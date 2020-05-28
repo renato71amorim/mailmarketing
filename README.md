@@ -4,7 +4,15 @@
 
 Conteúdo apenas para divulgação, caso tenah interesse entre em contato, ifnormações no final deste documento.
 
-![](../header.png)
+![](../imagens/contato.png)
+
+![](../imagens/gatilho.png)
+
+![](../imagens/lista.png)
+
+![](../imagens/meio.png)
+
+![](../imagens/programar.png)
 
 ## Instalação
 
