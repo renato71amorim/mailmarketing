@@ -1,0 +1,12 @@
+.css_email_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_email_grid_line {vertical-align: top;text-align: right;}
+.css_data_atualizacao_label {text-align:center;vertical-align:middle;justify-content:center;font-weight:bold;}
+.css_data_atualizacao_grid_line {vertical-align: top;text-align: center;}
+.css_data_descadastramento_label {text-align:center;vertical-align:middle;justify-content:center;font-weight:bold;}
+.css_data_descadastramento_grid_line {vertical-align: top;text-align: center;}
+.css_data_cadastro_label {text-align:center;vertical-align:middle;justify-content:center;font-weight:bold;}
+.css_data_cadastro_grid_line {vertical-align: top;text-align: center;}
+.css_motivo_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_motivo_grid_line {vertical-align: top;text-align: right;}
+.css_origem_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_origem_grid_line {vertical-align: top;text-align: right;}

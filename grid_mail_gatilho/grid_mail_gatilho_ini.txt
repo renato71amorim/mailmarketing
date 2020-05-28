@@ -1,0 +1,7 @@
+index.php
+mail_marketing
+grid_mail_gatilho
+NAO
+cons
+grid_mail_gatilho
+LigMd5

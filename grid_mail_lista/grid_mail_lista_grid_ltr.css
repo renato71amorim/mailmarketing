@@ -1,0 +1,12 @@
+.css_idmail_lista_label {text-align:right;vertical-align:middle;justify-content:right;font-weight:bold;}
+.css_idmail_lista_grid_line {vertical-align: top;text-align: right;}
+.css_mail_lista_descricao_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_mail_lista_descricao_grid_line {vertical-align: top;text-align: left;}
+.css_mail_lista_ativo_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_mail_lista_ativo_grid_line {vertical-align: top;text-align: left;}
+.css_mail_lista_sistema_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_mail_lista_sistema_grid_line {vertical-align: top;text-align: left;}
+.css_quantregistros_label {text-align:;vertical-align:middle;justify-content:;font-weight:bold;}
+.css_quantregistros_grid_line {text-align: left;}
+.css_contatos_label {text-align:;vertical-align:middle;justify-content:;font-weight:bold;}
+.css_contatos_grid_line {text-align: center;}
