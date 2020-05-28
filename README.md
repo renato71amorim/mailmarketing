@@ -2,17 +2,17 @@
 > Sistema de envio de mail marketing, desenvolvido sob encomenda.
 
 
-Conteúdo apenas para divulgação, caso tenah interesse entre em contato, ifnormações no final deste documento.
+Conteúdo apenas para divulgação, caso tenha interesse entre em contato, informações no final deste documento.
 
-![](../imagens/contato.png)
+![](imagens/contato.png)
 
-![](../imagens/gatilho.png)
+![](imagens/gatilho.png)
 
-![](../imagens/lista.png)
+![](imagens/lista.png)
 
-![](../imagens/meio.png)
+![](imagens/meio.png)
 
-![](../imagens/programar.png)
+![](imagens/programar.png)
 
 ## Instalação
 
