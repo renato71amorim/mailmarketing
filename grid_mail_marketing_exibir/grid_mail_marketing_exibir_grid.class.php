@@ -1216,6 +1216,8 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   <link rel=\"stylesheet\" href=\"" . $this->Ini->path_prod . "/third/font-awesome/css/all.min.css\" type=\"text/css\" media=\"screen\" />\r\n");
            $nm_saida->saida("   <script type=\"text/javascript\" src=\"" . $this->Ini->path_prod . "/third/jquery_plugin/touch_punch/jquery.ui.touch-punch.min.js\"></script>\r\n");
            $nm_saida->saida("   <script type=\"text/javascript\" src=\"" . $this->Ini->path_prod . "/third/jquery_plugin/malsup-blockui/jquery.blockUI.js\"></script>\r\n");
+           $nm_saida->saida("   <link rel=\"stylesheet\" href=\"" . $this->Ini->path_prod . "/third/jquery_plugin/dropdown_check_list/css/ui.dropdownchecklist.standalone.css\" type=\"text/css\" />\r\n");
+           $nm_saida->saida("   <script type=\"text/javascript\" src=\"" . $this->Ini->path_prod . "/third/jquery_plugin/dropdown_check_list/js/ui.dropdownchecklist.js\"></script>\r\n");
            $nm_saida->saida("        <script type=\"text/javascript\">\r\n");
            $nm_saida->saida("          var sc_pathToTB = '" . $this->Ini->path_prod . "/third/jquery_plugin/thickbox/';\r\n");
            $nm_saida->saida("          var sc_tbLangClose = \"" . html_entity_decode($this->Ini->Nm_lang['lang_tb_close'], ENT_COMPAT, $_SESSION['scriptcase']['charset']) . "\";\r\n");
@@ -1232,16 +1234,6 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_form" . $_SESSION['scriptcase']['reg_conf']['css_dir'] . ".css\" /> \r\n");
            $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_appdiv.css\" /> \r\n");
            $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_appdiv" . $_SESSION['scriptcase']['reg_conf']['css_dir'] . ".css\" /> \r\n");
-           $nm_saida->saida("   <style type=\"text/css\">\r\n");
-           $nm_saida->saida("     #quicksearchph_top {\r\n");
-           $nm_saida->saida("       position: relative;\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("     #quicksearchph_top img {\r\n");
-           $nm_saida->saida("       position: absolute;\r\n");
-           $nm_saida->saida("       top: 0;\r\n");
-           $nm_saida->saida("       right: 0;\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("   </style>\r\n");
            $nm_saida->saida("   <script type=\"text/javascript\"> \r\n");
            if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['embutida'])
            { 
@@ -1408,78 +1400,35 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            }
            if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['qsearch'] == "on")
            {
-               $nm_saida->saida("     scQuickSearchInit(false, '');\r\n");
                $nm_saida->saida("     scQuickSearchKeyUp('top', null);\r\n");
-               $nm_saida->saida("     scQSInit = false;\r\n");
            }
            $nm_saida->saida("   });\r\n");
            $nm_saida->saida("   function scQuickSearchSubmit_top() {\r\n");
            $nm_saida->saida("     document.F0_top.nmgp_opcao.value = 'fast_search';\r\n");
            $nm_saida->saida("     document.F0_top.submit();\r\n");
            $nm_saida->saida("   }\r\n");
-           $nm_saida->saida("   function scQuickSearchInit(bPosOnly, sPos) {\r\n");
-           $nm_saida->saida("     if (!bPosOnly) {\r\n");
-           $nm_saida->saida("       if ('' == sPos || 'top' == sPos) scQuickSearchSize('SC_fast_search_top', 'SC_fast_search_close_top', 'SC_fast_search_submit_top', 'quicksearchph_top');\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("   }\r\n");
-           $nm_saida->saida("   var fixedQuickSearchSize = {};\r\n");
-           $nm_saida->saida("   function scQuickSearchSize(sIdInput, sIdClose, sIdSubmit, sPlaceHolder) {\r\n");
-           $nm_saida->saida("     if($('#' + sIdInput).length)\r\n");
-           $nm_saida->saida("     {\r\n");
-           $nm_saida->saida("         if (\"boolean\" == typeof fixedQuickSearchSize[sIdInput] && fixedQuickSearchSize[sIdInput]) {\r\n");
-           $nm_saida->saida("             return;\r\n");
-           $nm_saida->saida("         }\r\n");
-           $nm_saida->saida("         var oInput = $('#' + sIdInput),\r\n");
-           $nm_saida->saida("             oClose = $('#' + sIdClose),\r\n");
-           $nm_saida->saida("             oSubmit = $('#' + sIdSubmit),\r\n");
-           $nm_saida->saida("             oPlace = $('#' + sPlaceHolder),\r\n");
-           $nm_saida->saida("             iInputP = parseInt(oInput.css('padding-right')) || 0,\r\n");
-           $nm_saida->saida("             iInputB = parseInt(oInput.css('border-right-width')) || 0,\r\n");
-           $nm_saida->saida("             iInputW = oInput.outerWidth(),\r\n");
-           $nm_saida->saida("             iPlaceW = oPlace.outerWidth(),\r\n");
-           $nm_saida->saida("             oInputO = oInput.offset(),\r\n");
-           $nm_saida->saida("             oPlaceO = oPlace.offset(),\r\n");
-           $nm_saida->saida("             iNewRight;\r\n");
-           $nm_saida->saida("         iNewRight = (iPlaceW - iInputW) - (oInputO.left - oPlaceO.left) + iInputB + 1;\r\n");
-           $nm_saida->saida("         oInput.css({\r\n");
-           $nm_saida->saida("           'height': Math.max(oInput.height(), 16) + 'px',\r\n");
-           $nm_saida->saida("           'padding-right': iInputP + 16 + " . $this->Ini->Str_qs_image_padding . " + 'px'\r\n");
-           $nm_saida->saida("         });\r\n");
-           $nm_saida->saida("         oClose.css({\r\n");
-           $nm_saida->saida("           'right': iNewRight + " . $this->Ini->Str_qs_image_padding . " + 'px',\r\n");
-           $nm_saida->saida("           'cursor': 'pointer'\r\n");
-           $nm_saida->saida("         });\r\n");
-           $nm_saida->saida("         oSubmit.css({\r\n");
-           $nm_saida->saida("           'right': iNewRight + " . $this->Ini->Str_qs_image_padding . " + 'px',\r\n");
-           $nm_saida->saida("           'cursor': 'pointer'\r\n");
-           $nm_saida->saida("         });\r\n");
-           $nm_saida->saida("         fixedQuickSearchSize[sIdInput] = true;\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scQuickSearchKeyUp(sPos, e) {\r\n");
-           $nm_saida->saida("    if(typeof scQSInitVal !== 'undefined')\r\n");
-           $nm_saida->saida("    {\r\n");
-           $nm_saida->saida("     if ('' != scQSInitVal && $('#SC_fast_search_' + sPos).val() == scQSInitVal && scQSInit) {\r\n");
-           $nm_saida->saida("       $('#SC_fast_search_close_' + sPos).show();\r\n");
-           $nm_saida->saida("       $('#SC_fast_search_submit_' + sPos).hide();\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("     else {\r\n");
-           $nm_saida->saida("       $('#SC_fast_search_close_' + sPos).hide();\r\n");
-           $nm_saida->saida("       $('#SC_fast_search_submit_' + sPos).show();\r\n");
-           $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     if (null != e) {\r\n");
            $nm_saida->saida("       var keyPressed = e.charCode || e.keyCode || e.which;\r\n");
            $nm_saida->saida("       if (13 == keyPressed) {\r\n");
            $nm_saida->saida("         if ('top' == sPos) nm_gp_submit_qsearch('top');\r\n");
            $nm_saida->saida("       }\r\n");
+           $nm_saida->saida("       else\r\n");
+           $nm_saida->saida("       {\r\n");
+           $nm_saida->saida("           $('#SC_fast_search_submit_top').show();\r\n");
+           $nm_saida->saida("       }\r\n");
            $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("    }\r\n");
            $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scBtnGroupByShow(sUrl, sPos) {\r\n");
            $nm_saida->saida("     if ($(\"#sc_id_groupby_placeholder_\" + sPos).css('display') != 'none') {\r\n");
-           $nm_saida->saida("         scBtnGroupByHide(sPos);\r\n");
-           $nm_saida->saida("         $(\"#sel_groupby_\" + sPos).removeClass(\"selected\");\r\n");
-           $nm_saida->saida("         return;\r\n");
+           if ($_SESSION['scriptcase']['proc_mobile']) { 
+               $nm_saida->saida("         //return;\r\n");
+           }
+           else {
+               $nm_saida->saida("         scBtnGroupByHide(sPos);\r\n");
+               $nm_saida->saida("         $(\"#sel_groupby_\" + sPos).removeClass(\"selected\");\r\n");
+               $nm_saida->saida("         return;\r\n");
+           }
            $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     $.ajax({\r\n");
            $nm_saida->saida("       type: \"GET\",\r\n");
@@ -1497,9 +1446,14 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scBtnSaveGridShow(origem, embbed, pos) {\r\n");
            $nm_saida->saida("     if ($(\"#sc_id_save_grid_placeholder_\" + pos).css('display') != 'none') {\r\n");
-           $nm_saida->saida("         $(\"#save_grid_\" + pos).removeClass(\"selected\")\r\n");
-           $nm_saida->saida("         scBtnSaveGridHide(pos);\r\n");
-           $nm_saida->saida("         return;\r\n");
+           if ($_SESSION['scriptcase']['proc_mobile']) { 
+               $nm_saida->saida("         // return;\r\n");
+           }
+           else {
+               $nm_saida->saida("         $(\"#save_grid_\" + pos).removeClass(\"selected\")\r\n");
+               $nm_saida->saida("         scBtnSaveGridHide(pos);\r\n");
+               $nm_saida->saida("         return;\r\n");
+           }
            $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     $.ajax({\r\n");
            $nm_saida->saida("       type: \"POST\",\r\n");
@@ -1518,9 +1472,14 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scBtnSelCamposShow(sUrl, sPos) {\r\n");
            $nm_saida->saida("     if ($(\"#sc_id_sel_campos_placeholder_\" + sPos).css('display') != 'none') {\r\n");
-           $nm_saida->saida("         scBtnSelCamposHide(sPos);\r\n");
-           $nm_saida->saida("         $(\"#selcmp_\" + sPos).removeClass(\"selected\");\r\n");
-           $nm_saida->saida("         return;\r\n");
+           if ($_SESSION['scriptcase']['proc_mobile']) { 
+               $nm_saida->saida("         //return;\r\n");
+           }
+           else {
+               $nm_saida->saida("         scBtnSelCamposHide(sPos);\r\n");
+               $nm_saida->saida("         $(\"#selcmp_\" + sPos).removeClass(\"selected\");\r\n");
+               $nm_saida->saida("         return;\r\n");
+           }
            $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     $.ajax({\r\n");
            $nm_saida->saida("       type: \"GET\",\r\n");
@@ -1538,9 +1497,14 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scBtnOrderCamposShow(sUrl, sPos) {\r\n");
            $nm_saida->saida("     if ($(\"#sc_id_order_campos_placeholder_\" + sPos).css('display') != 'none') {\r\n");
-           $nm_saida->saida("         scBtnOrderCamposHide(sPos);\r\n");
-           $nm_saida->saida("         $(\"#ordcmp_\" + sPos).removeClass(\"selected\");\r\n");
-           $nm_saida->saida("         return;\r\n");
+           if ($_SESSION['scriptcase']['proc_mobile']) { 
+               $nm_saida->saida("         //return;\r\n");
+           }
+           else {
+               $nm_saida->saida("         scBtnOrderCamposHide(sPos);\r\n");
+               $nm_saida->saida("         $(\"#ordcmp_\" + sPos).removeClass(\"selected\");\r\n");
+               $nm_saida->saida("         return;\r\n");
+           }
            $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     $.ajax({\r\n");
            $nm_saida->saida("       type: \"GET\",\r\n");
@@ -1808,6 +1772,7 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
        else
        {
           $remove_margin = isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['dashboard_info']['remove_margin']) && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['dashboard_info']['remove_margin'] ? 'margin: 0; ' : '';
+          $remove_border = '';
            $nm_saida->saida("  <body class=\"" . $this->css_scGridPage . "\" " . $str_iframe_body . " style=\"" . $remove_margin. $css_body . "\">\r\n");
        }
        $nm_saida->saida("  " . $this->Ini->Ajax_result_set . "\r\n");
@@ -1842,7 +1807,7 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
    {
        $nm_saida->saida("     <TR>\r\n");
        $nm_saida->saida("       <TD>\r\n");
-       $nm_saida->saida("       <div class=\"scGridBorder\">\r\n");
+       $nm_saida->saida("       <div class=\"scGridBorder\" style=\"" . (isset($remove_border) ? $remove_border : '') . "\">\r\n");
        if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['doc_word'])
        { 
            $nm_saida->saida("  <div id=\"id_div_process\" style=\"display: none; margin: 10px; whitespace: nowrap\" class=\"scFormProcessFixed\"><span class=\"scFormProcess\"><img border=\"0\" src=\"" . $this->Ini->path_icones . "/scriptcase__NM__ajax_load.gif\" align=\"absmiddle\" />&nbsp;" . $this->Ini->Nm_lang['lang_othr_prcs'] . "...</span></div>\r\n");
@@ -2451,11 +2416,13 @@ $nm_saida->saida("     <TD class=\"" . $this->css_line_back . $this->css_sep . $
 $nm_saida->saida("     <span style=\"vertical-align:middle; font-weight:bold;\">" . nl2br($SC_Label) . "</span><br />\r\n");
    } 
           $conteudo = sc_strip_script($this->mail_marketing_assunto); 
+          $conteudo_original = sc_strip_script($this->mail_marketing_assunto); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if (isset($this->NM_cmp_hidden['mail_marketing_assunto']) && $this->NM_cmp_hidden['mail_marketing_assunto'] == "off")
           {
               $conteudo = "&nbsp;";
@@ -2488,11 +2455,13 @@ $nm_saida->saida("     <TD class=\"" . $this->css_line_back . $this->css_sep . $
 $nm_saida->saida("     <span style=\"vertical-align:middle; font-weight:bold;\">" . nl2br($SC_Label) . "</span><br />\r\n");
    } 
           $conteudo = sc_strip_script($this->mail_marketing_imagem_cabecalho); 
+          $conteudo_original = sc_strip_script($this->mail_marketing_imagem_cabecalho); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if (isset($this->NM_cmp_hidden['mail_marketing_imagem_cabecalho']) && $this->NM_cmp_hidden['mail_marketing_imagem_cabecalho'] == "off")
           {
               $conteudo = "&nbsp;";
@@ -2525,11 +2494,13 @@ $nm_saida->saida("     <TD class=\"" . $this->css_line_back . $this->css_sep . $
 $nm_saida->saida("     <span style=\"vertical-align:middle; font-weight:bold;\">" . nl2br($SC_Label) . "</span><br />\r\n");
    } 
           $conteudo = sc_strip_script($this->mail_marketing_conteudo); 
+          $conteudo_original = sc_strip_script($this->mail_marketing_conteudo); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if (isset($this->NM_cmp_hidden['mail_marketing_conteudo']) && $this->NM_cmp_hidden['mail_marketing_conteudo'] == "off")
           {
               $conteudo = "&nbsp;";
@@ -2562,11 +2533,13 @@ $nm_saida->saida("     <TD class=\"" . $this->css_line_back . $this->css_sep . $
 $nm_saida->saida("     <span style=\"vertical-align:middle; font-weight:bold;\">" . nl2br($SC_Label) . "</span><br />\r\n");
    } 
           $conteudo = sc_strip_script($this->mail_marketing_link_conteudo); 
+          $conteudo_original = sc_strip_script($this->mail_marketing_link_conteudo); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if (isset($this->NM_cmp_hidden['mail_marketing_link_conteudo']) && $this->NM_cmp_hidden['mail_marketing_link_conteudo'] == "off")
           {
               $conteudo = "&nbsp;";
@@ -2599,11 +2572,13 @@ $nm_saida->saida("     <TD class=\"" . $this->css_line_back . $this->css_sep . $
 $nm_saida->saida("     <span style=\"vertical-align:middle; font-weight:bold;\">" . nl2br($SC_Label) . "</span><br />\r\n");
    } 
           $conteudo = sc_strip_script($this->mail_marketing_imagem_rodape); 
+          $conteudo_original = sc_strip_script($this->mail_marketing_imagem_rodape); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if (isset($this->NM_cmp_hidden['mail_marketing_imagem_rodape']) && $this->NM_cmp_hidden['mail_marketing_imagem_rodape'] == "off")
           {
               $conteudo = "&nbsp;";
@@ -2786,8 +2761,7 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -2795,8 +2769,7 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -2804,8 +2777,18 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
    function nmgp_barra_top_normal()
    {
@@ -2833,10 +2816,10 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
       {
       if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['qsearch'] == "on")
       {
+          $nm_saida->saida("           <script type=\"text/javascript\">var change_fast_top = \"\";</script>\r\n");
           $OPC_cmp = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'][0] : "";
           $OPC_arg = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'][1] : "";
           $OPC_dat = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'][2] : "";
-          $nm_saida->saida("           <script type=\"text/javascript\">var change_fast_top = \"\";</script>\r\n");
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['ajax_nav'])
           {
               $this->Ini->Arr_result['setVar'][] = array('var' => 'change_fast_top', 'value' => "");
@@ -2853,14 +2836,25 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
           {
               $OPC_dat = NM_conv_charset($OPC_dat, $_SESSION['scriptcase']['charset'], "UTF-8");
           }
+          $stateSearchIconClose  = 'none';
+          $stateSearchIconSearch = '';
+          if(!empty($OPC_dat))
+          {
+              $stateSearchIconClose  = '';
+              $stateSearchIconSearch = 'none';
+          }
           $nm_saida->saida("          <input type=\"hidden\"  id=\"fast_search_f0_top\" name=\"nmgp_fast_search\" value=\"SC_all_Cmp\">\r\n");
-          $nm_saida->saida("          <input type=\"hidden\" id=\"cond_fast_search_f0_top\" name=\"nmgp_cond_fast_search\" value=\"qp\">\r\n");
-          $nm_saida->saida("          <script type=\"text/javascript\">var scQSInitVal = \"" . NM_encode_input($OPC_dat) . "\";</script>\r\n");
-          $nm_saida->saida("          <span id=\"quicksearchph_top\">\r\n");
-          $nm_saida->saida("           <input type=\"text\" id=\"SC_fast_search_top\" class=\"" . $this->css_css_toolbar_obj . "\" style=\"vertical-align: middle;\" name=\"nmgp_arg_fast_search\" value=\"" . NM_encode_input($OPC_dat) . "\" size=\"10\" onChange=\"change_fast_top = 'CH';\" alt=\"{maxLength: 255}\" placeholder=\"" . $this->Ini->Nm_lang['lang_othr_qk_watermark'] . "\">\r\n");
-          $nm_saida->saida("           <img style=\"display: none\" id=\"SC_fast_search_close_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_clean . "\" onclick=\"document.getElementById('SC_fast_search_top').value = '__Clear_Fast__'; nm_gp_submit_qsearch('top');\">\r\n");
-          $nm_saida->saida("           <img style=\"display: none\" id=\"SC_fast_search_submit_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_search . "\" onclick=\"nm_gp_submit_qsearch('top');\">\r\n");
-          $nm_saida->saida("          </span>\r\n");
+          $nm_saida->saida("          <select id=\"cond_fast_search_f0_top\" class=\"" . $this->css_css_toolbar_obj . "\" style=\"vertical-align: middle;display:none;\" name=\"nmgp_cond_fast_search\" onChange=\"change_fast_top = 'CH';\">\r\n");
+          $OPC_sel = " selected='selected'";
+          $nm_saida->saida("           <option value=\"qp\"$OPC_sel>" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>\r\n");
+          $nm_saida->saida("          </select>\r\n");
+          $nm_saida->saida("          <span id=\"quicksearchph_top\" class=\"" . $this->css_css_toolbar_obj . "\" style='display: inline-block; vertical-align: inherit;'>\r\n");
+          $nm_saida->saida("           <span>\r\n");
+          $nm_saida->saida("             <input type=\"text\" id=\"SC_fast_search_top\" class=\"" . $this->css_css_toolbar_obj . "_text\" style=\"border-width: 0px;\" name=\"nmgp_arg_fast_search\" value=\"" . NM_encode_input($OPC_dat) . "\" size=\"10\" onChange=\"change_fast_top = 'CH';\" alt=\"{maxLength: 255}\" placeholder=\"" . $this->Ini->Nm_lang['lang_othr_qk_watermark'] . "\">&nbsp;\r\n");
+          $nm_saida->saida("             <img style=\"display: " . $stateSearchIconSearch . "\" id=\"SC_fast_search_submit_top\" class='css_toolbar_obj_qs_search_img' src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_search . "\" onclick=\"nm_gp_submit_qsearch('top');\">\r\n");
+          $nm_saida->saida("             <img style=\"display: " . $stateSearchIconClose . "\" class='css_toolbar_obj_qs_search_img' id=\"SC_fast_search_close_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_clean . "\" onclick=\"document.getElementById('SC_fast_search_top').value = '__Clear_Fast__'; nm_gp_submit_qsearch('top');\">\r\n");
+          $nm_saida->saida("            </span>\r\n");
+          $nm_saida->saida("          </span>");
           $NM_btn = true;
       }
           $nm_saida->saida("         </td> \r\n");
@@ -3330,10 +3324,10 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
       {
       if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['qsearch'] == "on")
       {
+          $nm_saida->saida("           <script type=\"text/javascript\">var change_fast_top = \"\";</script>\r\n");
           $OPC_cmp = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'][0] : "";
           $OPC_arg = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'][1] : "";
           $OPC_dat = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['fast_search'][2] : "";
-          $nm_saida->saida("           <script type=\"text/javascript\">var change_fast_top = \"\";</script>\r\n");
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_marketing_exibir']['ajax_nav'])
           {
               $this->Ini->Arr_result['setVar'][] = array('var' => 'change_fast_top', 'value' => "");
@@ -3350,14 +3344,25 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
           {
               $OPC_dat = NM_conv_charset($OPC_dat, $_SESSION['scriptcase']['charset'], "UTF-8");
           }
+          $stateSearchIconClose  = 'none';
+          $stateSearchIconSearch = '';
+          if(!empty($OPC_dat))
+          {
+              $stateSearchIconClose  = '';
+              $stateSearchIconSearch = 'none';
+          }
           $nm_saida->saida("          <input type=\"hidden\"  id=\"fast_search_f0_top\" name=\"nmgp_fast_search\" value=\"SC_all_Cmp\">\r\n");
-          $nm_saida->saida("          <input type=\"hidden\" id=\"cond_fast_search_f0_top\" name=\"nmgp_cond_fast_search\" value=\"qp\">\r\n");
-          $nm_saida->saida("          <script type=\"text/javascript\">var scQSInitVal = \"" . NM_encode_input($OPC_dat) . "\";</script>\r\n");
-          $nm_saida->saida("          <span id=\"quicksearchph_top\">\r\n");
-          $nm_saida->saida("           <input type=\"text\" id=\"SC_fast_search_top\" class=\"" . $this->css_css_toolbar_obj . "\" style=\"vertical-align: middle;\" name=\"nmgp_arg_fast_search\" value=\"" . NM_encode_input($OPC_dat) . "\" size=\"10\" onChange=\"change_fast_top = 'CH';\" alt=\"{maxLength: 255}\" placeholder=\"" . $this->Ini->Nm_lang['lang_othr_qk_watermark'] . "\">\r\n");
-          $nm_saida->saida("           <img style=\"display: none\" id=\"SC_fast_search_close_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_clean . "\" onclick=\"document.getElementById('SC_fast_search_top').value = '__Clear_Fast__'; nm_gp_submit_qsearch('top');\">\r\n");
-          $nm_saida->saida("           <img style=\"display: none\" id=\"SC_fast_search_submit_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_search . "\" onclick=\"nm_gp_submit_qsearch('top');\">\r\n");
-          $nm_saida->saida("          </span>\r\n");
+          $nm_saida->saida("          <select id=\"cond_fast_search_f0_top\" class=\"" . $this->css_css_toolbar_obj . "\" style=\"vertical-align: middle;display:none;\" name=\"nmgp_cond_fast_search\" onChange=\"change_fast_top = 'CH';\">\r\n");
+          $OPC_sel = " selected='selected'";
+          $nm_saida->saida("           <option value=\"qp\"$OPC_sel>" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>\r\n");
+          $nm_saida->saida("          </select>\r\n");
+          $nm_saida->saida("          <span id=\"quicksearchph_top\" class=\"" . $this->css_css_toolbar_obj . "\" style='display: inline-block; vertical-align: inherit;'>\r\n");
+          $nm_saida->saida("           <span>\r\n");
+          $nm_saida->saida("             <input type=\"text\" id=\"SC_fast_search_top\" class=\"" . $this->css_css_toolbar_obj . "_text\" style=\"border-width: 0px;\" name=\"nmgp_arg_fast_search\" value=\"" . NM_encode_input($OPC_dat) . "\" size=\"10\" onChange=\"change_fast_top = 'CH';\" alt=\"{maxLength: 255}\" placeholder=\"" . $this->Ini->Nm_lang['lang_othr_qk_watermark'] . "\">&nbsp;\r\n");
+          $nm_saida->saida("             <img style=\"display: " . $stateSearchIconSearch . "\" id=\"SC_fast_search_submit_top\" class='css_toolbar_obj_qs_search_img' src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_search . "\" onclick=\"nm_gp_submit_qsearch('top');\">\r\n");
+          $nm_saida->saida("             <img style=\"display: " . $stateSearchIconClose . "\" class='css_toolbar_obj_qs_search_img' id=\"SC_fast_search_close_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_clean . "\" onclick=\"document.getElementById('SC_fast_search_top').value = '__Clear_Fast__'; nm_gp_submit_qsearch('top');\">\r\n");
+          $nm_saida->saida("            </span>\r\n");
+          $nm_saida->saida("          </span>");
           $NM_btn = true;
       }
           $nm_saida->saida("         </td> \r\n");
@@ -3877,7 +3882,16 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
       $trab_mask  = $nm_mask;
       $tam_campo  = strlen($nm_campo);
       $trab_saida = "";
-      $mask_num = false;
+      $str_highlight_ini = "";
+      $str_highlight_fim = "";
+      if(substr($nm_campo, 0, 23) == '<div class="highlight">' && substr($nm_campo, -6) == '</div>')
+      {
+           $str_highlight_ini = substr($nm_campo, 0, 23);
+           $str_highlight_fim = substr($nm_campo, -6);
+
+           $trab_campo = substr($nm_campo, 23, -6);
+           $tam_campo  = strlen($trab_campo);
+      }      $mask_num = false;
       for ($x=0; $x < strlen($trab_mask); $x++)
       {
           if (substr($trab_mask, $x, 1) == "#")
@@ -3920,7 +3934,7 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
           {
               $trab_saida .= substr($trab_campo, $xdados);
           }
-          $nm_campo = $trab_saida;
+          $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
           return;
       }
       for ($ix = strlen($trab_mask); $ix > 0; $ix--)
@@ -3973,7 +3987,7 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
                $trab_saida = substr($trab_saida, 0, $iz) . substr($trab_saida, $iz + 1);
            }
       }
-      $nm_campo = $trab_saida;
+      $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
    } 
  function check_btns()
  {
@@ -4428,9 +4442,55 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
    $nm_saida->saida("      } \r\n");
    $nm_saida->saida("      nm_gp_submit_ajax(\"rec\", campo); \r\n");
    $nm_saida->saida("   } \r\n");
+   $nm_saida->saida("   function nm_gp_open_qsearch_div(pos)\r\n");
+   $nm_saida->saida("   {\r\n");
+   $nm_saida->saida("        if($('#SC_fast_search_dropdown_' + pos).hasClass('fa-caret-down'))\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            if(($('#quicksearchph_' + pos).offset().top+$('#id_qs_div_' + pos).height()+10) >= $(document).height())\r\n");
+   $nm_saida->saida("            {\r\n");
+   $nm_saida->saida("                $('#id_qs_div_' + pos).offset({top:($('#quicksearchph_' + pos).offset().top-($('#quicksearchph_' + pos).height()/2)-$('#id_qs_div_' + pos).height()-4)});\r\n");
+   $nm_saida->saida("            }\r\n");
+   $nm_saida->saida("            nm_gp_open_qsearch_div_store_temp(pos);\r\n");
+   $nm_saida->saida("            $('#SC_fast_search_dropdown_' + pos).removeClass('fa-caret-down').addClass('fa-caret-up');\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        else\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            $('#SC_fast_search_dropdown_' + pos).removeClass('fa-caret-up').addClass('fa-caret-down');\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        $('#id_qs_div_' + pos).toggle();\r\n");
+   $nm_saida->saida("   }\r\n");
+   $nm_saida->saida("   var tmp_qs_arr_fields = [], tmp_qs_arr_cond = \"\";\r\n");
+   $nm_saida->saida("   function nm_gp_open_qsearch_div_store_temp(pos)\r\n");
+   $nm_saida->saida("   {\r\n");
+   $nm_saida->saida("        tmp_qs_arr_fields = [], tmp_qs_str_cond = \"\";\r\n");
+   $nm_saida->saida("        if($('#fast_search_f0_' + pos).prop('type') == 'select-multiple')\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            tmp_qs_arr_fields = $('#fast_search_f0_' + pos).val();\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        else\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            tmp_qs_arr_fields.push($('#fast_search_f0_' + pos).val());\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        tmp_qs_str_cond = $('#cond_fast_search_f0_' + pos).val();\r\n");
+   $nm_saida->saida("   }\r\n");
+   $nm_saida->saida("   function nm_gp_cancel_qsearch_div_store_temp(pos)\r\n");
+   $nm_saida->saida("   {\r\n");
+   $nm_saida->saida("        $('#fast_search_f0_' + pos).val('');\r\n");
+   $nm_saida->saida("        $(\"#fast_search_f0_\" + pos + \" option\").prop('selected', false);\r\n");
+   $nm_saida->saida("        for(it=0; it<tmp_qs_arr_fields.length; it++)\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            $(\"#fast_search_f0_\" + pos + \" option[value='\"+ tmp_qs_arr_fields[it] +\"']\").prop('selected', true);\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        $(\"#fast_search_f0_\" + pos).change();\r\n");
+   $nm_saida->saida("        tmp_qs_arr_fields = [];\r\n");
+   $nm_saida->saida("        $('#cond_fast_search_f0_' + pos).val(tmp_qs_str_cond);\r\n");
+   $nm_saida->saida("        $('#cond_fast_search_f0_' + pos).change();\r\n");
+   $nm_saida->saida("        tmp_qs_str_cond = \"\";\r\n");
+   $nm_saida->saida("        nm_gp_open_qsearch_div(pos);\r\n");
+   $nm_saida->saida("   }\r\n");
    $nm_saida->saida("   function nm_gp_submit_qsearch(pos) \r\n");
    $nm_saida->saida("   { \r\n");
-   $nm_saida->saida("      var out_qsearch = \"\";\r\n");
+   $nm_saida->saida("       var out_qsearch = \"\";\r\n");
    $nm_saida->saida("       var ver_ch = eval('change_fast_' + pos);\r\n");
    $nm_saida->saida("       if (document.getElementById('SC_fast_search_' + pos).value == '' && ver_ch == '')\r\n");
    $nm_saida->saida("       { \r\n");
@@ -4442,8 +4502,8 @@ $nm_saida->saida("    </td></tr></table></td>\r\n");
    $nm_saida->saida("       { \r\n");
    $nm_saida->saida("           document.getElementById('SC_fast_search_' + pos).value = '';\r\n");
    $nm_saida->saida("       } \r\n");
-   $nm_saida->saida("       out_qsearch = document.getElementById('fast_search_f0_' + pos).value;\r\n");
-   $nm_saida->saida("       out_qsearch += \"_SCQS_\" + document.getElementById('cond_fast_search_f0_' + pos).value;\r\n");
+   $nm_saida->saida("       out_qsearch = $('#fast_search_f0_' + pos).val();\r\n");
+   $nm_saida->saida("       out_qsearch += \"_SCQS_\" + $('#cond_fast_search_f0_' + pos).val();\r\n");
    $nm_saida->saida("       out_qsearch += \"_SCQS_\" + document.getElementById('SC_fast_search_' + pos).value;\r\n");
    $nm_saida->saida("       out_qsearch = out_qsearch.replace(/[+]/g, \"__NM_PLUS__\");\r\n");
    $nm_saida->saida("       out_qsearch = out_qsearch.replace(/[&]/g, \"__NM_AMP__\");\r\n");

@@ -21,9 +21,9 @@ if ($_SESSION['scriptcase']['device_mobile'])
         $_SESSION['scriptcase']['display_mobile'] = true;
     }
 }
-    $_SESSION['scriptcase']['menu_mail']['glo_nm_path_prod']      = "/principal/prod";
+    $_SESSION['scriptcase']['menu_mail']['glo_nm_path_prod']      = "/var/www/html/principal/prod";
     $_SESSION['scriptcase']['menu_mail']['glo_nm_perfil']         = "";
-    $_SESSION['scriptcase']['menu_mail']['glo_nm_path_imag_temp'] = "/principal/tmp";
+    $_SESSION['scriptcase']['menu_mail']['glo_nm_path_imag_temp'] = "/var/www/html/principal/tmp";
     $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo']      = "";
     //check publication with the prod
     $str_path_apl_url  = $_SERVER['PHP_SELF'];
@@ -495,6 +495,10 @@ if (isset($_POST) && !empty($_POST))
          $$nmgp_var = $nmgp_val;
     }
 }
+if (!isset($_SERVER['HTTP_REFERER']) || (!isset($nmgp_parms) && !isset($script_case_init) && !isset($script_case_session) && !isset($nmgp_start) ))
+{
+    $_SESSION['sc_session']['SC_parm_violation'] = true;
+}
 if (isset($script_case_init))
 {
     $_SESSION['sc_session'][1]['menu_mail']['init'] = $script_case_init;
@@ -584,18 +588,6 @@ if (!isset($_SESSION['scriptcase']['sc_apl_seg']))
 {
     $_SESSION['scriptcase']['sc_apl_seg'] = array();
 }
-$sc_teste_seg = file($path_apls . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_contato") . "/grid_mail_contato_ini.txt");
-if ((!isset($sc_teste_seg[3]) || trim($sc_teste_seg[3]) == "NAO") || (isset($_SESSION['nm_session']['user']['sec']['flag']) && $_SESSION['nm_session']['user']['sec']['flag'] == "N")) 
-{
-    if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']))
-    {
-        $_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato'] = "on";
-    }
-}
-if (isset($_SESSION['nm_session']['user']['sec']['flag']) && $_SESSION['nm_session']['user']['sec']['flag'] == "N") 
-{ 
-    $_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato'] = "on";
-} 
 $sc_teste_seg = file($path_apls . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_marketing") . "/grid_mail_marketing_ini.txt");
 if ((!isset($sc_teste_seg[3]) || trim($sc_teste_seg[3]) == "NAO") || (isset($_SESSION['nm_session']['user']['sec']['flag']) && $_SESSION['nm_session']['user']['sec']['flag'] == "N")) 
 {
@@ -632,57 +624,59 @@ if (isset($_SESSION['nm_session']['user']['sec']['flag']) && $_SESSION['nm_sessi
 { 
     $_SESSION['scriptcase']['sc_apl_seg']['grid_mail_meio'] = "on";
 } 
-$sc_teste_seg = file($path_apls . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_gatilho") . "/grid_mail_gatilho_ini.txt");
+$sc_teste_seg = file($path_apls . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_contato") . "/grid_mail_contato_ini.txt");
 if ((!isset($sc_teste_seg[3]) || trim($sc_teste_seg[3]) == "NAO") || (isset($_SESSION['nm_session']['user']['sec']['flag']) && $_SESSION['nm_session']['user']['sec']['flag'] == "N")) 
 {
-    if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_gatilho']))
+    if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']))
     {
-        $_SESSION['scriptcase']['sc_apl_seg']['grid_mail_gatilho'] = "on";
+        $_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato'] = "on";
     }
 }
 if (isset($_SESSION['nm_session']['user']['sec']['flag']) && $_SESSION['nm_session']['user']['sec']['flag'] == "N") 
 { 
-    $_SESSION['scriptcase']['sc_apl_seg']['grid_mail_gatilho'] = "on";
+    $_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato'] = "on";
+} 
+$sc_teste_seg = file($path_apls . $this->tab_grupo[0] . SC_dir_app_name("dispara_email") . "/dispara_email_ini.txt");
+if ((!isset($sc_teste_seg[3]) || trim($sc_teste_seg[3]) == "NAO") || (isset($_SESSION['nm_session']['user']['sec']['flag']) && $_SESSION['nm_session']['user']['sec']['flag'] == "N")) 
+{
+    if (!isset($_SESSION['scriptcase']['sc_apl_seg']['dispara_email']))
+    {
+        $_SESSION['scriptcase']['sc_apl_seg']['dispara_email'] = "on";
+    }
+}
+if (isset($_SESSION['nm_session']['user']['sec']['flag']) && $_SESSION['nm_session']['user']['sec']['flag'] == "N") 
+{ 
+    $_SESSION['scriptcase']['sc_apl_seg']['dispara_email'] = "on";
 } 
 /* Itens do Menu */
 
 $sOutputBuffer = ob_get_contents();
 ob_end_clean();
 
- $nm_var_lab[0] = "Mail Marketing";
+ $nm_var_lab[0] = "Programar envio";
 if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_lab[0]))
 {
     $nm_var_lab[0] = sc_convert_encoding($nm_var_lab[0], $_SESSION['scriptcase']['charset'], "UTF-8");
 }
- $nm_var_lab[1] = "Contatos";
+ $nm_var_lab[1] = "Listas";
 if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_lab[1]))
 {
     $nm_var_lab[1] = sc_convert_encoding($nm_var_lab[1], $_SESSION['scriptcase']['charset'], "UTF-8");
 }
- $nm_var_lab[2] = "Programar envio";
+ $nm_var_lab[2] = "Meios";
 if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_lab[2]))
 {
     $nm_var_lab[2] = sc_convert_encoding($nm_var_lab[2], $_SESSION['scriptcase']['charset'], "UTF-8");
 }
- $nm_var_lab[3] = "Configurações";
+ $nm_var_lab[3] = "Contatos";
 if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_lab[3]))
 {
     $nm_var_lab[3] = sc_convert_encoding($nm_var_lab[3], $_SESSION['scriptcase']['charset'], "UTF-8");
 }
- $nm_var_lab[4] = "Listas             ";
+ $nm_var_lab[4] = "Enviar agora";
 if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_lab[4]))
 {
     $nm_var_lab[4] = sc_convert_encoding($nm_var_lab[4], $_SESSION['scriptcase']['charset'], "UTF-8");
-}
- $nm_var_lab[5] = "Meios";
-if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_lab[5]))
-{
-    $nm_var_lab[5] = sc_convert_encoding($nm_var_lab[5], $_SESSION['scriptcase']['charset'], "UTF-8");
-}
- $nm_var_lab[6] = "Gatilhos";
-if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_lab[6]))
-{
-    $nm_var_lab[6] = sc_convert_encoding($nm_var_lab[6], $_SESSION['scriptcase']['charset'], "UTF-8");
 }
  $nm_var_hint[0] = "";
 if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_hint[0]))
@@ -709,134 +703,49 @@ if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_hint[4])
 {
     $nm_var_hint[4] = sc_convert_encoding($nm_var_hint[4], $_SESSION['scriptcase']['charset'], "UTF-8");
 }
- $nm_var_hint[5] = "";
-if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_hint[5]))
-{
-    $nm_var_hint[5] = sc_convert_encoding($nm_var_hint[5], $_SESSION['scriptcase']['charset'], "UTF-8");
-}
- $nm_var_hint[6] = "";
-if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($nm_var_hint[6]))
-{
-    $nm_var_hint[6] = sc_convert_encoding($nm_var_hint[6], $_SESSION['scriptcase']['charset'], "UTF-8");
-}
 $saida_apl = $_SESSION['scriptcase']['sc_saida_menu_mail'];
-$menu_mail_menuData['data'] .= "item_1|.|" . $nm_var_lab[0] . "||" . $nm_var_hint[0] . "|scriptcase__NM__ico__NM__document_edit_32.png|_self|\n";
-if (isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']) && strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']) == "on")
-{
-    $menu_mail_menuData['data'] .= "item_6|..|" . $nm_var_lab[1] . "|menu_mail_form_php.php?sc_item_menu=item_6&sc_apl_menu=grid_mail_contato&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[1] . "|scriptcase__NM__ico__NM__data_green_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
-}
-else
-{
-    $menu_mail_menuData['data'] .= "item_6|..|" . $nm_var_lab[1] . "|||scriptcase__NM__ico__NM__data_green_32.png|_self|disabled\n";
-}
 if (isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_marketing']) && strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_marketing']) == "on")
 {
-    $menu_mail_menuData['data'] .= "item_8|..|" . $nm_var_lab[2] . "|menu_mail_form_php.php?sc_item_menu=item_8&sc_apl_menu=grid_mail_marketing&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[2] . "|scriptcase__NM__ico__NM__date_time_preferences_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
+    $menu_mail_menuData['data'] .= "item_8|.|" . $nm_var_lab[0] . "|menu_mail_form_php.php?sc_item_menu=item_8&sc_apl_menu=grid_mail_marketing&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[0] . "|scriptcase__NM__ico__NM__date_time_preferences_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
 }
 else
 {
-    $menu_mail_menuData['data'] .= "item_8|..|" . $nm_var_lab[2] . "|||scriptcase__NM__ico__NM__date_time_preferences_32.png|_self|disabled\n";
+    $menu_mail_menuData['data'] .= "item_8|.|" . $nm_var_lab[0] . "|||scriptcase__NM__ico__NM__date_time_preferences_32.png|_self|disabled\n";
 }
-$menu_mail_menuData['data'] .= "item_2|.|" . $nm_var_lab[3] . "||" . $nm_var_hint[3] . "|scriptcase__NM__ico__NM__debug_32.png|_self|\n";
 if (isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_lista']) && strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_lista']) == "on")
 {
-    $menu_mail_menuData['data'] .= "item_5|..|" . $nm_var_lab[4] . "|menu_mail_form_php.php?sc_item_menu=item_5&sc_apl_menu=grid_mail_lista&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[4] . "|scriptcase__NM__ico__NM__dictionary_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
+    $menu_mail_menuData['data'] .= "item_10|.|" . $nm_var_lab[1] . "|menu_mail_form_php.php?sc_item_menu=item_10&sc_apl_menu=grid_mail_lista&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[1] . "|scriptcase__NM__ico__NM__address_book2_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
 }
 else
 {
-    $menu_mail_menuData['data'] .= "item_5|..|" . $nm_var_lab[4] . "|||scriptcase__NM__ico__NM__dictionary_32.png|_self|disabled\n";
+    $menu_mail_menuData['data'] .= "item_10|.|" . $nm_var_lab[1] . "|||scriptcase__NM__ico__NM__address_book2_32.png|_self|disabled\n";
 }
 if (isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_meio']) && strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_meio']) == "on")
 {
-    $menu_mail_menuData['data'] .= "item_3|..|" . $nm_var_lab[5] . "|menu_mail_form_php.php?sc_item_menu=item_3&sc_apl_menu=grid_mail_meio&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[5] . "|scriptcase__NM__ico__NM__document_attachment_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
+    $menu_mail_menuData['data'] .= "item_3|.|" . $nm_var_lab[2] . "|menu_mail_form_php.php?sc_item_menu=item_3&sc_apl_menu=grid_mail_meio&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[2] . "|scriptcase__NM__ico__NM__document_attachment_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
 }
 else
 {
-    $menu_mail_menuData['data'] .= "item_3|..|" . $nm_var_lab[5] . "|||scriptcase__NM__ico__NM__document_attachment_32.png|_self|disabled\n";
+    $menu_mail_menuData['data'] .= "item_3|.|" . $nm_var_lab[2] . "|||scriptcase__NM__ico__NM__document_attachment_32.png|_self|disabled\n";
 }
-if (isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_gatilho']) && strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_gatilho']) == "on")
+if (isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']) && strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']) == "on")
 {
-    $menu_mail_menuData['data'] .= "item_4|..|" . $nm_var_lab[6] . "|menu_mail_form_php.php?sc_item_menu=item_4&sc_apl_menu=grid_mail_gatilho&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[6] . "|scriptcase__NM__ico__NM__dice_blue_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
+    $menu_mail_menuData['data'] .= "item_6|.|" . $nm_var_lab[3] . "|menu_mail_form_php.php?sc_item_menu=item_6&sc_apl_menu=grid_mail_contato&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[3] . "|scriptcase__NM__ico__NM__data_green_32.png|" . $this->menu_mail_target('_self') . "|" . "\n";
 }
 else
 {
-    $menu_mail_menuData['data'] .= "item_4|..|" . $nm_var_lab[6] . "|||scriptcase__NM__ico__NM__dice_blue_32.png|_self|disabled\n";
+    $menu_mail_menuData['data'] .= "item_6|.|" . $nm_var_lab[3] . "|||scriptcase__NM__ico__NM__data_green_32.png|_self|disabled\n";
+}
+if (isset($_SESSION['scriptcase']['sc_apl_seg']['dispara_email']) && strtolower($_SESSION['scriptcase']['sc_apl_seg']['dispara_email']) == "on")
+{
+    $menu_mail_menuData['data'] .= "item_9|.|" . $nm_var_lab[4] . "|menu_mail_form_php.php?sc_item_menu=item_9&sc_apl_menu=dispara_email&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "|" . $nm_var_hint[4] . "|scriptcase__NM__ico__NM__alarmclock_run_32.png|" . $this->menu_mail_target('_blank') . "|" . "\n";
+}
+else
+{
+    $menu_mail_menuData['data'] .= "item_9|.|" . $nm_var_lab[4] . "|||scriptcase__NM__ico__NM__alarmclock_run_32.png|_blank|disabled\n";
 }
 
 $menu_mail_menuData['data'] = array();
-$str_disabled = "N";
-$str_link = "#";
-$str_icon = "scriptcase__NM__ico__NM__document_edit_32.png";
-$icon_aba = "";
-$icon_aba_inactive = "";
-if(empty($icon_aba) && isset($arr_menuicons['others']['active']))
-{
-    $icon_aba = $arr_menuicons['others']['active'];
-}
-if(empty($icon_aba_inactive) && isset($arr_menuicons['others']['inactive']))
-{
-    $icon_aba_inactive = $arr_menuicons['others']['inactive'];
-}
-if($this->force_mobile || ($_SESSION['scriptcase']['device_mobile'] && $_SESSION['scriptcase']['display_mobile']))
-{
-$str_link = "#";
-}
-$menu_mail_menuData['data'][] = array(
-    'label'    => "" . $nm_var_lab[0] . "",
-    'level'    => "0",
-    'link'     => $str_link,
-    'hint'     => "" . $nm_var_hint[0] . "",
-    'id'       => "item_1",
-    'icon'     => $str_icon,
-    'icon_aba' => $icon_aba,
-    'icon_aba_inactive' => $icon_aba_inactive,
-    'target'   => "",
-    'sc_id'    => "item_1",
-    'disabled' => $str_disabled,
-    'display'     => "text_img",
-    'display_position'=> "text_right",
-    'icon_fa'     => "fas fa-cog",
-    'icon_color'     => "",
-    'icon_color_hover'     => "",
-    'icon_color_disabled'     => "",
-);
-$str_disabled = "N";
-$str_link = "menu_mail_form_php.php?sc_item_menu=item_6&sc_apl_menu=grid_mail_contato&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "";
-if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']) || strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']) != "on")
-{
-    $str_link = "#";
-    $str_disabled = "Y";
-}
-    $str_icon = "scriptcase__NM__ico__NM__data_green_32.png";
-    $icon_aba = "";
-    $icon_aba_inactive = "";
-    if(empty($icon_aba) && isset($arr_menuicons['cons']['active']))
-    {
-        $icon_aba = $arr_menuicons['cons']['active'];
-    }
-    if(empty($icon_aba_inactive) && isset($arr_menuicons['cons']['inactive']))
-    {
-        $icon_aba_inactive = $arr_menuicons['cons']['inactive'];
-    }
-    $menu_mail_menuData['data'][] = array(
-        'label'    => "" . $nm_var_lab[1] . "",
-        'level'    => "1",
-        'link'     => $str_link,
-        'hint'     => "" . $nm_var_hint[1] . "",
-        'id'       => "item_6",
-        'icon'     => $str_icon,
-        'icon_aba' => $icon_aba,
-        'icon_aba_inactive' => $icon_aba_inactive,
-        'target'   => " item-target=\"" . $this->menu_mail_target('_self') . "\"",
-        'sc_id'    => "item_6",
-        'disabled' => $str_disabled,
-        'display'     => "text_img",
-        'display_position'=> "text_right",
-        'icon_fa'     => "fas fa-cog",
-        'icon_color'     => "",
-        'icon_color_hover'     => "",
-        'icon_color_disabled'     => "",
-    );
 $str_disabled = "N";
 $str_link = "menu_mail_form_php.php?sc_item_menu=item_8&sc_apl_menu=grid_mail_marketing&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "";
 if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_marketing']) || strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_marketing']) != "on")
@@ -856,10 +765,10 @@ if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_marketing']) || strt
         $icon_aba_inactive = $arr_menuicons['cons']['inactive'];
     }
     $menu_mail_menuData['data'][] = array(
-        'label'    => "" . $nm_var_lab[2] . "",
-        'level'    => "1",
+        'label'    => "" . $nm_var_lab[0] . "",
+        'level'    => "0",
         'link'     => $str_link,
-        'hint'     => "" . $nm_var_hint[2] . "",
+        'hint'     => "" . $nm_var_hint[0] . "",
         'id'       => "item_8",
         'icon'     => $str_icon,
         'icon_aba' => $icon_aba,
@@ -875,49 +784,13 @@ if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_marketing']) || strt
         'icon_color_disabled'     => "",
     );
 $str_disabled = "N";
-$str_link = "#";
-$str_icon = "scriptcase__NM__ico__NM__debug_32.png";
-$icon_aba = "";
-$icon_aba_inactive = "";
-if(empty($icon_aba) && isset($arr_menuicons['others']['active']))
-{
-    $icon_aba = $arr_menuicons['others']['active'];
-}
-if(empty($icon_aba_inactive) && isset($arr_menuicons['others']['inactive']))
-{
-    $icon_aba_inactive = $arr_menuicons['others']['inactive'];
-}
-if($this->force_mobile || ($_SESSION['scriptcase']['device_mobile'] && $_SESSION['scriptcase']['display_mobile']))
-{
-$str_link = "#";
-}
-$menu_mail_menuData['data'][] = array(
-    'label'    => "" . $nm_var_lab[3] . "",
-    'level'    => "0",
-    'link'     => $str_link,
-    'hint'     => "" . $nm_var_hint[3] . "",
-    'id'       => "item_2",
-    'icon'     => $str_icon,
-    'icon_aba' => $icon_aba,
-    'icon_aba_inactive' => $icon_aba_inactive,
-    'target'   => "",
-    'sc_id'    => "item_2",
-    'disabled' => $str_disabled,
-    'display'     => "text_img",
-    'display_position'=> "text_right",
-    'icon_fa'     => "fas fa-cog",
-    'icon_color'     => "",
-    'icon_color_hover'     => "",
-    'icon_color_disabled'     => "",
-);
-$str_disabled = "N";
-$str_link = "menu_mail_form_php.php?sc_item_menu=item_5&sc_apl_menu=grid_mail_lista&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "";
+$str_link = "menu_mail_form_php.php?sc_item_menu=item_10&sc_apl_menu=grid_mail_lista&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "";
 if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_lista']) || strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_lista']) != "on")
 {
     $str_link = "#";
     $str_disabled = "Y";
 }
-    $str_icon = "scriptcase__NM__ico__NM__dictionary_32.png";
+    $str_icon = "scriptcase__NM__ico__NM__address_book2_32.png";
     $icon_aba = "";
     $icon_aba_inactive = "";
     if(empty($icon_aba) && isset($arr_menuicons['cons']['active']))
@@ -929,16 +802,16 @@ if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_lista']) || strtolow
         $icon_aba_inactive = $arr_menuicons['cons']['inactive'];
     }
     $menu_mail_menuData['data'][] = array(
-        'label'    => "" . $nm_var_lab[4] . "",
-        'level'    => "1",
+        'label'    => "" . $nm_var_lab[1] . "",
+        'level'    => "0",
         'link'     => $str_link,
-        'hint'     => "" . $nm_var_hint[4] . "",
-        'id'       => "item_5",
+        'hint'     => "" . $nm_var_hint[1] . "",
+        'id'       => "item_10",
         'icon'     => $str_icon,
         'icon_aba' => $icon_aba,
         'icon_aba_inactive' => $icon_aba_inactive,
         'target'   => " item-target=\"" . $this->menu_mail_target('_self') . "\"",
-        'sc_id'    => "item_5",
+        'sc_id'    => "item_10",
         'disabled' => $str_disabled,
         'display'     => "text_img",
         'display_position'=> "text_right",
@@ -966,10 +839,10 @@ if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_meio']) || strtolowe
         $icon_aba_inactive = $arr_menuicons['cons']['inactive'];
     }
     $menu_mail_menuData['data'][] = array(
-        'label'    => "" . $nm_var_lab[5] . "",
-        'level'    => "1",
+        'label'    => "" . $nm_var_lab[2] . "",
+        'level'    => "0",
         'link'     => $str_link,
-        'hint'     => "" . $nm_var_hint[5] . "",
+        'hint'     => "" . $nm_var_hint[2] . "",
         'id'       => "item_3",
         'icon'     => $str_icon,
         'icon_aba' => $icon_aba,
@@ -985,13 +858,13 @@ if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_meio']) || strtolowe
         'icon_color_disabled'     => "",
     );
 $str_disabled = "N";
-$str_link = "menu_mail_form_php.php?sc_item_menu=item_4&sc_apl_menu=grid_mail_gatilho&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "";
-if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_gatilho']) || strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_gatilho']) != "on")
+$str_link = "menu_mail_form_php.php?sc_item_menu=item_6&sc_apl_menu=grid_mail_contato&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "";
+if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']) || strtolower($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_contato']) != "on")
 {
     $str_link = "#";
     $str_disabled = "Y";
 }
-    $str_icon = "scriptcase__NM__ico__NM__dice_blue_32.png";
+    $str_icon = "scriptcase__NM__ico__NM__data_green_32.png";
     $icon_aba = "";
     $icon_aba_inactive = "";
     if(empty($icon_aba) && isset($arr_menuicons['cons']['active']))
@@ -1003,16 +876,53 @@ if (!isset($_SESSION['scriptcase']['sc_apl_seg']['grid_mail_gatilho']) || strtol
         $icon_aba_inactive = $arr_menuicons['cons']['inactive'];
     }
     $menu_mail_menuData['data'][] = array(
-        'label'    => "" . $nm_var_lab[6] . "",
-        'level'    => "1",
+        'label'    => "" . $nm_var_lab[3] . "",
+        'level'    => "0",
         'link'     => $str_link,
-        'hint'     => "" . $nm_var_hint[6] . "",
-        'id'       => "item_4",
+        'hint'     => "" . $nm_var_hint[3] . "",
+        'id'       => "item_6",
         'icon'     => $str_icon,
         'icon_aba' => $icon_aba,
         'icon_aba_inactive' => $icon_aba_inactive,
         'target'   => " item-target=\"" . $this->menu_mail_target('_self') . "\"",
-        'sc_id'    => "item_4",
+        'sc_id'    => "item_6",
+        'disabled' => $str_disabled,
+        'display'     => "text_img",
+        'display_position'=> "text_right",
+        'icon_fa'     => "fas fa-cog",
+        'icon_color'     => "",
+        'icon_color_hover'     => "",
+        'icon_color_disabled'     => "",
+    );
+$str_disabled = "N";
+$str_link = "menu_mail_form_php.php?sc_item_menu=item_9&sc_apl_menu=dispara_email&sc_apl_link=" . urlencode($menu_mail_menuData['url']['link']) . "&sc_usa_grupo=" . $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo'] . "";
+if (!isset($_SESSION['scriptcase']['sc_apl_seg']['dispara_email']) || strtolower($_SESSION['scriptcase']['sc_apl_seg']['dispara_email']) != "on")
+{
+    $str_link = "#";
+    $str_disabled = "Y";
+}
+    $str_icon = "scriptcase__NM__ico__NM__alarmclock_run_32.png";
+    $icon_aba = "";
+    $icon_aba_inactive = "";
+    if(empty($icon_aba) && isset($arr_menuicons['blank']['active']))
+    {
+        $icon_aba = $arr_menuicons['blank']['active'];
+    }
+    if(empty($icon_aba_inactive) && isset($arr_menuicons['blank']['inactive']))
+    {
+        $icon_aba_inactive = $arr_menuicons['blank']['inactive'];
+    }
+    $menu_mail_menuData['data'][] = array(
+        'label'    => "" . $nm_var_lab[4] . "",
+        'level'    => "0",
+        'link'     => $str_link,
+        'hint'     => "" . $nm_var_hint[4] . "",
+        'id'       => "item_9",
+        'icon'     => $str_icon,
+        'icon_aba' => $icon_aba,
+        'icon_aba_inactive' => $icon_aba_inactive,
+        'target'   => " item-target=\"" . $this->menu_mail_target('_blank') . "\"",
+        'sc_id'    => "item_9",
         'disabled' => $str_disabled,
         'display'     => "text_img",
         'display_position'=> "text_right",
@@ -1954,6 +1864,7 @@ $( document ).ready(function() { scToggleOverflow() });
 function scToggleOverflow() {
   var width_offset = 0;
   if (is_menu_vertical === true) { width_offset = $('#idDivMenu').parent()[0].offsetWidth + 2; };
+  $('.scTabLine').css('width', ($('#main_menu_table')[0].offsetWidth - width_offset) + 'px');
   var hasOverflow, scrollElement;
   scrollElement = $('#div_contrl_abas')[0];
   if (scrollElement.offsetHeight < scrollElement.scrollHeight || scrollElement.offsetWidth < scrollElement.scrollWidth) {
@@ -1984,28 +1895,30 @@ function scTabScroll(axis) {
 }
 function openMenuItem(str_id)
 {
-    str_target_sv = "";
-    if (str_id != "iframe_menu_mail")
-    {
-        str_target_sv = str_id + "_iframe";
-        str_id        = str_id.replace("menu_mail_","");
-    }
-    if($('#' + str_id).parent().length)
-    {
-        $('#' + str_id).parent().toggleClass('menu__item--active');
-    }
-    str_link   = $('#' + str_id).attr('item-href');
-    str_target = $('#' + str_id).attr('item-target');
+  str_target_sv = "";
+  if (str_id != "iframe_menu_mail")
+  {
+      str_target_sv = str_id + "_iframe";
+      str_id        = str_id.replace("menu_mail_","");
+  }
+  if($('#' + str_id).parent().length)
+  {
+      if(!$('#' + str_id).parent().hasClass('menu__item--active'))
+      {
+        $('#' + str_id).closest('ul').find('li').removeClass('menu__item--active');
+      }
+       $('#' + str_id).parent().toggleClass('menu__item--active');
+  }
+  str_link   = $('#' + str_id).attr('item-href');
+  str_target = $('#' + str_id).attr('item-target');
+  if (typeof str_link !== typeof undefined && str_link !== false) {
     if (str_target == "menu_mail_iframe" && str_link != '' && str_link != '#' && str_link != 'javascript:')
     {
         str_target = (str_target_sv != "") ? str_target_sv : str_target;
         mudaIframe(str_id);
-        if (str_id != "menu_mail")
-        {
-            $('#links_abas').css('display','');
-            $('#id_links_abas').css('display','');
-        }
-        if (str_id != "menu_mail" && Tab_abas[str_id] != 'show')
+        $('#links_abas').css('display','');
+        $('#id_links_abas').css('display','');
+        if (Tab_abas[str_id] != 'show')
         {
             createAba(str_id);
       scToggleOverflow();
@@ -2035,8 +1948,9 @@ function openMenuItem(str_id)
         }
         ?>
     }
-    if($('#iframe_menu_mail').length)
+    if(str_target != '_blank' && $('#iframe_menu_mail').length)
         $('#iframe_menu_mail')[0].contentWindow.focus();
+  }
 }
 </script>
 <?php
@@ -2078,7 +1992,7 @@ if ($menu_mail_menuData['iframe'])
           </div>
         </td>
         </tr><tr>
-    <td style="border-width: 1px; height: 100%; padding: 0px;vertical-align:top;text-align:center;">
+    <td id="Iframe_control_td" style="border-width: 1px; height: 100%; padding: 0px;vertical-align:top;text-align:center;">
     <div id="Iframe_control" style='width:100%; height:100%; margin:0px; padding:0px;'>
       <iframe id="iframe_menu_mail" name="menu_mail_iframe" frameborder="0" class="scMenuIframe" style="width: 100%; height: 100%;"  src="<?php echo ($NM_scr_iframe != "" ? $NM_scr_iframe : "menu_mail_pag_ini.php"); ?>"></iframe>
 <?php
@@ -2461,10 +2375,6 @@ if (isset($_POST['nmgp_start'])) {$nmgp_start = $_POST['nmgp_start'];}
 if (isset($_GET['nmgp_start']))  {$nmgp_start = $_GET['nmgp_start'];} 
 $Sem_Session = (!isset($_SESSION['sc_session'])) ? true : false;
 $_SESSION['scriptcase']['sem_session'] = false;
-if (!isset($_SERVER['HTTP_REFERER']) || (!isset($nmgp_parms) && !isset($script_case_init) && !isset($script_case_session) && !isset($nmgp_start) ))
-{
-    $Sem_Session = false;
-}
 $NM_dir_atual = getcwd();
 if (empty($NM_dir_atual)) {
     $str_path_sys  = (isset($_SERVER['SCRIPT_FILENAME'])) ? $_SERVER['SCRIPT_FILENAME'] : $_SERVER['ORIG_PATH_TRANSLATED'];

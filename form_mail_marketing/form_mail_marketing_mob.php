@@ -34,9 +34,10 @@
    $_SESSION['scriptcase']['form_mail_marketing']['error_buffer'] = '';
 
    $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_perfil']          = "principal";
-   $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_prod']       = "/principal/prod";
-   $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_imagens']    = "/principal/file/img";
-   $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_imag_temp']  = "/principal/tmp";
+   $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_prod']       = "/var/www/html/principal/prod";
+   $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_imagens']    = "/var/www/doc/img";
+   $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
+   $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_cache']  = "";
    $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_doc']        = "/var/www/doc";
    $NM_dir_atual = getcwd();
    if (empty($NM_dir_atual))
@@ -70,6 +71,11 @@
    if(empty($_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_imag_temp']))
    {
            /*check tmp*/$_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_imag_temp'] = $str_path_apl_url . "_lib/tmp";
+   }
+   //check cache
+   if(empty($_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_cache']))
+   {
+           /*check cache*/$_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_cache'] = $str_path_apl_dir . "_lib/file/cache";
    }
    //check doc
    if(empty($_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_doc']))
@@ -167,7 +173,6 @@ class form_mail_marketing_mob_ini
    var $path_atual;
    var $Gd_missing;
    var $sc_site_ssl;
-   var $link_grid_mail_marketing_exibir_cons;
    var $nm_cont_lin;
    var $nm_limite_lin;
    var $nm_limite_lin_prt;
@@ -272,8 +277,8 @@ class form_mail_marketing_mob_ini
       $this->nm_dt_criacao   = "20200508"; 
       $this->nm_hr_criacao   = "223250"; 
       $this->nm_autor_alt    = "admin"; 
-      $this->nm_dt_ult_alt   = "20200509"; 
-      $this->nm_hr_ult_alt   = "121226"; 
+      $this->nm_dt_ult_alt   = "20200924"; 
+      $this->nm_hr_ult_alt   = "114745"; 
       list($NM_usec, $NM_sec) = explode(" ", microtime()); 
       $this->nm_timestamp    = (float) $NM_sec; 
       $this->nm_app_version  = "1.0.0"; 
@@ -352,6 +357,7 @@ class form_mail_marketing_mob_ini
       $this->path_prod       = $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_prod'];
       $this->path_imagens    = $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_imagens'];
       $this->path_imag_temp  = $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_imag_temp'];
+      $this->path_cache      = $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_cache'];
       $this->path_doc        = $_SESSION['scriptcase']['form_mail_marketing_mob']['glo_nm_path_doc'];
       if (!isset($_SESSION['scriptcase']['str_lang']) || empty($_SESSION['scriptcase']['str_lang']))
       {
@@ -613,23 +619,6 @@ class form_mail_marketing_mob_ini
           echo "</html>";
           exit;
       }
-      $Tmp_apl_lig = "grid_mail_marketing_exibir";
-      if (is_file($this->root . $this->path_link . "_lib/friendly_url/grid_mail_marketing_exibir_ini.txt"))
-      {
-          $Friendly = file($this->root . $this->path_link . "_lib/friendly_url/grid_mail_marketing_exibir_ini.txt");
-          if (isset($Friendly[0]) && !empty($Friendly[0]))
-          {
-              $Tmp_apl_lig = trim($Friendly[0]);
-          }
-      }
-      if (is_file($this->root . $this->path_link . $Tmp_apl_lig . "/grid_mail_marketing_exibir_ini.txt"))
-      {
-          $L_md5 = file($this->root . $this->path_link . $Tmp_apl_lig . "/grid_mail_marketing_exibir_ini.txt");
-          if (isset($L_md5[6]) && trim($L_md5[6]) == "LigMd5")
-          {
-              $this->sc_lig_md5["grid_mail_marketing_exibir"] = 'S';
-          }
-      }
       $PHP_ver = str_replace(".", "", phpversion()); 
       if (substr($PHP_ver, 0, 3) < 434)
       {
@@ -715,11 +704,11 @@ class form_mail_marketing_mob_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -811,7 +800,7 @@ class form_mail_marketing_mob_ini
       $this->path_atual  = getcwd();
       $opsys = strtolower(php_uname());
 
-      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin;
+      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin, $remove_border;
       if (!isset($_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']))
       {
           $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard'] = false;
@@ -820,6 +809,7 @@ class form_mail_marketing_mob_ini
           $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['parent_widget']   = '';
           $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['compact_mode']    = false;
           $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['remove_margin']   = false;
+          $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['remove_border']   = false;
       }
       if (isset($_GET['under_dashboard']) && 1 == $_GET['under_dashboard'])
       {
@@ -837,6 +827,9 @@ class form_mail_marketing_mob_ini
               }
               if (isset($_GET['remove_margin'])) {
                   $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['remove_margin'] = 1 == $_GET['remove_margin'];
+              }
+              if (isset($_GET['remove_border'])) {
+                  $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['remove_border'] = 1 == $_GET['remove_border'];
               }
           }
       }
@@ -857,6 +850,9 @@ class form_mail_marketing_mob_ini
               if (isset($remove_margin)) {
                   $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['remove_margin'] = 1 == $remove_margin;
               }
+              if (isset($remove_border)) {
+                  $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['remove_border'] = 1 == $remove_border;
+              }
           }
       }
       if (!isset($_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['maximized']))
@@ -867,7 +863,6 @@ class form_mail_marketing_mob_ini
       {
           $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['maximized'] = 1 == $_GET['maximized'];
       }
-      $this->link_grid_mail_marketing_exibir_cons = $this->sc_protocolo . $this->server . $this->path_link . "" . SC_dir_app_name('grid_mail_marketing_exibir') . "/";
       if ($_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard'])
       {
           $sTmpDashboardApp = $_SESSION['sc_session'][$this->sc_page]['form_mail_marketing_mob']['dashboard_info']['dashboard_app'];
@@ -921,10 +916,10 @@ class form_mail_marketing_mob_ini
       $this->regionalDefault();
       $this->sc_tem_trans_banco = false;
       $this->nm_bases_access     = array();
-      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql");
+      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql", "azure_mysql", "azure_mysqlt", "azure_mysqli", "azure_maxsql", "azure_pdo_mysql", "googlecloud_mysql", "googlecloud_mysqlt", "googlecloud_mysqli", "googlecloud_maxsql", "googlecloud_pdo_mysql", "amazonrds_mysql", "amazonrds_mysqlt", "amazonrds_mysqli", "amazonrds_maxsql", "amazonrds_pdo_mysql");
       $this->nm_bases_sqlite     = array("sqlite", "sqlite3", "pdosqlite");
       $this->nm_bases_all        = array_merge($this->nm_bases_mysql, $this->nm_bases_sqlite);
-      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_v1D9JKH9FUHABYHQF7DMvsVcB/DWF/DoFUD9JmZkBiHArKD5JeHgNKHEJqHEXCHINUDcXGDuBqHIrKVWFaDMvmVcFKV5BmVoBqD9BsZkFGHAvsD5XGHgBeHEFiV5B3DoF7D9XsDuFaHAveHQJeDMzGVIFCH5XCVEFGDcJUZ1X7HIBeHuJeHgrKHEJGDWr/VoBOD9XsZ9XGHIrKHQNUDMvmVcFKV5BmVoBqD9BsZkFGHArKD5BqDMzGHEJqV5FaVoFGD9FYDQFGD1BeV5XGHuNOVcXKV5X7VoBOD9XOZSB/Z1BeV5FUDENOVkXeDWFqHIJsD9XsZ9JeD1BeD5F7DMvmVcFiV5X7DorqD9BsH9FaHAN7V5X7DMNKZSXeV5FqDoraD9JKDQX7HIBeV5raHuNOVcBODWFaVoX7D9JmH9B/HArYZMB/DEBeHEXeV5XCVoBqDcXOZSX7Z1BYV5JwHgvsZSrCV5F/VorqD9JmZ1rqHArKHQJwDEBODkFeH5FYVoFGHQJKDQJwDSN7VWJsDMvmV9FeDWF/VENUDcJUZ1X7DSNOHQNUHgBeHEFiV5B3DoF7D9XsDuFaHAveHQXGDMvsVIBsH5B3VEFGHQBsZkFGHIBOZMBqHgvCHArCV5XCHMJsDcXGDQBqD1veHQJsDMrwVcB/Dur/HMB/HQJmZkBiHANOHuJwHgvCHArCDuFaHMFaHQXsDQFaDSrwHuFUHgNKDkBODuFqDoFGDcBqVIJwD1rwHQrqHgBYVkJ3V5FqHIBqHQJKH9FUD1veHQB/DMrwV9FeHEBmVoFGHQNmH9BOHINKZMBqHgvCHArsDWFqHMBqHQXsH9BiD1BeHuBqDMrwVcB/H5FqHMX7DcNmZSBqHIBeHQXGDMrYZSXeDuFYVoXGDcJeZ9rqD1BeHQJeDMvsZSNiDuX7HIrqHQXOZSBOHANOHuFaHgvCHEJqDWFGZuBqHQJeDQFaHANOHQJwDMrwV9FeDWF/VoBiDcNmZ1FGD1rKHQFGHgvCHArCDWXCHIrqHQNmDQB/D1NKVWJeHgNKDkBODuFqDoFGDcBqVIJwD1rwD5JeDMBYZSJqV5FaDoBODcJeDQFGD1veD5BOHgrYZSJ3V5X7VoraD9XOZ1rqD1vsD5FaHgvsVkXeDWFqZuFaHQNmDQX7HArYD5B/HgrKV9FiV5X7VErqHQBqZkFUZ1rYD5BqDEBeHEBUDWBmZuBqHQBiZ9rqZ1rwVWXGHuBYDkFCDuX7VoX7D9BsH9B/Z1BeZMB/HgvCZSJGH5FYDoF7D9NwH9X7DSBYV5JeHuBYVcFKH5FqVoB/D9XOH9B/D1zGD5FaDMrYZSXeDuFYVoXGDcJeZ9rqD1BeV5BqHgvsDkB/V5X7DoX7D9BsH9FaD1rwZMB/DMNKZSJGDWF/DoF7HQJKDQJsZ1vCV5FGHuNOV9FeDWB3VoX7HQNmZ1BiHAvCD5BqHgveHErsH5FGDoJeHQJeDQFaHAveD5NUHgNKDkBOV5FYHMBiHQNwZSFaHIBeD5JeHgvsHErsH5BmZuBOHQBiH9X7D1veV5BqHgvOVIBOHEFGVEraD9BsZSBqHABYD5rqHgBeHEFiV5B3DoF7D9XsDuFaHAveHQrqHgrKVcBOV5F/VoB/D9BiZ1F7Z1BOD5raHgBeZSXeDWX7VoB/D9NmDQJsHArYD5NUHuNOZSJ3DWXCHMFUD9BsZ1B/Z1BeD5XGDEBeHEXeV5FqHIJsD9XsZ9JeD1BeD5F7DMvmVcBUHEX/DoJsHQNmZ1XGZ1veZMNU";
+      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_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";
       $this->prep_conect();
       $this->conectDB();
       if (!in_array(strtolower($this->nm_tpbanco), $this->nm_bases_all))
@@ -1117,6 +1112,10 @@ class form_mail_marketing_mob_ini
       {
           $this->nm_arr_db_extra_args['mysql_ssl_cipher'] = $_SESSION['scriptcase']['glo_mysql_ssl_cipher']; 
       }
+      if (isset($_SESSION['scriptcase']['oracle_type']))
+      {
+          $this->nm_arr_db_extra_args['oracle_type'] = $_SESSION['scriptcase']['oracle_type']; 
+      }
       $this->date_delim  = "'";
       $this->date_delim1 = "'";
       if (isset($_SESSION['scriptcase']['glo_decimal_db']) && !empty($_SESSION['scriptcase']['glo_decimal_db']))
@@ -1199,11 +1198,11 @@ class form_mail_marketing_mob_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -1572,7 +1571,7 @@ ob_start();
     }
     if (!isset($_SERVER['HTTP_REFERER']) || (!isset($nmgp_parms) && !isset($script_case_init) && !isset($script_case_session) && !isset($_POST['rs']) && !isset($nmgp_start) ))
     {
-        $Sem_Session = false;
+        $_SESSION['sc_session']['SC_parm_violation'] = true;
     }
     $NM_dir_atual = getcwd();
     if (empty($NM_dir_atual)) {
@@ -1683,11 +1682,6 @@ ob_start();
             $mail_marketing_terminar_quando = NM_utf8_urldecode($_POST['rsargs'][0]);
             $script_case_init = NM_utf8_urldecode($_POST['rsargs'][1]);
         }
-        if ('ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho' == $_POST['rs'])
-        {
-            $mail_marketing_gatilho = NM_utf8_urldecode($_POST['rsargs'][0]);
-            $script_case_init = NM_utf8_urldecode($_POST['rsargs'][1]);
-        }
         if ('ajax_form_mail_marketing_mob_submit_form' == $_POST['rs'])
         {
             $idmail_marketing = NM_utf8_urldecode($_POST['rsargs'][0]);
@@ -1701,15 +1695,14 @@ ob_start();
             $mail_marketing_imagem_rodape = NM_utf8_urldecode($_POST['rsargs'][8]);
             $mail_marketing_iniciar_quando = NM_utf8_urldecode($_POST['rsargs'][9]);
             $mail_marketing_terminar_quando = NM_utf8_urldecode($_POST['rsargs'][10]);
-            $mail_marketing_gatilho = NM_utf8_urldecode($_POST['rsargs'][11]);
-            $nm_form_submit = NM_utf8_urldecode($_POST['rsargs'][12]);
-            $nmgp_url_saida = NM_utf8_urldecode($_POST['rsargs'][13]);
-            $nmgp_opcao = NM_utf8_urldecode($_POST['rsargs'][14]);
-            $nmgp_ancora = NM_utf8_urldecode($_POST['rsargs'][15]);
-            $nmgp_num_form = NM_utf8_urldecode($_POST['rsargs'][16]);
-            $nmgp_parms = NM_utf8_urldecode($_POST['rsargs'][17]);
-            $script_case_init = NM_utf8_urldecode($_POST['rsargs'][18]);
-            $csrf_token = NM_utf8_urldecode($_POST['rsargs'][19]);
+            $nm_form_submit = NM_utf8_urldecode($_POST['rsargs'][11]);
+            $nmgp_url_saida = NM_utf8_urldecode($_POST['rsargs'][12]);
+            $nmgp_opcao = NM_utf8_urldecode($_POST['rsargs'][13]);
+            $nmgp_ancora = NM_utf8_urldecode($_POST['rsargs'][14]);
+            $nmgp_num_form = NM_utf8_urldecode($_POST['rsargs'][15]);
+            $nmgp_parms = NM_utf8_urldecode($_POST['rsargs'][16]);
+            $script_case_init = NM_utf8_urldecode($_POST['rsargs'][17]);
+            $csrf_token = NM_utf8_urldecode($_POST['rsargs'][18]);
         }
         if ('ajax_form_mail_marketing_mob_navigate_form' == $_POST['rs'])
         {
@@ -2168,7 +2161,6 @@ ob_start();
     $inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->NM_ajax_info['select_html'] = array();
     $inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->NM_ajax_info['select_html']['mail_marketing_emitente'] = " onClick=\"\" ";
     $inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->NM_ajax_info['select_html']['mail_marketing_lista'] = "class=\"sc-js-input scFormObjectOdd css_mail_marketing_lista_obj\" style=\"\" id=\"id_sc_field_mail_marketing_lista\" name=\"mail_marketing_lista\" size=\"1\" alt=\"{type: 'select', enterTab: false}\"";
-    $inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->NM_ajax_info['select_html']['mail_marketing_gatilho'] = "class=\"sc-js-input scFormObjectOdd css_mail_marketing_gatilho_obj\" style=\"\" id=\"id_sc_field_mail_marketing_gatilho\" name=\"mail_marketing_gatilho\" size=\"1\" alt=\"{type: 'select', enterTab: false}\"";
 
     if (!defined('SC_SAJAX_LOADED'))
     {
@@ -2193,7 +2185,6 @@ ob_start();
     sajax_export("ajax_form_mail_marketing_mob_validate_mail_marketing_imagem_rodape");
     sajax_export("ajax_form_mail_marketing_mob_validate_mail_marketing_iniciar_quando");
     sajax_export("ajax_form_mail_marketing_mob_validate_mail_marketing_terminar_quando");
-    sajax_export("ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho");
     sajax_export("ajax_form_mail_marketing_mob_submit_form");
     sajax_export("ajax_form_mail_marketing_mob_navigate_form");
     sajax_handle_client_request();
@@ -2429,26 +2420,7 @@ ob_start();
         exit;
     } // ajax_validate_mail_marketing_terminar_quando
 
-    function ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho($mail_marketing_gatilho, $script_case_init)
-    {
-        global $inicial_form_mail_marketing_mob;
-        //register_shutdown_function("form_mail_marketing_mob_pack_ajax_response");
-        $inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->NM_ajax_flag          = true;
-        $inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->NM_ajax_opcao         = 'validate_mail_marketing_gatilho';
-        $inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->NM_ajax_info['param'] = array(
-                  'mail_marketing_gatilho' => NM_utf8_urldecode($mail_marketing_gatilho),
-                  'script_case_init' => NM_utf8_urldecode($script_case_init),
-                  'buffer_output' => true,
-                 );
-        if ($inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->NM_ajax_info['param']['buffer_output'])
-        {
-            ob_start();
-        }
-        $inicial_form_mail_marketing_mob->contr_form_mail_marketing_mob->controle();
-        exit;
-    } // ajax_validate_mail_marketing_gatilho
-
-    function ajax_form_mail_marketing_mob_submit_form($idmail_marketing, $mail_marketing_campanha, $mail_marketing_emitente, $mail_marketing_lista, $mail_marketing_assunto, $mail_marketing_imagem_cabecalho, $mail_marketing_conteudo, $mail_marketing_link_conteudo, $mail_marketing_imagem_rodape, $mail_marketing_iniciar_quando, $mail_marketing_terminar_quando, $mail_marketing_gatilho, $nm_form_submit, $nmgp_url_saida, $nmgp_opcao, $nmgp_ancora, $nmgp_num_form, $nmgp_parms, $script_case_init, $csrf_token)
+    function ajax_form_mail_marketing_mob_submit_form($idmail_marketing, $mail_marketing_campanha, $mail_marketing_emitente, $mail_marketing_lista, $mail_marketing_assunto, $mail_marketing_imagem_cabecalho, $mail_marketing_conteudo, $mail_marketing_link_conteudo, $mail_marketing_imagem_rodape, $mail_marketing_iniciar_quando, $mail_marketing_terminar_quando, $nm_form_submit, $nmgp_url_saida, $nmgp_opcao, $nmgp_ancora, $nmgp_num_form, $nmgp_parms, $script_case_init, $csrf_token)
     {
         global $inicial_form_mail_marketing_mob;
         //register_shutdown_function("form_mail_marketing_mob_pack_ajax_response");
@@ -2466,7 +2438,6 @@ ob_start();
                   'mail_marketing_imagem_rodape' => NM_utf8_urldecode($mail_marketing_imagem_rodape),
                   'mail_marketing_iniciar_quando' => NM_utf8_urldecode($mail_marketing_iniciar_quando),
                   'mail_marketing_terminar_quando' => NM_utf8_urldecode($mail_marketing_terminar_quando),
-                  'mail_marketing_gatilho' => NM_utf8_urldecode($mail_marketing_gatilho),
                   'nm_form_submit' => NM_utf8_urldecode($nm_form_submit),
                   'nmgp_url_saida' => NM_utf8_urldecode($nmgp_url_saida),
                   'nmgp_opcao' => NM_utf8_urldecode($nmgp_opcao),

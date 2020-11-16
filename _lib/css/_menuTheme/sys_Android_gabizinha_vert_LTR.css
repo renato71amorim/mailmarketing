@@ -1,7 +1,7 @@
 ul#css3menu1,ul#css3menu1 ul{
 	margin:0;list-style:none;padding:0;background-color:#dedede;border-width:1px;border-style:solid;border-color:#5f5f5f;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;}
 ul#css3menu1 ul{
-	display:none;position:absolute;left:100%;top:0;-moz-box-shadow:3.5px 3.5px 5px #000000;-webkit-box-shadow:3.5px 3.5px 5px #000000;box-shadow:3.5px 3.5px 5px #000000;background-color:#ffffff;border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px;border-width:1px;border-color:#FFF;padding:0 10px 10px;}
+	display:none;position:absolute;left:100%;top:0;-moz-box-shadow:3.5px 3.5px 5px #000000;-webkit-box-shadow:3.5px 3.5px 5px #000000;box-shadow:3.5px 3.5px 5px #000000;background-color:#ffffff;border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px;border-width:1px;border-color:#FFF;padding:0 10px 10px;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";opacity:1;filter:alpha(opacity=100);}
 ul#css3menu1 li:hover>*{
 	display:block;}
 ul#css3menu1 li{
@@ -34,9 +34,9 @@ ul#css3menu1 ul span{
 ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li a.pressed{
 	background-color:#ffffff;background-image:none;font-weight:bold;font-style:none;font-size:13px;font-family:Tahoma;color:#0978b3;text-decoration:none;}
 ul#css3menu1 li.topfirst>a{
-	{theme_main_radius_item3}}
+	border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-webkit-border-radius:5px;-webkit-border-bottom-right-radius:0;-webkit-border-bottom-left-radius:0;}
 ul#css3menu1 li.toplast>a{
-	{theme_main_radius_item4}}
+	border-radius:0 0 5px 5px;-moz-border-radius:0 0 5px 5px;-webkit-border-radius:0;-webkit-border-bottom-right-radius:5px;-webkit-border-bottom-left-radius:5px;}
 ul#css3menu1 img {
     border: none; vertical-align: middle; margin-right: 10px;}
 .scdisabledmain{
@@ -46,5 +46,5 @@ ul#css3menu1 img {
  color:#808080 !important;
 }
 .scMenuHTableCssAlt{
- background-image:url("/scriptcase/devel/conf/scriptcase/img/ico/alarmclock_pause_24.png");background-color:#CACACA;background-repeat:repeat-x;
+ background-image:url("/scriptcase9/devel/conf/scriptcase/img/ico/alarmclock_pause_24.png");background-color:#CACACA;background-repeat:repeat-x;
 }

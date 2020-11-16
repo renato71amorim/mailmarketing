@@ -34,9 +34,10 @@
    $_SESSION['scriptcase']['form_mail_meio']['error_buffer'] = '';
 
    $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_perfil']          = "principal";
-   $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_prod']       = "/principal/prod";
-   $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_imagens']    = "/principal/file/img";
-   $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_imag_temp']  = "/principal/tmp";
+   $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_prod']       = "/var/www/html/principal/prod";
+   $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_imagens']    = "/var/www/doc/img";
+   $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
+   $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_cache']  = "";
    $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_doc']        = "/var/www/doc";
    $NM_dir_atual = getcwd();
    if (empty($NM_dir_atual))
@@ -70,6 +71,11 @@
    if(empty($_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_imag_temp']))
    {
            /*check tmp*/$_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_imag_temp'] = $str_path_apl_url . "_lib/tmp";
+   }
+   //check cache
+   if(empty($_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_cache']))
+   {
+           /*check cache*/$_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_cache'] = $str_path_apl_dir . "_lib/file/cache";
    }
    //check doc
    if(empty($_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_doc']))
@@ -271,8 +277,8 @@ class form_mail_meio_mob_ini
       $this->nm_dt_criacao   = "20200508"; 
       $this->nm_hr_criacao   = "224854"; 
       $this->nm_autor_alt    = "admin"; 
-      $this->nm_dt_ult_alt   = "20200509"; 
-      $this->nm_hr_ult_alt   = "121226"; 
+      $this->nm_dt_ult_alt   = "20200924"; 
+      $this->nm_hr_ult_alt   = "083303"; 
       list($NM_usec, $NM_sec) = explode(" ", microtime()); 
       $this->nm_timestamp    = (float) $NM_sec; 
       $this->nm_app_version  = "1.0.0"; 
@@ -351,6 +357,7 @@ class form_mail_meio_mob_ini
       $this->path_prod       = $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_prod'];
       $this->path_imagens    = $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_imagens'];
       $this->path_imag_temp  = $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_imag_temp'];
+      $this->path_cache      = $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_cache'];
       $this->path_doc        = $_SESSION['scriptcase']['form_mail_meio_mob']['glo_nm_path_doc'];
       if (!isset($_SESSION['scriptcase']['str_lang']) || empty($_SESSION['scriptcase']['str_lang']))
       {
@@ -697,11 +704,11 @@ class form_mail_meio_mob_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -793,7 +800,7 @@ class form_mail_meio_mob_ini
       $this->path_atual  = getcwd();
       $opsys = strtolower(php_uname());
 
-      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin;
+      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin, $remove_border;
       if (!isset($_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['under_dashboard']))
       {
           $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['under_dashboard'] = false;
@@ -802,6 +809,7 @@ class form_mail_meio_mob_ini
           $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['parent_widget']   = '';
           $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['compact_mode']    = false;
           $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['remove_margin']   = false;
+          $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['remove_border']   = false;
       }
       if (isset($_GET['under_dashboard']) && 1 == $_GET['under_dashboard'])
       {
@@ -819,6 +827,9 @@ class form_mail_meio_mob_ini
               }
               if (isset($_GET['remove_margin'])) {
                   $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['remove_margin'] = 1 == $_GET['remove_margin'];
+              }
+              if (isset($_GET['remove_border'])) {
+                  $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['remove_border'] = 1 == $_GET['remove_border'];
               }
           }
       }
@@ -838,6 +849,9 @@ class form_mail_meio_mob_ini
               }
               if (isset($remove_margin)) {
                   $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['remove_margin'] = 1 == $remove_margin;
+              }
+              if (isset($remove_border)) {
+                  $_SESSION['sc_session'][$this->sc_page]['form_mail_meio_mob']['dashboard_info']['remove_border'] = 1 == $remove_border;
               }
           }
       }
@@ -902,10 +916,10 @@ class form_mail_meio_mob_ini
       $this->regionalDefault();
       $this->sc_tem_trans_banco = false;
       $this->nm_bases_access     = array();
-      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql");
+      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql", "azure_mysql", "azure_mysqlt", "azure_mysqli", "azure_maxsql", "azure_pdo_mysql", "googlecloud_mysql", "googlecloud_mysqlt", "googlecloud_mysqli", "googlecloud_maxsql", "googlecloud_pdo_mysql", "amazonrds_mysql", "amazonrds_mysqlt", "amazonrds_mysqli", "amazonrds_maxsql", "amazonrds_pdo_mysql");
       $this->nm_bases_sqlite     = array("sqlite", "sqlite3", "pdosqlite");
       $this->nm_bases_all        = array_merge($this->nm_bases_mysql, $this->nm_bases_sqlite);
-      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_v1HQBiDQBqD1BeHuJwHgvOVIB/DWFYVoFGD9XGZ1X7HANOHQJwDEBODkFeH5FYVoFGHQJKDQBqHANOHuFaHuNOZSrCH5FqDoXGHQJmZ1BiD1vsZMBqHgveVkXeDuJeHMJwD9FYDQJsHANOVWJwDMvsVcrsHEBmVErqHQBqZ1FaHAN7V5BOHgNOHArCDWF/VoBiDcJUZSX7Z1BYHuFaHuzGVcFKDWFYVoJwD9BsZ1FaDSrYD5JeDErKHEXeDuFYDoFUDcJeH9FGHANOV5JwHuNOVIFCHEF/DoraHQJmZ1F7Z1vmD5rqDEBOHArCDWBmDoB/DcBwH9X7Z1rwV5BOHuNOVcB/V5X7DoXGDcBqZ1B/DSrYV5FGDMNKZSXeV5FqVoB/D9JKDQX7Z1rwV5raHuNOVcBOV5X7VoBOHQFYZSFaHArKV5XGDErKHErCDWF/VoBiDcJUZSX7Z1BYHuFaHuvmDkB/DWJeHMFUD9XOZ1B/D1rKHuFaHgveHEJqH5F/HIJsD9XsZ9JeD1BeD5F7DMvmVcFeV5X/VEBiHQBsZ1BiDSrYHQBiHgBODkB/DWB3VoFGHQNmH9FUHAveHQNUDMrYVcFeHEBmDoXGDcNmZ1FGHIBeHQJsHgNKVkJqDWBmVoFGHQXsZSBiDSN7HuNUDMzGDkBsDuFGVoBqD9BsZ1F7DSrYD5rqDMrYZSJ3HEB7ZuJsHQNmDQFUHIrwHurqHgrwVcXKDWXKDoXGHQXOVINUD1NaD5JeDMveHErsDWB3VoFGHQXODuFaZ1BYHuBiDMvmDkB/HEX/DoXGHQXGH9BOHIveD5JwHgBOZSJqDurmDoF7D9XsDQJsDSBYV5FGHgNKDkBsDuB7VEBiHQNwH9BqHIrwHuB/DMvCVkJ3HEXKVoFGHQFYDuBqHINaVWBODMvmVIBsHEFGDoXGHQBsZSBODSNOHQXGHgBOHErCDWrGVoFGHQXsH9BiHIrKHQJeHgrwVcBUDWBmVoBqD9BsZ1F7DSrYD5rqDMrYZSJGH5FYDoF7DcXOZSFGHAveV5FUHuBYVcFKDur/VoJwHQFYH9B/Z1BeD5BqDEvsHEFKV5FaHMJeDcBwDQFGD1veHQXGHgvsVcBOHEX7DoraHQFYH9FaHAvmZMJeHgvCHEJGDWF/VoJeD9NwDQBqHINaV5BqDMrwDkFCDuX7VEF7D9BiH9FaHAN7D5FaDEBOZSJGH5BmDoB/D9NwZSX7D1BeV5BOHuvmVcFCDWXCVENUDcBqH9B/HABYD5JeDMzGHAFKV5XKDoF7D9XsDQJsDSBYV5FGHgNKDkFCH5FqVoBqDcNwH9B/HIveD5FaDErKZSJGH5F/DoFUD9NwDQJsD1BeHuFaHuNOZSrCH5FqDoXGHQJmZ1BiHAvCD5BqHgveDkXKDWBmDoBOHQXODuBqHAvmVWBODMvmVcFKV5BmVoBqD9BsZkFGHAvsZMFaHgBOHArCHEFqZuJeHQBiZ9XGDSBYHuX7HuBYVIFCDWXCHMJsDcJUZ1FaHAN7ZMFaDEvsVkJqDWFqHIFGHQJKDQJsZ1vCV5FGHuNOV9FeDWXCHIJeDcJUZ1B/Z1NOD5NUDEvsHEFiV5XKDoNUHQJKZSX7HArYD5JwHuBYVcFKDWFaDoJsD9BsVIJwHArKHQJsDEBOHEXeV5FaDoJeD9JKDQX7Z1BYHuFaHuNOZSrCH5FqDoXGHQJmZ1BiDSvOV5FUHgveHEBOV5JeZura";
+      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_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";
       $this->prep_conect();
       $this->conectDB();
       if (!in_array(strtolower($this->nm_tpbanco), $this->nm_bases_all))
@@ -1098,6 +1112,10 @@ class form_mail_meio_mob_ini
       {
           $this->nm_arr_db_extra_args['mysql_ssl_cipher'] = $_SESSION['scriptcase']['glo_mysql_ssl_cipher']; 
       }
+      if (isset($_SESSION['scriptcase']['oracle_type']))
+      {
+          $this->nm_arr_db_extra_args['oracle_type'] = $_SESSION['scriptcase']['oracle_type']; 
+      }
       $this->date_delim  = "'";
       $this->date_delim1 = "'";
       if (isset($_SESSION['scriptcase']['glo_decimal_db']) && !empty($_SESSION['scriptcase']['glo_decimal_db']))
@@ -1180,11 +1198,11 @@ class form_mail_meio_mob_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -1553,7 +1571,7 @@ ob_start();
     }
     if (!isset($_SERVER['HTTP_REFERER']) || (!isset($nmgp_parms) && !isset($script_case_init) && !isset($script_case_session) && !isset($_POST['rs']) && !isset($nmgp_start) ))
     {
-        $Sem_Session = false;
+        $_SESSION['sc_session']['SC_parm_violation'] = true;
     }
     $NM_dir_atual = getcwd();
     if (empty($NM_dir_atual)) {

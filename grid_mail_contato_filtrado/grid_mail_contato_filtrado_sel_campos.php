@@ -7,7 +7,7 @@
    {
      include_once('grid_mail_contato_filtrado_session.php');
      session_start();
-     $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imag_temp']  = "/principal/tmp";
+     $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
      //check tmp
      if(empty($_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imag_temp']))
      {
@@ -159,7 +159,11 @@ function Sel_cmp_process()
       $tab_ger_campos = array();
       $tab_blk_campos = array();
 
-            $tab_ger_campos['email'] = "on";
+            $tab_ger_campos['nome'] = "on";
+      $tab_blk_campos[] = "nome";
+      $tab_ger_campos['email'] = "on";
+      $tab_ger_campos['aniversario'] = "on";
+      $tab_blk_campos[] = "aniversario";
       $tab_ger_campos['data_atualizacao'] = "on";
       $tab_ger_campos['data_descadastramento'] = "on";
       $tab_ger_campos['data_cadastro'] = "on";

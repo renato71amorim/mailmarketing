@@ -1,8 +1,8 @@
 <?php
 include_once('menu_mail_session.php');
 session_start();
-   $_SESSION['scriptcase']['menu_mail']['glo_nm_path_prod']      = "/principal/prod";
-   $_SESSION['scriptcase']['menu_mail']['glo_nm_path_imag_temp'] = "/principal/tmp";
+   $_SESSION['scriptcase']['menu_mail']['glo_nm_path_prod']      = "/var/www/html/principal/prod";
+   $_SESSION['scriptcase']['menu_mail']['glo_nm_path_imag_temp'] = "/var/www/html/principal/tmp";
    //check publication with the prod
    $str_path_apl_url  = $_SERVER['PHP_SELF'];
    $str_path_apl_url  = str_replace("\\", '/', $str_path_apl_url);
@@ -318,15 +318,11 @@ class menu_mail_form_php
          }
       }
       {
-      if ($_SESSION['scriptcase']['sc_item_menu'] == "item_6")
-      {
-          $apl_run = $_SESSION['scriptcase']['sc_apl_menu_link'] . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_contato") . "/?nm_run_menu=1&nm_apl_menu=menu_mail&script_case_init=" . $this->Gera_sc_init($this->sc_menu_item) . "&script_case_session=" . session_id() . "";
-      }
       if ($_SESSION['scriptcase']['sc_item_menu'] == "item_8")
       {
           $apl_run = $_SESSION['scriptcase']['sc_apl_menu_link'] . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_marketing") . "/?nm_run_menu=1&nm_apl_menu=menu_mail&script_case_init=" . $this->Gera_sc_init($this->sc_menu_item) . "&script_case_session=" . session_id() . "";
       }
-      if ($_SESSION['scriptcase']['sc_item_menu'] == "item_5")
+      if ($_SESSION['scriptcase']['sc_item_menu'] == "item_10")
       {
           $apl_run = $_SESSION['scriptcase']['sc_apl_menu_link'] . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_lista") . "/?nm_run_menu=1&nm_apl_menu=menu_mail&script_case_init=" . $this->Gera_sc_init($this->sc_menu_item) . "&script_case_session=" . session_id() . "";
       }
@@ -334,9 +330,13 @@ class menu_mail_form_php
       {
           $apl_run = $_SESSION['scriptcase']['sc_apl_menu_link'] . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_meio") . "/?nm_run_menu=1&nm_apl_menu=menu_mail&script_case_init=" . $this->Gera_sc_init($this->sc_menu_item) . "&script_case_session=" . session_id() . "";
       }
-      if ($_SESSION['scriptcase']['sc_item_menu'] == "item_4")
+      if ($_SESSION['scriptcase']['sc_item_menu'] == "item_6")
       {
-          $apl_run = $_SESSION['scriptcase']['sc_apl_menu_link'] . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_gatilho") . "/?nm_run_menu=1&nm_apl_menu=menu_mail&script_case_init=" . $this->Gera_sc_init($this->sc_menu_item) . "&script_case_session=" . session_id() . "";
+          $apl_run = $_SESSION['scriptcase']['sc_apl_menu_link'] . $this->tab_grupo[0] . SC_dir_app_name("grid_mail_contato") . "/?nm_run_menu=1&nm_apl_menu=menu_mail&script_case_init=" . $this->Gera_sc_init($this->sc_menu_item) . "&script_case_session=" . session_id() . "";
+      }
+      if ($_SESSION['scriptcase']['sc_item_menu'] == "item_9")
+      {
+          $apl_run = $_SESSION['scriptcase']['sc_apl_menu_link'] . $this->tab_grupo[0] . SC_dir_app_name("dispara_email") . "/?nmgp_outra_jan=true&nm_apl_menu=menu_mail";
       }
       }
       if (!$link_url)

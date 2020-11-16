@@ -81,6 +81,10 @@ class grid_mail_contato_filtrado_res_xls
       $this->Tit_zip    = "grid_mail_contato_filtrado.zip";
       if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name']))
       {
+          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'], ".");
+          if ($Pos === false) {
+              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'] .= $this->Xls_tp ;
+          }
           $this->Arquivo = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
           $this->Arq_zip = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
           $this->Tit_doc = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
@@ -508,7 +512,16 @@ if ($_SESSION['scriptcase']['proc_mobile'])
       $trab_mask  = $nm_mask;
       $tam_campo  = strlen($nm_campo);
       $trab_saida = "";
-      $mask_num = false;
+      $str_highlight_ini = "";
+      $str_highlight_fim = "";
+      if(substr($nm_campo, 0, 23) == '<div class="highlight">' && substr($nm_campo, -6) == '</div>')
+      {
+           $str_highlight_ini = substr($nm_campo, 0, 23);
+           $str_highlight_fim = substr($nm_campo, -6);
+
+           $trab_campo = substr($nm_campo, 23, -6);
+           $tam_campo  = strlen($trab_campo);
+      }      $mask_num = false;
       for ($x=0; $x < strlen($trab_mask); $x++)
       {
           if (substr($trab_mask, $x, 1) == "#")
@@ -551,7 +564,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
           {
               $trab_saida .= substr($trab_campo, $xdados);
           }
-          $nm_campo = $trab_saida;
+          $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
           return;
       }
       for ($ix = strlen($trab_mask); $ix > 0; $ix--)
@@ -604,7 +617,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
                $trab_saida = substr($trab_saida, 0, $iz) . substr($trab_saida, $iz + 1);
            }
       }
-      $nm_campo = $trab_saida;
+      $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
    } 
 }
 

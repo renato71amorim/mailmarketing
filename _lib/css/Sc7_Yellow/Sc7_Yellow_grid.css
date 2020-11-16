@@ -7,7 +7,9 @@
 .scGridToolbarPadding { padding: 5px 10px }
 .scGridToolbarPadding > span { background-color: #fff }
 .css_toolbar_obj { background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #999 #CCCCCC #CCCCCC; border-style: solid; border-width: 1px; color: #333333; font-family: Verdana, Geneva, sans-serif; font-size: 12px; padding: 2px 2px; text-decoration: none }
+.css_toolbar_obj_text { opacity: 1; filter: alpha(opacity=100); color: #333333; font-family: Verdana, Geneva, sans-serif; font-size: 12px; text-decoration: none; background: transparent }
 .css_toolbar_obj:focus { background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #999 #CCCCCC #CCCCCC; color: #333333 }
+.css_toolbar_obj_text:focus { opacity: 1; filter: alpha(opacity=100); color: #333333; outline: none !important }
 .css_toolbar_objWm { color: #D4CACA }
 .scGridHeader { background-color: #EDB817; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #fff; border-width: 0 }
 .scGridHeaderFont { color: #FFCC00; font-family: Verdana, Geneva, sans-serif; font-size: 12px; font-weight: bold; padding: 0; letter-spacing: 0px; text-decoration: none }
@@ -29,8 +31,10 @@
 .scGridFieldEvenFont { color: #000; font-family: Verdana, Geneva, sans-serif; font-size: 12px; padding: 3px 4px; text-decoration: none; border-color: #D2D2D2; border-style: solid; border-width: 0 }
 .scGridFieldEvenVert { background-color: #F1F3FB; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #D2D2D2; border-style: solid; color: #000; font-family: Verdana, Geneva, sans-serif; font-size: 12px; padding: 3px 4px; text-decoration: none }
 .scGridFieldEvenLink { color: #333333; text-decoration: none }
+.scGridFieldEvenFont .highlight, .scGridFieldEvenVert .highlight { background-image: none; opacity: 1; filter: alpha(opacity=100); color: #ff0000; display: inline-block }
 .scGridFieldOdd { background-color: #FFFFFF; background-image: none; opacity: 1; filter: alpha(opacity=100) }
 .scGridFieldOddFont { color: #000; font-family: Verdana, Geneva, sans-serif; font-size: 12px; padding: 3px 4px; text-decoration: none; border-color: #D2D2D2; border-style: solid; border-width: 0 }
+.scGridFieldOddFont .highlight, .scGridFieldOddVert .highlight { background-image: none; opacity: 1; filter: alpha(opacity=100); color: #ff0000; display: inline-block }
 .scGridFieldOddVert { background-color: #FFFFFF; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #D2D2D2; border-style: solid; color: #000; font-family: Verdana, Geneva, sans-serif; font-size: 12px; padding: 3px 4px; text-decoration: none }
 .scGridFieldOddLink { color: #333333; text-decoration: none }
 .scGridFieldClick { background-color: #C0C0C0; box-shadow: css_grid_campo_par_box_shadow; border-color: #D2D2D2; border-style: solid; border-width: 0 }
@@ -39,6 +43,7 @@
 .scGridLabelVert { background-image: url(../../img/scriptcase__NM__V7labelSoftgray.png); background-repeat: repeat-x; opacity: 1; filter: alpha(opacity=100); border-color: #D2D2D2; border-style: solid; border-width: 1px; color: #734500; font-family: Verdana, Geneva, sans-serif; font-size: 12px; font-weight: bold; padding: 2px 4px; letter-spacing: 0px 5px; text-decoration: none }
 .scGridLabelFont { color: #734500; font-family: Verdana, Geneva, sans-serif; font-size: 12px; font-weight: bold; padding: 2px 4px; letter-spacing: 0px 5px; text-decoration: none; border-color: #D2D2D2; border-style: solid; border-width: 1px }
 scGridLabelVert:hover,.scGridLabelFont:hover { background-image: none; opacity: 1; filter: alpha(opacity=100); color: #734500; text-decoration: none; border-color: #D2D2D2; border-style: solid; border-width: 1px }
+scGridLabelVert:hover .scGridLabelLink,.scGridLabelFont:hover .scGridLabelLink { color: #734500 }
 .scGridLabelLink { color: #734500; font-family: Verdana, Geneva, sans-serif; font-size: 12px; font-weight: bold; text-decoration: none }
 .scGridTabela { background-color: #fff; background-image: none; opacity: 1; filter: alpha(opacity=100); border-collapse: collapse; border-color: #fff; border-width: 0; padding: 0 }
 .scGridTabelaTd { padding: 0 }

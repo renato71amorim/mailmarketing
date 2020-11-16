@@ -51,6 +51,8 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
   var sc_img_status_ok = '<?php echo $this->Ini->path_icones; ?>/<?php echo $this->Ini->Img_status_ok; ?>';
   var sc_img_status_err = '<?php echo $this->Ini->path_icones; ?>/<?php echo $this->Ini->Img_status_err; ?>';
   var sc_css_status = '<?php echo $this->Ini->Css_status; ?>';
+  var sc_css_status_pwd_box = '<?php echo $this->Ini->Css_status_pwd_box; ?>';
+  var sc_css_status_pwd_text = '<?php echo $this->Ini->Css_status_pwd_text; ?>';
  </SCRIPT>
         <SCRIPT type="text/javascript" src="<?php echo $this->Ini->path_prod; ?>/third/jquery/js/jquery.js"></SCRIPT>
 <input type="hidden" id="sc-mobile-lock" value='true' />
@@ -64,16 +66,6 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
  <SCRIPT type="text/javascript" src="<?php echo $this->Ini->url_lib_js; ?>jquery.fileupload.js"></SCRIPT>
  <SCRIPT type="text/javascript" src="<?php echo $this->Ini->path_prod; ?>/third/jquery_plugin/malsup-blockui/jquery.blockUI.js"></SCRIPT>
  <SCRIPT type="text/javascript" src="<?php echo $this->Ini->path_prod; ?>/third/jquery_plugin/thickbox/thickbox-compressed.js"></SCRIPT>
- <style type="text/css">
-  #quicksearchph_t {
-   position: relative;
-  }
-  #quicksearchph_t img {
-   position: absolute;
-   top: 0;
-   right: 0;
-  }
- </style>
 <style type="text/css">
 .sc-button-image.disabled {
 	opacity: 0.25
@@ -153,8 +145,6 @@ if ('' != $miniCalendarFA) {
  <link rel="stylesheet" type="text/css" href="<?php echo $this->Ini->path_prod; ?>/third/font-awesome/css/all.min.css" />
  <link rel="stylesheet" type="text/css" href="<?php echo $this->Ini->path_link ?>_lib/css/<?php echo $this->Ini->str_schema_all ?>_calendar.css" />
  <link rel="stylesheet" type="text/css" href="<?php echo $this->Ini->path_link ?>_lib/css/<?php echo $this->Ini->str_schema_all ?>_calendar<?php echo $_SESSION['scriptcase']['reg_conf']['css_dir'] ?>.css" />
- <link rel="stylesheet" type="text/css" href="<?php echo $this->Ini->path_link ?>_lib/css/<?php echo $this->Ini->str_schema_all ?>_btngrp.css" />
- <link rel="stylesheet" type="text/css" href="<?php echo $this->Ini->path_link ?>_lib/css/<?php echo $this->Ini->str_schema_all ?>_btngrp<?php echo $_SESSION['scriptcase']['reg_conf']['css_dir'] ?>.css" media="screen" />
 <?php
    include_once("../_lib/css/" . $this->Ini->str_schema_all . "_tab.php");
  }
@@ -311,6 +301,10 @@ function summary_atualiza(reg_ini, reg_qtd, reg_tot)
     }
     if (document.getElementById("sc_b_summary_b")) document.getElementById("sc_b_summary_b").innerHTML = nm_sumario;
 }
+function navpage_atualiza(str_navpage)
+{
+    if (document.getElementById("sc_b_navpage_b")) document.getElementById("sc_b_navpage_b").innerHTML = str_navpage;
+}
 <?php
 
 include_once('form_mail_marketing_mob_jquery.php');
@@ -463,24 +457,9 @@ function process_hotkeys(hotkey)
     return false;
 }
 
- var scQSInit = true;
- var scQSPos  = {};
  var Dyn_Ini  = true;
  $(function() {
 
-  $(".scBtnGrpText").mouseover(function() { $(this).addClass("scBtnGrpTextOver"); }).mouseout(function() { $(this).removeClass("scBtnGrpTextOver"); });
-     $(".scBtnGrpClick").mouseup(function(){
-          event.preventDefault();
-          if(event.target !== event.currentTarget) return;
-          if($(this).find("a").prop('href') != '')
-          {
-              $(this).find("a").click();
-          }
-          else
-          {
-              eval($(this).find("a").prop('onclick'));
-          }
-  });
   scJQElementsAdd('');
 
   scJQGeneralAdd();
@@ -523,80 +502,83 @@ if (!$this->NM_ajax_flag && isset($this->NM_non_ajax_info['ajaxJavascript']) && 
  });
 
    $(window).on('load', function() {
-     scQuickSearchInit(false, '');
-     if (document.getElementById('SC_fast_search_t')) {
+     if ($('#t').length>0) {
          scQuickSearchKeyUp('t', null);
      }
-     scQSInit = false;
    });
-   function SC_btn_grp_text() {
-      $(".scBtnGrpText").mouseover(function() { $(this).addClass("scBtnGrpTextOver"); }).mouseout(function() { $(this).removeClass("scBtnGrpTextOver"); });
-   };
    function scQuickSearchSubmit_t() {
      nm_move('fast_search', 't');
    }
 
-   function scQuickSearchInit(bPosOnly, sPos) {
-     if (!bPosOnly) {
-       if (document.getElementById('SC_fast_search_t')) {
-           if ('' == sPos || 't' == sPos) {
-               scQuickSearchSize('SC_fast_search_t', 'SC_fast_search_close_t', 'SC_fast_search_submit_t', 'quicksearchph_t');
-           }
-       }
-     }
-   }
-   var fixedQuickSearchSize = {};
-   function scQuickSearchSize(sIdInput, sIdClose, sIdSubmit, sPlaceHolder) {
-     if ("boolean" == typeof fixedQuickSearchSize[sIdInput] && fixedQuickSearchSize[sIdInput]) {
-       return;
-     }
-     var oInput = $('#' + sIdInput),
-         oClose = $('#' + sIdClose),
-         oSubmit = $('#' + sIdSubmit),
-         oPlace = $('#' + sPlaceHolder),
-         iInputP = parseInt(oInput.css('padding-right')) || 0,
-         iInputB = parseInt(oInput.css('border-right-width')) || 0,
-         iInputW = oInput.outerWidth(),
-         iPlaceW = oPlace.outerWidth(),
-         oInputO = oInput.offset(),
-         oPlaceO = oPlace.offset(),
-         iNewRight;
-     iNewRight = (iPlaceW - iInputW) - (oInputO.left - oPlaceO.left) + iInputB + 1;
-     oInput.css({
-       'padding-right': iInputP + 16 + <?php echo $this->Ini->Str_qs_image_padding ?> + 'px'
-     });
-     if (0 != oInput.height()) {
-       oInput.css({
-         'height': Math.max(oInput.height(), 16) + 'px',
-       });
-     }
-     oClose.css({
-       'right': iNewRight + <?php echo $this->Ini->Str_qs_image_padding ?> + 'px',
-       'cursor': 'pointer'
-     });
-     oSubmit.css({
-       'right': iNewRight + <?php echo $this->Ini->Str_qs_image_padding ?> + 'px',
-       'cursor': 'pointer'
-     });
-     fixedQuickSearchSize[sIdInput] = true;
-   }
    function scQuickSearchKeyUp(sPos, e) {
-     if ('' != scQSInitVal && $('#SC_fast_search_' + sPos).val() == scQSInitVal && scQSInit) {
-       $('#SC_fast_search_close_' + sPos).show();
-       $('#SC_fast_search_submit_' + sPos).hide();
-     }
-     else {
-       $('#SC_fast_search_close_' + sPos).hide();
-       $('#SC_fast_search_submit_' + sPos).show();
-     }
      if (null != e) {
        var keyPressed = e.charCode || e.keyCode || e.which;
        if (13 == keyPressed) {
          if ('t' == sPos) scQuickSearchSubmit_t();
        }
+       else
+       {
+           $('#SC_fast_search_submit_'+sPos).show();
+       }
      }
    }
- if($(".sc-ui-block-control").length) {
+   function nm_gp_submit_qsearch(pos)
+   {
+        nm_move('fast_search', pos);
+   }
+   function nm_gp_open_qsearch_div(pos)
+   {
+        if($('#SC_fast_search_dropdown_' + pos).hasClass('fa-caret-down'))
+        {
+            if(($('#quicksearchph_' + pos).offset().top+$('#id_qs_div_' + pos).height()+10) >= $(document).height())
+            {
+                $('#id_qs_div_' + pos).offset({top:($('#quicksearchph_' + pos).offset().top-($('#quicksearchph_' + pos).height()/2)-$('#id_qs_div_' + pos).height()-4)});
+            }
+
+            nm_gp_open_qsearch_div_store_temp(pos);
+            $('#SC_fast_search_dropdown_' + pos).removeClass('fa-caret-down').addClass('fa-caret-up');
+        }
+        else
+        {
+            $('#SC_fast_search_dropdown_' + pos).removeClass('fa-caret-up').addClass('fa-caret-down');
+        }
+        $('#id_qs_div_' + pos).toggle();
+   }
+
+   var tmp_qs_arr_fields = [], tmp_qs_arr_cond = "";
+   function nm_gp_open_qsearch_div_store_temp(pos)
+   {
+        tmp_qs_arr_fields = [], tmp_qs_str_cond = "";
+
+        if($('#fast_search_f0_' + pos).prop('type') == 'select-multiple')
+        {
+            tmp_qs_arr_fields = $('#fast_search_f0_' + pos).val();
+        }
+        else
+        {
+            tmp_qs_arr_fields.push($('#fast_search_f0_' + pos).val());
+        }
+
+        tmp_qs_str_cond = $('#cond_fast_search_f0_' + pos).val();
+   }
+
+   function nm_gp_cancel_qsearch_div_store_temp(pos)
+   {
+        $('#fast_search_f0_' + pos).val('');
+        $("#fast_search_f0_" + pos + " option").prop('selected', false);
+        for(it=0; it<tmp_qs_arr_fields.length; it++)
+        {
+            $("#fast_search_f0_" + pos + " option[value='"+ tmp_qs_arr_fields[it] +"']").prop('selected', true);
+        }
+        $("#fast_search_f0_" + pos).change();
+        tmp_qs_arr_fields = [];
+
+        $('#cond_fast_search_f0_' + pos).val(tmp_qs_str_cond);
+        $('#cond_fast_search_f0_' + pos).change();
+        tmp_qs_str_cond = "";
+
+        nm_gp_open_qsearch_div(pos);
+   } if($(".sc-ui-block-control").length) {
   preloadBlock = new Image();
   preloadBlock.src = "<?php echo $this->Ini->path_icones; ?>/" + sc_blockExp;
  }
@@ -667,6 +649,7 @@ else
     $opcao_botoes = $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['recarga'];
 }
     $remove_margin = isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['remove_margin']) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['remove_margin'] ? 'margin: 0; ' : '';
+    $remove_border = '';
 ?>
 <body class="scFormPage" style="<?php echo $remove_margin . $str_iframe_body; ?>">
 <?php
@@ -821,7 +804,7 @@ sc_userSweetAlertDisplayed = false;
 <table id="main_table_form"  align="center" cellpadding=0 cellspacing=0 >
  <tr>
   <td>
-  <div class="scFormBorder">
+  <div class="scFormBorder" style="<?php echo (isset($remove_border) ? $remove_border : ''); ?>">
    <table width='100%' cellspacing=0 cellpadding=0>
 <?php
   if (!$this->Embutida_call && (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['mostra_cab']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['mostra_cab'] != "N") && (!$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard'] || !$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['compact_mode'] || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['maximized']))
@@ -857,31 +840,39 @@ if (($this->Embutida_form || !$this->Embutida_call || $this->Grid_editavel || $t
           $OPC_cmp = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['fast_search'][0] : "";
           $OPC_arg = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['fast_search'][1] : "";
           $OPC_dat = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['fast_search'][2] : "";
+          $stateSearchIconClose  = 'none';
+          $stateSearchIconSearch = '';
+          if(!empty($OPC_dat))
+          {
+              $stateSearchIconClose  = '';
+              $stateSearchIconSearch = 'none';
+          }
 ?> 
            <script type="text/javascript">var change_fast_t = "";</script>
-          <input type="hidden" name="nmgp_fast_search_t" value="SC_all_Cmp">
-          <input type="hidden" name="nmgp_cond_fast_search_t" value="qp">
-          <script type="text/javascript">var scQSInitVal = "<?php echo $OPC_dat ?>";</script>
-          <span id="quicksearchph_t">
-           <input type="text" id="SC_fast_search_t" class="scFormToolbarInput" style="vertical-align: middle" name="nmgp_arg_fast_search_t" value="<?php echo $this->form_encode_input($OPC_dat) ?>" size="10" onChange="change_fast_t = 'CH';" alt="{maxLength: 255}" placeholder="<?php echo $this->Ini->Nm_lang['lang_othr_qk_watermark'] ?>">
-           <img style="position: absolute; display: none; height: 16px; width: 16px" id="SC_fast_search_close_t" src="<?php echo $this->Ini->path_botoes ?>/<?php echo $this->Ini->Img_qs_clean; ?>" onclick="document.getElementById('SC_fast_search_t').value = '__Clear_Fast__'; nm_move('fast_search', 't');">
-           <img style="position: absolute; display: none; height: 16px; width: 16px" id="SC_fast_search_submit_t" src="<?php echo $this->Ini->path_botoes ?>/<?php echo $this->Ini->Img_qs_search; ?>" onclick="scQuickSearchSubmit_t();">
-          </span>
+          <input id='fast_search_f0_t' type="hidden" name="nmgp_fast_search_t" value="SC_all_Cmp">
+          <select id='cond_fast_search_f0_t' class="scFormToolbarInput" style="vertical-align: middle;display:none;" name="nmgp_cond_fast_search_t" onChange="change_fast_t = 'CH';">
 <?php 
+          $OPC_sel = ("qp" == $OPC_arg) ? " selected" : "";
+           echo "           <option value='qp'" . $OPC_sel . ">" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>";
+?> 
+          </select>
+          <span id="quicksearchph_t" class="scFormToolbarInput" style='display: inline-block; vertical-align: inherit'>
+              <span>
+                  <input type="text" id="SC_fast_search_t" class="scFormToolbarInputText" style="border-width: 0px;;" name="nmgp_arg_fast_search_t" value="<?php echo $this->form_encode_input($OPC_dat) ?>" size="10" onChange="change_fast_t = 'CH';" alt="{maxLength: 255}" placeholder="<?php echo $this->Ini->Nm_lang['lang_othr_qk_watermark'] ?>">&nbsp;
+                  <img style="display: <?php echo $stateSearchIconSearch ?>; "  id="SC_fast_search_submit_t" class='css_toolbar_obj_qs_search_img' src="<?php echo $this->Ini->path_botoes ?>/<?php echo $this->Ini->Img_qs_search; ?>" onclick="scQuickSearchSubmit_t();">
+                  <img style="display: <?php echo $stateSearchIconClose ?>; " id="SC_fast_search_close_t" class='css_toolbar_obj_qs_search_img' src="<?php echo $this->Ini->path_botoes ?>/<?php echo $this->Ini->Img_qs_clean; ?>" onclick="document.getElementById('SC_fast_search_t').value = '__Clear_Fast__'; nm_move('fast_search', 't');">
+              </span>
+          </span>  </div>
+  <?php
       }
-        $sCondStyle = ($this->nmgp_botoes['new'] != 'off' || $this->nmgp_botoes['insert'] != 'off' || $this->nmgp_botoes['exit'] != 'off' || $this->nmgp_botoes['update'] != 'off' || $this->nmgp_botoes['delete'] != 'off' || $this->nmgp_botoes['copy'] != 'off') ? '' : 'display: none;';
-?>
-       <?php echo nmButtonOutput($this->arr_buttons, "group_group_2", "scBtnGrpShow('group_2_t')", "scBtnGrpShow('group_2_t')", "sc_btgp_btn_group_2_t", "", "" . $this->Ini->Nm_lang['lang_btns_options'] . "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "" . $this->Ini->Nm_lang['lang_btns_options'] . "", "", "", "__sc_grp__");?>
- 
-<?php
-        $NM_btn = true;
-echo nmButtonGroupTableOutput($this->arr_buttons, "group_group_2", 'group_2', 't', '', 'ini');
+?> 
+     </td> 
+     <td nowrap align="center" valign="middle" width="33%" class="scFormToolbarPadding"> 
+<?php 
     if ($opcao_botoes != "novo") {
         $sCondStyle = ($this->nmgp_botoes['new'] == "on") ? '' : 'display: none;';
 ?>
-         <div class="scBtnGrpText scBtnGrpClick"  style="<?php echo $sCondStyle; ?>" id="gbl_sc_b_new_t">
-<?php echo nmButtonOutput($this->arr_buttons, "bnovo", "scBtnFn_sys_format_inc()", "scBtnFn_sys_format_inc()", "sc_b_new_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Enter)", "sc-unique-btn-15", "", "group_2");?>
-  </div>
+       <?php echo nmButtonOutput($this->arr_buttons, "bnovo", "scBtnFn_sys_format_inc()", "scBtnFn_sys_format_inc()", "sc_b_new_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Enter)", "sc-unique-btn-15", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -889,9 +880,7 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "group_group_2", 'group_2', 't
     if (($opcao_botoes == "novo") && (!$this->Embutida_call || $this->sc_evento == "novo" || $this->sc_evento == "insert" || $this->sc_evento == "incluir")) {
         $sCondStyle = ($this->nmgp_botoes['insert'] == "on") ? '' : 'display: none;';
 ?>
-         <div class="scBtnGrpText scBtnGrpClick"  style="<?php echo $sCondStyle; ?>" id="gbl_sc_b_ins_t">
-<?php echo nmButtonOutput($this->arr_buttons, "bincluir", "scBtnFn_sys_format_inc()", "scBtnFn_sys_format_inc()", "sc_b_ins_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Enter)", "sc-unique-btn-16", "", "group_2");?>
-  </div>
+       <?php echo nmButtonOutput($this->arr_buttons, "bincluir", "scBtnFn_sys_format_inc()", "scBtnFn_sys_format_inc()", "sc_b_ins_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Enter)", "sc-unique-btn-16", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -899,9 +888,7 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "group_group_2", 'group_2', 't
     if (($opcao_botoes == "novo") && (!$this->Embutida_call || $this->sc_evento == "novo" || $this->sc_evento == "insert" || $this->sc_evento == "incluir")) {
         $sCondStyle = ($this->nmgp_botoes['insert'] == "on" && $this->nmgp_botoes['cancel'] == "on") && ($this->nm_flag_saida_novo != "S" || $this->nmgp_botoes['exit'] != "on") ? '' : 'display: none;';
 ?>
-         <div class="scBtnGrpText scBtnGrpClick"  style="<?php echo $sCondStyle; ?>" id="gbl_sc_b_sai_t">
-<?php echo nmButtonOutput($this->arr_buttons, "bcancelar", "scBtnFn_sys_format_cnl()", "scBtnFn_sys_format_cnl()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Escape)", "sc-unique-btn-17", "", "group_2");?>
-  </div>
+       <?php echo nmButtonOutput($this->arr_buttons, "bcancelar", "scBtnFn_sys_format_cnl()", "scBtnFn_sys_format_cnl()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Escape)", "sc-unique-btn-17", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -909,9 +896,7 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "group_group_2", 'group_2', 't
     if ($opcao_botoes != "novo") {
         $sCondStyle = ($this->nmgp_botoes['update'] == "on") ? '' : 'display: none;';
 ?>
-         <div class="scBtnGrpText scBtnGrpClick"  style="<?php echo $sCondStyle; ?>" id="gbl_sc_b_upd_t">
-<?php echo nmButtonOutput($this->arr_buttons, "balterar", "scBtnFn_sys_format_alt()", "scBtnFn_sys_format_alt()", "sc_b_upd_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + S)", "sc-unique-btn-18", "", "group_2");?>
-  </div>
+       <?php echo nmButtonOutput($this->arr_buttons, "balterar", "scBtnFn_sys_format_alt()", "scBtnFn_sys_format_alt()", "sc_b_upd_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + S)", "sc-unique-btn-18", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -919,31 +904,15 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "group_group_2", 'group_2', 't
     if ($opcao_botoes != "novo") {
         $sCondStyle = ($this->nmgp_botoes['delete'] == "on") ? '' : 'display: none;';
 ?>
-         <div class="scBtnGrpText scBtnGrpClick"  style="<?php echo $sCondStyle; ?>" id="gbl_sc_b_del_t">
-<?php echo nmButtonOutput($this->arr_buttons, "bexcluir", "scBtnFn_sys_format_exc()", "scBtnFn_sys_format_exc()", "sc_b_del_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Delete)", "sc-unique-btn-19", "", "group_2");?>
-  </div>
+       <?php echo nmButtonOutput($this->arr_buttons, "bexcluir", "scBtnFn_sys_format_exc()", "scBtnFn_sys_format_exc()", "sc_b_del_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Delete)", "sc-unique-btn-19", "", "");?>
  
 <?php
         $NM_btn = true;
     }
-        $sCondStyle = '';
-?>
-         <div class="scBtnGrpText scBtnGrpClick"  style="<?php echo $sCondStyle; ?>" id="gbl_sys_separator">
- </td></tr><tr><td class="scBtnGrpBackground">
-  </div>
- 
-<?php
-    if ($opcao_botoes != "novo") {
-        $sCondStyle = ($this->nmgp_botoes['copy'] == "on") ? '' : 'display: none;';
-?>
-         <div class="scBtnGrpText scBtnGrpClick"  style="<?php echo $sCondStyle; ?>" id="gbl_sc_b_clone_t">
-<?php echo nmButtonOutput($this->arr_buttons, "bcopy", "scBtnFn_sys_format_copy()", "scBtnFn_sys_format_copy()", "sc_b_clone_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Shift + C)", "sc-unique-btn-21", "", "group_2");?>
-  </div>
- 
-<?php
-        $NM_btn = true;
-    }
-echo nmButtonGroupTableOutput($this->arr_buttons, "", '', '', '', 'fim');
+?> 
+     </td> 
+     <td nowrap align="right" valign="middle" width="33%" class="scFormToolbarPadding"> 
+<?php 
     if ('' != $this->url_webhelp) {
         $sCondStyle = '';
 ?>
@@ -955,7 +924,7 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "", '', '', '', 'fim');
     if (($opcao_botoes == "novo") && (isset($_SESSION['scriptcase']['nm_sc_retorno']) && !empty($_SESSION['scriptcase']['nm_sc_retorno']) && ($nm_apl_dependente != 1 || $this->nm_Start_new) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R") && (!$this->Embutida_call) && ((!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']) || !$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']))) {
         $sCondStyle = (($this->nm_flag_saida_novo == "S" || ($this->nm_Start_new && !$this->aba_iframe)) && $this->nmgp_botoes['exit'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "bvoltar", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "", "sc-unique-btn-22", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "bvoltar", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "", "sc-unique-btn-20", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -963,7 +932,7 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "", '', '', '', 'fim');
     if (($opcao_botoes == "novo") && (!isset($_SESSION['scriptcase']['nm_sc_retorno']) || empty($_SESSION['scriptcase']['nm_sc_retorno']) || $nm_apl_dependente == 1 || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] == "F" || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] == "R") && (!$this->Embutida_call) && ((!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']) || !$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']))) {
         $sCondStyle = ($this->nm_flag_saida_novo == "S" && $this->nmgp_botoes['exit'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "bvoltar", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "", "sc-unique-btn-23", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "bvoltar", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "", "sc-unique-btn-21", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -971,7 +940,7 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "", '', '', '', 'fim');
     if (($opcao_botoes != "novo") && (!$this->Embutida_call) && ((!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']) || !$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard'] || (isset($this->is_calendar_app) && $this->is_calendar_app)))) {
         $sCondStyle = (isset($_SESSION['scriptcase']['nm_sc_retorno']) && !empty($_SESSION['scriptcase']['nm_sc_retorno']) && $nm_apl_dependente != 1 && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R" && !$this->aba_iframe && $this->nmgp_botoes['exit'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "bsair", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Alt + Q)", "sc-unique-btn-24", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "bsair", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Alt + Q)", "sc-unique-btn-22", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -979,7 +948,7 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "", '', '', '', 'fim');
     if (($opcao_botoes != "novo") && (!$this->Embutida_call) && ((!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']) || !$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard'] || (isset($this->is_calendar_app) && $this->is_calendar_app)))) {
         $sCondStyle = (!isset($_SESSION['scriptcase']['nm_sc_retorno']) || empty($_SESSION['scriptcase']['nm_sc_retorno']) || $nm_apl_dependente == 1 || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] == "F" || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] == "R" || $this->aba_iframe || $this->nmgp_botoes['exit'] != "on") && ($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F" && $this->nmgp_botoes['exit'] == "on") && ($nm_apl_dependente == 1 && $this->nmgp_botoes['exit'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "bvoltar", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "", "sc-unique-btn-25", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "bvoltar", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "", "sc-unique-btn-23", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -987,19 +956,11 @@ echo nmButtonGroupTableOutput($this->arr_buttons, "", '', '', '', 'fim');
     if (($opcao_botoes != "novo") && (!$this->Embutida_call) && ((!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']) || !$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard'] || (isset($this->is_calendar_app) && $this->is_calendar_app)))) {
         $sCondStyle = (!isset($_SESSION['scriptcase']['nm_sc_retorno']) || empty($_SESSION['scriptcase']['nm_sc_retorno']) || $nm_apl_dependente == 1 || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] == "F" || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] == "R" || $this->aba_iframe || $this->nmgp_botoes['exit'] != "on") && ($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F" && $this->nmgp_botoes['exit'] == "on") && ($nm_apl_dependente != 1 || $this->nmgp_botoes['exit'] != "on") && ((!$this->aba_iframe || $this->is_calendar_app) && $this->nmgp_botoes['exit'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "bsair", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Alt + Q)", "sc-unique-btn-26", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "bsair", "scBtnFn_sys_format_sai()", "scBtnFn_sys_format_sai()", "sc_b_sai_t", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Alt + Q)", "sc-unique-btn-24", "", "");?>
  
 <?php
         $NM_btn = true;
     }
-?> 
-     </td> 
-     <td nowrap align="center" valign="middle" width="33%" class="scFormToolbarPadding"> 
-<?php 
-?> 
-     </td> 
-     <td nowrap align="right" valign="middle" width="33%" class="scFormToolbarPadding"> 
-<?php 
 }
 if (($this->Embutida_form || !$this->Embutida_call || $this->Grid_editavel || $this->Embutida_multi || ($this->Embutida_call && 'on' == $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['embutida_liga_form_btn_nav'])) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R")
 {
@@ -1082,7 +1043,7 @@ unset($NM_ult_sep);
 <?php } else { $sc_hidden_no++; ?>
 <?php if ((isset($this->Embutida_form) && $this->Embutida_form) || ($this->nmgp_opcao != "novo" && $this->nmgp_opc_ant != "incluir")) { ?>
 
-    <TD class="scFormDataOdd css_idmail_marketing_line" id="hidden_field_data_idmail_marketing" style="<?php echo $sStyleHidden_idmail_marketing; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_idmail_marketing_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_idmail_marketing_label"><span id="id_label_idmail_marketing"><?php echo $this->nm_new_label['idmail_marketing']; ?></span></span><br><span id="id_read_on_idmail_marketing" class="css_idmail_marketing_line" style="<?php echo $sStyleReadLab_idmail_marketing; ?>"><?php echo $this->form_encode_input($this->idmail_marketing); ?></span><span id="id_read_off_idmail_marketing" class="css_read_off_idmail_marketing" style="<?php echo $sStyleReadInp_idmail_marketing; ?>"><input type="hidden" name="idmail_marketing" value="<?php echo $this->form_encode_input($idmail_marketing) . "\">"?><span id="id_ajax_label_idmail_marketing"><?php echo nl2br($idmail_marketing); ?></span>
+    <TD class="scFormDataOdd css_idmail_marketing_line" id="hidden_field_data_idmail_marketing" style="<?php echo $sStyleHidden_idmail_marketing; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_idmail_marketing_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_idmail_marketing_label"><span id="id_label_idmail_marketing"><?php echo $this->nm_new_label['idmail_marketing']; ?></span></span><br><span id="id_read_on_idmail_marketing" class="css_idmail_marketing_line" style="<?php echo $sStyleReadLab_idmail_marketing; ?>"><?php echo $this->form_format_readonly("idmail_marketing", $this->form_encode_input($this->idmail_marketing)); ?></span><span id="id_read_off_idmail_marketing" class="css_read_off_idmail_marketing" style="<?php echo $sStyleReadInp_idmail_marketing; ?>"><input type="hidden" name="idmail_marketing" value="<?php echo $this->form_encode_input($idmail_marketing) . "\">"?><span id="id_ajax_label_idmail_marketing"><?php echo nl2br($idmail_marketing); ?></span>
 </span></span></td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_idmail_marketing_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_idmail_marketing_text"></span></td></tr></table></td></tr></table> </TD>
    <?php }
       else
@@ -1141,13 +1102,13 @@ unset($NM_ult_sep);
 <input type="hidden" name="mail_marketing_campanha" value="<?php echo $this->form_encode_input($mail_marketing_campanha) . "\">"; ?>
 <?php } else { $sc_hidden_no++; ?>
 
-    <TD class="scFormDataOdd css_mail_marketing_campanha_line" id="hidden_field_data_mail_marketing_campanha" style="<?php echo $sStyleHidden_mail_marketing_campanha; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_campanha_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_campanha_label"><span id="id_label_mail_marketing_campanha"><?php echo $this->nm_new_label['mail_marketing_campanha']; ?></span></span><br>
+    <TD class="scFormDataOdd css_mail_marketing_campanha_line" id="hidden_field_data_mail_marketing_campanha" style="<?php echo $sStyleHidden_mail_marketing_campanha; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_campanha_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_campanha_label"><span id="id_label_mail_marketing_campanha"><?php echo $this->nm_new_label['mail_marketing_campanha']; ?></span><?php if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['php_cmp_required']['mail_marketing_campanha']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['php_cmp_required']['mail_marketing_campanha'] == "on") { ?> <span class="scFormRequiredOdd">*</span> <?php }?></span><br>
 <?php if ($bTestReadOnly && $this->nmgp_opcao != "novo" && isset($this->nmgp_cmp_readonly["mail_marketing_campanha"]) &&  $this->nmgp_cmp_readonly["mail_marketing_campanha"] == "on") { 
 
  ?>
 <input type="hidden" name="mail_marketing_campanha" value="<?php echo $this->form_encode_input($mail_marketing_campanha) . "\">" . $mail_marketing_campanha . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_marketing_campanha" class="sc-ui-readonly-mail_marketing_campanha css_mail_marketing_campanha_line" style="<?php echo $sStyleReadLab_mail_marketing_campanha; ?>"><?php echo $this->mail_marketing_campanha; ?></span><span id="id_read_off_mail_marketing_campanha" class="css_read_off_mail_marketing_campanha" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_campanha; ?>">
+<span id="id_read_on_mail_marketing_campanha" class="sc-ui-readonly-mail_marketing_campanha css_mail_marketing_campanha_line" style="<?php echo $sStyleReadLab_mail_marketing_campanha; ?>"><?php echo $this->form_format_readonly("mail_marketing_campanha", $this->mail_marketing_campanha); ?></span><span id="id_read_off_mail_marketing_campanha" class="css_read_off_mail_marketing_campanha" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_campanha; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_marketing_campanha_obj" style="" id="id_sc_field_mail_marketing_campanha" type=text name="mail_marketing_campanha" value="<?php echo $this->form_encode_input($mail_marketing_campanha) ?>"
  size=50 maxlength=255 alt="{datatype: 'text', maxLength: 255, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_marketing_campanha_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_marketing_campanha_text"></span></td></tr></table></td></tr></table> </TD>
@@ -1202,7 +1163,7 @@ unset($NM_ult_sep);
 <input type="hidden" name="mail_marketing_emitente" value="<?php echo $this->form_encode_input($mail_marketing_emitente) . "\">"; ?>
 <?php } else { $sc_hidden_no++; ?>
 
-    <TD class="scFormDataOdd css_mail_marketing_emitente_line" id="hidden_field_data_mail_marketing_emitente" style="<?php echo $sStyleHidden_mail_marketing_emitente; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_emitente_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_emitente_label"><span id="id_label_mail_marketing_emitente"><?php echo $this->nm_new_label['mail_marketing_emitente']; ?></span></span><br>
+    <TD class="scFormDataOdd css_mail_marketing_emitente_line" id="hidden_field_data_mail_marketing_emitente" style="<?php echo $sStyleHidden_mail_marketing_emitente; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_emitente_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_emitente_label"><span id="id_label_mail_marketing_emitente"><?php echo $this->nm_new_label['mail_marketing_emitente']; ?></span><?php if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['php_cmp_required']['mail_marketing_emitente']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['php_cmp_required']['mail_marketing_emitente'] == "on") { ?> <span class="scFormRequiredOdd">*</span> <?php }?></span><br>
 <?php if ($bTestReadOnly && $this->nmgp_opcao != "novo" && isset($this->nmgp_cmp_readonly["mail_marketing_emitente"]) &&  $this->nmgp_cmp_readonly["mail_marketing_emitente"] == "on") { 
  
 $nmgp_def_dados = "" ; 
@@ -1311,7 +1272,7 @@ else
           $x++; 
    }
    $x = 0; 
-   echo "<span id=\"id_read_on_mail_marketing_emitente\" class=\"css_mail_marketing_emitente_line\" style=\"" .  $sStyleReadLab_mail_marketing_emitente . "\">" . $this->form_encode_input($mail_marketing_emitente_look) . "</span><span id=\"id_read_off_mail_marketing_emitente\" class=\"css_read_off_mail_marketing_emitente css_mail_marketing_emitente_line\" style=\"" . $sStyleReadInp_mail_marketing_emitente . "\">";
+   echo "<span id=\"id_read_on_mail_marketing_emitente\" class=\"css_mail_marketing_emitente_line\" style=\"" .  $sStyleReadLab_mail_marketing_emitente . "\">" . $this->form_format_readonly("mail_marketing_emitente", $this->form_encode_input($mail_marketing_emitente_look)) . "</span><span id=\"id_read_off_mail_marketing_emitente\" class=\"css_read_off_mail_marketing_emitente css_mail_marketing_emitente_line\" style=\"" . $sStyleReadInp_mail_marketing_emitente . "\">";
    echo "<div id=\"idAjaxRadio_mail_marketing_emitente\" class=\"css_mail_marketing_emitente_line\" style=\"display: inline-block\">\r\n";
    $y = 0 ; 
    echo "<table cellspacing=0 cellpadding=0 border=0>\r\n";
@@ -1402,7 +1363,7 @@ else
 <input type=hidden name="mail_marketing_lista" value="<?php echo $this->form_encode_input($this->mail_marketing_lista) . "\">"; ?>
 <?php } else { $sc_hidden_no++; ?>
 
-    <TD class="scFormDataOdd css_mail_marketing_lista_line" id="hidden_field_data_mail_marketing_lista" style="<?php echo $sStyleHidden_mail_marketing_lista; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_lista_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_lista_label"><span id="id_label_mail_marketing_lista"><?php echo $this->nm_new_label['mail_marketing_lista']; ?></span></span><br>
+    <TD class="scFormDataOdd css_mail_marketing_lista_line" id="hidden_field_data_mail_marketing_lista" style="<?php echo $sStyleHidden_mail_marketing_lista; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_lista_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_lista_label"><span id="id_label_mail_marketing_lista"><?php echo $this->nm_new_label['mail_marketing_lista']; ?></span><?php if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['php_cmp_required']['mail_marketing_lista']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['php_cmp_required']['mail_marketing_lista'] == "on") { ?> <span class="scFormRequiredOdd">*</span> <?php }?></span><br>
 <?php if ($bTestReadOnly && $this->nmgp_opcao != "novo" && isset($this->nmgp_cmp_readonly["mail_marketing_lista"]) &&  $this->nmgp_cmp_readonly["mail_marketing_lista"] == "on") { 
  
 $nmgp_def_dados = "" ; 
@@ -1515,9 +1476,11 @@ else
               $mail_marketing_lista_look = $this->mail_marketing_lista;
           }
    $x = 0; 
-   echo "<span id=\"id_read_on_mail_marketing_lista\" class=\"css_mail_marketing_lista_line\" style=\"" .  $sStyleReadLab_mail_marketing_lista . "\">" . $this->form_encode_input($mail_marketing_lista_look) . "</span><span id=\"id_read_off_mail_marketing_lista\" class=\"css_read_off_mail_marketing_lista\" style=\"white-space: nowrap; " . $sStyleReadInp_mail_marketing_lista . "\">";
+   echo "<span id=\"id_read_on_mail_marketing_lista\" class=\"css_mail_marketing_lista_line\" style=\"" .  $sStyleReadLab_mail_marketing_lista . "\">" . $this->form_format_readonly("mail_marketing_lista", $this->form_encode_input($mail_marketing_lista_look)) . "</span><span id=\"id_read_off_mail_marketing_lista\" class=\"css_read_off_mail_marketing_lista\" style=\"white-space: nowrap; " . $sStyleReadInp_mail_marketing_lista . "\">";
    echo " <span id=\"idAjaxSelect_mail_marketing_lista\"><select class=\"sc-js-input scFormObjectOdd css_mail_marketing_lista_obj\" style=\"\" id=\"id_sc_field_mail_marketing_lista\" name=\"mail_marketing_lista\" size=\"1\" alt=\"{type: 'select', enterTab: false}\">" ; 
    echo "\r" ; 
+   $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_lista'][] = ''; 
+   echo "  <option value=\"\">" . str_replace("<", "&lt;"," ") . "</option>" ; 
    while (!empty($todo[$x]) && !$nm_nao_carga) 
    {
           $cadaselect = explode("?#?", $todo[$x]) ; 
@@ -1534,7 +1497,7 @@ else
                   echo " selected" ;
               } 
            } 
-          echo ">$cadaselect[0] </option>" ; 
+          echo ">" . str_replace('<', '&lt;',$cadaselect[0]) . "</option>" ; 
           echo "\r" ; 
           $x++ ; 
    }  ; 
@@ -1595,13 +1558,13 @@ else
 <input type="hidden" name="mail_marketing_assunto" value="<?php echo $this->form_encode_input($mail_marketing_assunto) . "\">"; ?>
 <?php } else { $sc_hidden_no++; ?>
 
-    <TD class="scFormDataOdd css_mail_marketing_assunto_line" id="hidden_field_data_mail_marketing_assunto" style="<?php echo $sStyleHidden_mail_marketing_assunto; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_assunto_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_assunto_label"><span id="id_label_mail_marketing_assunto"><?php echo $this->nm_new_label['mail_marketing_assunto']; ?></span></span><br>
+    <TD class="scFormDataOdd css_mail_marketing_assunto_line" id="hidden_field_data_mail_marketing_assunto" style="<?php echo $sStyleHidden_mail_marketing_assunto; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_assunto_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_assunto_label"><span id="id_label_mail_marketing_assunto"><?php echo $this->nm_new_label['mail_marketing_assunto']; ?></span><?php if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['php_cmp_required']['mail_marketing_assunto']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['php_cmp_required']['mail_marketing_assunto'] == "on") { ?> <span class="scFormRequiredOdd">*</span> <?php }?></span><br>
 <?php if ($bTestReadOnly && $this->nmgp_opcao != "novo" && isset($this->nmgp_cmp_readonly["mail_marketing_assunto"]) &&  $this->nmgp_cmp_readonly["mail_marketing_assunto"] == "on") { 
 
  ?>
 <input type="hidden" name="mail_marketing_assunto" value="<?php echo $this->form_encode_input($mail_marketing_assunto) . "\">" . $mail_marketing_assunto . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_marketing_assunto" class="sc-ui-readonly-mail_marketing_assunto css_mail_marketing_assunto_line" style="<?php echo $sStyleReadLab_mail_marketing_assunto; ?>"><?php echo $this->mail_marketing_assunto; ?></span><span id="id_read_off_mail_marketing_assunto" class="css_read_off_mail_marketing_assunto" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_assunto; ?>">
+<span id="id_read_on_mail_marketing_assunto" class="sc-ui-readonly-mail_marketing_assunto css_mail_marketing_assunto_line" style="<?php echo $sStyleReadLab_mail_marketing_assunto; ?>"><?php echo $this->form_format_readonly("mail_marketing_assunto", $this->mail_marketing_assunto); ?></span><span id="id_read_off_mail_marketing_assunto" class="css_read_off_mail_marketing_assunto" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_assunto; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_marketing_assunto_obj" style="" id="id_sc_field_mail_marketing_assunto" type=text name="mail_marketing_assunto" value="<?php echo $this->form_encode_input($mail_marketing_assunto) ?>"
  size=50 maxlength=55 alt="{datatype: 'text', maxLength: 55, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_marketing_assunto_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_marketing_assunto_text"></span></td></tr></table></td></tr></table> </TD>
@@ -1662,7 +1625,7 @@ else
  ?>
 <input type="hidden" name="mail_marketing_imagem_cabecalho" value="<?php echo $this->form_encode_input($mail_marketing_imagem_cabecalho) . "\">" . $mail_marketing_imagem_cabecalho . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_marketing_imagem_cabecalho" class="sc-ui-readonly-mail_marketing_imagem_cabecalho css_mail_marketing_imagem_cabecalho_line" style="<?php echo $sStyleReadLab_mail_marketing_imagem_cabecalho; ?>"><?php echo $this->mail_marketing_imagem_cabecalho; ?></span><span id="id_read_off_mail_marketing_imagem_cabecalho" class="css_read_off_mail_marketing_imagem_cabecalho" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_imagem_cabecalho; ?>">
+<span id="id_read_on_mail_marketing_imagem_cabecalho" class="sc-ui-readonly-mail_marketing_imagem_cabecalho css_mail_marketing_imagem_cabecalho_line" style="<?php echo $sStyleReadLab_mail_marketing_imagem_cabecalho; ?>"><?php echo $this->form_format_readonly("mail_marketing_imagem_cabecalho", $this->mail_marketing_imagem_cabecalho); ?></span><span id="id_read_off_mail_marketing_imagem_cabecalho" class="css_read_off_mail_marketing_imagem_cabecalho" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_imagem_cabecalho; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_marketing_imagem_cabecalho_obj" style="" id="id_sc_field_mail_marketing_imagem_cabecalho" type=text name="mail_marketing_imagem_cabecalho" value="<?php echo $this->form_encode_input($mail_marketing_imagem_cabecalho) ?>"
  size=50 maxlength=255 alt="{enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" >&nbsp;<?php echo nmButtonOutput($this->arr_buttons, "blink", "window.open(nm_link_url(document.F1.mail_marketing_imagem_cabecalho.value), '_blank')", "window.open(nm_link_url(document.F1.mail_marketing_imagem_cabecalho.value), '_blank')", "mail_marketing_imagem_cabecalho_url", "", "", "", "", "", "", $this->Ini->path_botoes, "", "", "", "", "");?>
 
@@ -1730,7 +1693,7 @@ $mail_marketing_conteudo_val = str_replace('<br />', '__SC_BREAK_LINE__', nl2br(
  ?>
 <input type="hidden" name="mail_marketing_conteudo" value="<?php echo $this->form_encode_input($mail_marketing_conteudo) . "\">" . $mail_marketing_conteudo_val . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_marketing_conteudo" class="sc-ui-readonly-mail_marketing_conteudo css_mail_marketing_conteudo_line" style="<?php echo $sStyleReadLab_mail_marketing_conteudo; ?>"><?php echo $mail_marketing_conteudo_val; ?></span><span id="id_read_off_mail_marketing_conteudo" class="css_read_off_mail_marketing_conteudo" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_conteudo; ?>">
+<span id="id_read_on_mail_marketing_conteudo" class="sc-ui-readonly-mail_marketing_conteudo css_mail_marketing_conteudo_line" style="<?php echo $sStyleReadLab_mail_marketing_conteudo; ?>"><?php echo $this->form_format_readonly("mail_marketing_conteudo", str_replace(chr(10), "<br>", $this->form_encode_input($mail_marketing_conteudo_val))); ?></span><span id="id_read_off_mail_marketing_conteudo" class="css_read_off_mail_marketing_conteudo" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_conteudo; ?>">
  <textarea  class="sc-js-input scFormObjectOdd css_mail_marketing_conteudo_obj" style="white-space: pre-wrap;" name="mail_marketing_conteudo" id="id_sc_field_mail_marketing_conteudo" rows="10" cols="50"
  alt="{datatype: 'text', maxLength: 32767, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" >
 <?php echo $mail_marketing_conteudo; ?>
@@ -1794,7 +1757,7 @@ $mail_marketing_conteudo_val = str_replace('<br />', '__SC_BREAK_LINE__', nl2br(
  ?>
 <input type="hidden" name="mail_marketing_link_conteudo" value="<?php echo $this->form_encode_input($mail_marketing_link_conteudo) . "\">" . $mail_marketing_link_conteudo . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_marketing_link_conteudo" class="sc-ui-readonly-mail_marketing_link_conteudo css_mail_marketing_link_conteudo_line" style="<?php echo $sStyleReadLab_mail_marketing_link_conteudo; ?>"><?php echo $this->mail_marketing_link_conteudo; ?></span><span id="id_read_off_mail_marketing_link_conteudo" class="css_read_off_mail_marketing_link_conteudo" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_link_conteudo; ?>">
+<span id="id_read_on_mail_marketing_link_conteudo" class="sc-ui-readonly-mail_marketing_link_conteudo css_mail_marketing_link_conteudo_line" style="<?php echo $sStyleReadLab_mail_marketing_link_conteudo; ?>"><?php echo $this->form_format_readonly("mail_marketing_link_conteudo", $this->mail_marketing_link_conteudo); ?></span><span id="id_read_off_mail_marketing_link_conteudo" class="css_read_off_mail_marketing_link_conteudo" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_link_conteudo; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_marketing_link_conteudo_obj" style="" id="id_sc_field_mail_marketing_link_conteudo" type=text name="mail_marketing_link_conteudo" value="<?php echo $this->form_encode_input($mail_marketing_link_conteudo) ?>"
  size=50 maxlength=255 alt="{enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" >&nbsp;<?php echo nmButtonOutput($this->arr_buttons, "blink", "window.open(nm_link_url(document.F1.mail_marketing_link_conteudo.value), '_blank')", "window.open(nm_link_url(document.F1.mail_marketing_link_conteudo.value), '_blank')", "mail_marketing_link_conteudo_url", "", "", "", "", "", "", $this->Ini->path_botoes, "", "", "", "", "");?>
 
@@ -1857,7 +1820,7 @@ $mail_marketing_conteudo_val = str_replace('<br />', '__SC_BREAK_LINE__', nl2br(
  ?>
 <input type="hidden" name="mail_marketing_imagem_rodape" value="<?php echo $this->form_encode_input($mail_marketing_imagem_rodape) . "\">" . $mail_marketing_imagem_rodape . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_marketing_imagem_rodape" class="sc-ui-readonly-mail_marketing_imagem_rodape css_mail_marketing_imagem_rodape_line" style="<?php echo $sStyleReadLab_mail_marketing_imagem_rodape; ?>"><?php echo $this->mail_marketing_imagem_rodape; ?></span><span id="id_read_off_mail_marketing_imagem_rodape" class="css_read_off_mail_marketing_imagem_rodape" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_imagem_rodape; ?>">
+<span id="id_read_on_mail_marketing_imagem_rodape" class="sc-ui-readonly-mail_marketing_imagem_rodape css_mail_marketing_imagem_rodape_line" style="<?php echo $sStyleReadLab_mail_marketing_imagem_rodape; ?>"><?php echo $this->form_format_readonly("mail_marketing_imagem_rodape", $this->mail_marketing_imagem_rodape); ?></span><span id="id_read_off_mail_marketing_imagem_rodape" class="css_read_off_mail_marketing_imagem_rodape" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_imagem_rodape; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_marketing_imagem_rodape_obj" style="" id="id_sc_field_mail_marketing_imagem_rodape" type=text name="mail_marketing_imagem_rodape" value="<?php echo $this->form_encode_input($mail_marketing_imagem_rodape) ?>"
  size=50 maxlength=255 alt="{enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" >&nbsp;<?php echo nmButtonOutput($this->arr_buttons, "blink", "window.open(nm_link_url(document.F1.mail_marketing_imagem_rodape.value), '_blank')", "window.open(nm_link_url(document.F1.mail_marketing_imagem_rodape.value), '_blank')", "mail_marketing_imagem_rodape_url", "", "", "", "", "", "", $this->Ini->path_botoes, "", "", "", "", "");?>
 
@@ -1879,7 +1842,23 @@ $mail_marketing_conteudo_val = str_replace('<br />', '__SC_BREAK_LINE__', nl2br(
 
 <?php } 
 ?> 
-<?php if ($sc_hidden_no > 0) { echo "<tr>"; }; 
+
+
+
+
+
+
+<?php $sStyleHidden_mail_marketing_imagem_rodape_dumb = ('' == $sStyleHidden_mail_marketing_imagem_rodape) ? 'display: none' : ''; ?>
+    <TD class="scFormDataOdd" id="hidden_field_data_mail_marketing_imagem_rodape_dumb" style="<?php echo $sStyleHidden_mail_marketing_imagem_rodape_dumb; ?>"></TD>
+   </tr>
+<?php $sc_hidden_no = 1; ?>
+</TABLE></div><!-- bloco_f -->
+   </td>
+   </tr></table>
+   <a name="bloco_1"></a>
+   <table width="100%" height="100%" cellpadding="0" cellspacing=0><tr valign="top"><td width="100%" height="">
+<div id="div_hidden_bloco_1"><!-- bloco_c -->
+<TABLE align="center" id="hidden_bloco_1" class="scFormTable" width="100%" style="height: 100%;"><?php if ($sc_hidden_no > 0) { echo "<tr>"; }; 
       $sc_hidden_yes = 0; $sc_hidden_no = 0; ?>
 
 
@@ -1917,22 +1896,7 @@ $mail_marketing_conteudo_val = str_replace('<br />', '__SC_BREAK_LINE__', nl2br(
 <input type="hidden" name="mail_marketing_iniciar_quando" value="<?php echo $this->form_encode_input($mail_marketing_iniciar_quando) . "\">"; ?>
 <?php } else { $sc_hidden_no++; ?>
 
-    <TD class="scFormDataOdd css_mail_marketing_iniciar_quando_line" id="hidden_field_data_mail_marketing_iniciar_quando" style="<?php echo $sStyleHidden_mail_marketing_iniciar_quando; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_iniciar_quando_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_iniciar_quando_label"><span id="id_label_mail_marketing_iniciar_quando"><?php echo $this->nm_new_label['mail_marketing_iniciar_quando']; ?></span></span><br>
-<?php if ($bTestReadOnly && $this->nmgp_opcao != "novo" && isset($this->nmgp_cmp_readonly["mail_marketing_iniciar_quando"]) &&  $this->nmgp_cmp_readonly["mail_marketing_iniciar_quando"] == "on") { 
-
- ?>
-<input type="hidden" name="mail_marketing_iniciar_quando" value="<?php echo $this->form_encode_input($mail_marketing_iniciar_quando) . "\">" . $mail_marketing_iniciar_quando . ""; ?>
-<?php } else { ?>
-<span id="id_read_on_mail_marketing_iniciar_quando" class="sc-ui-readonly-mail_marketing_iniciar_quando css_mail_marketing_iniciar_quando_line" style="<?php echo $sStyleReadLab_mail_marketing_iniciar_quando; ?>"><?php echo $mail_marketing_iniciar_quando; ?></span><span id="id_read_off_mail_marketing_iniciar_quando" class="css_read_off_mail_marketing_iniciar_quando" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_iniciar_quando; ?>"><?php
-$miniCalendarButton = $this->jqueryButtonText('calendar');
-if ('scButton_' == substr($miniCalendarButton[1], 0, 9)) {
-    $miniCalendarButton[1] = substr($miniCalendarButton[1], 9);
-}
-?>
-<span class='trigger-picker-<?php echo $miniCalendarButton[1]; ?>'>
-
- <input class="sc-js-input scFormObjectOdd css_mail_marketing_iniciar_quando_obj" style="" id="id_sc_field_mail_marketing_iniciar_quando" type=text name="mail_marketing_iniciar_quando" value="<?php echo $this->form_encode_input($mail_marketing_iniciar_quando) ?>"
- size=18 alt="{datatype: 'datetime', dateSep: '<?php echo $this->field_config['mail_marketing_iniciar_quando']['date_sep']; ?>', dateFormat: '<?php echo $this->field_config['mail_marketing_iniciar_quando']['date_format']; ?>', timeSep: '<?php echo $this->field_config['mail_marketing_iniciar_quando']['time_sep']; ?>', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span>
+    <TD class="scFormDataOdd css_mail_marketing_iniciar_quando_line" id="hidden_field_data_mail_marketing_iniciar_quando" style="<?php echo $sStyleHidden_mail_marketing_iniciar_quando; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_iniciar_quando_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_iniciar_quando_label"><span id="id_label_mail_marketing_iniciar_quando"><?php echo $this->nm_new_label['mail_marketing_iniciar_quando']; ?></span></span><br><input type="hidden" name="mail_marketing_iniciar_quando" value="<?php echo $this->form_encode_input($mail_marketing_iniciar_quando); ?>"><span id="id_ajax_label_mail_marketing_iniciar_quando"><?php echo nl2br($mail_marketing_iniciar_quando); ?></span>
 <?php
 $tmp_form_data = $this->field_config['mail_marketing_iniciar_quando']['date_format'];
 $tmp_form_data = str_replace('aaaa', 'yyyy', $tmp_form_data);
@@ -1944,7 +1908,6 @@ $tmp_form_data = str_replace('ii'  , $this->Ini->Nm_lang['lang_othr_date_mint'],
 $tmp_form_data = str_replace('ss'  , $this->Ini->Nm_lang['lang_othr_date_scnd'], $tmp_form_data);
 $tmp_form_data = str_replace(';'   , ' '                                       , $tmp_form_data);
 ?>
-&nbsp;<span class="scFormDataHelpOdd"><?php echo $tmp_form_data; ?></span></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_marketing_iniciar_quando_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_marketing_iniciar_quando_text"></span></td></tr></table></td></tr></table> </TD>
    <?php }?>
 <?php
@@ -2003,22 +1966,7 @@ $tmp_form_data = str_replace(';'   , ' '                                       ,
 <input type="hidden" name="mail_marketing_terminar_quando" value="<?php echo $this->form_encode_input($mail_marketing_terminar_quando) . "\">"; ?>
 <?php } else { $sc_hidden_no++; ?>
 
-    <TD class="scFormDataOdd css_mail_marketing_terminar_quando_line" id="hidden_field_data_mail_marketing_terminar_quando" style="<?php echo $sStyleHidden_mail_marketing_terminar_quando; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_terminar_quando_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_terminar_quando_label"><span id="id_label_mail_marketing_terminar_quando"><?php echo $this->nm_new_label['mail_marketing_terminar_quando']; ?></span></span><br>
-<?php if ($bTestReadOnly && $this->nmgp_opcao != "novo" && isset($this->nmgp_cmp_readonly["mail_marketing_terminar_quando"]) &&  $this->nmgp_cmp_readonly["mail_marketing_terminar_quando"] == "on") { 
-
- ?>
-<input type="hidden" name="mail_marketing_terminar_quando" value="<?php echo $this->form_encode_input($mail_marketing_terminar_quando) . "\">" . $mail_marketing_terminar_quando . ""; ?>
-<?php } else { ?>
-<span id="id_read_on_mail_marketing_terminar_quando" class="sc-ui-readonly-mail_marketing_terminar_quando css_mail_marketing_terminar_quando_line" style="<?php echo $sStyleReadLab_mail_marketing_terminar_quando; ?>"><?php echo $mail_marketing_terminar_quando; ?></span><span id="id_read_off_mail_marketing_terminar_quando" class="css_read_off_mail_marketing_terminar_quando" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_marketing_terminar_quando; ?>"><?php
-$miniCalendarButton = $this->jqueryButtonText('calendar');
-if ('scButton_' == substr($miniCalendarButton[1], 0, 9)) {
-    $miniCalendarButton[1] = substr($miniCalendarButton[1], 9);
-}
-?>
-<span class='trigger-picker-<?php echo $miniCalendarButton[1]; ?>'>
-
- <input class="sc-js-input scFormObjectOdd css_mail_marketing_terminar_quando_obj" style="" id="id_sc_field_mail_marketing_terminar_quando" type=text name="mail_marketing_terminar_quando" value="<?php echo $this->form_encode_input($mail_marketing_terminar_quando) ?>"
- size=18 alt="{datatype: 'datetime', dateSep: '<?php echo $this->field_config['mail_marketing_terminar_quando']['date_sep']; ?>', dateFormat: '<?php echo $this->field_config['mail_marketing_terminar_quando']['date_format']; ?>', timeSep: '<?php echo $this->field_config['mail_marketing_terminar_quando']['time_sep']; ?>', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span>
+    <TD class="scFormDataOdd css_mail_marketing_terminar_quando_line" id="hidden_field_data_mail_marketing_terminar_quando" style="<?php echo $sStyleHidden_mail_marketing_terminar_quando; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_terminar_quando_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_terminar_quando_label"><span id="id_label_mail_marketing_terminar_quando"><?php echo $this->nm_new_label['mail_marketing_terminar_quando']; ?></span></span><br><input type="hidden" name="mail_marketing_terminar_quando" value="<?php echo $this->form_encode_input($mail_marketing_terminar_quando); ?>"><span id="id_ajax_label_mail_marketing_terminar_quando"><?php echo nl2br($mail_marketing_terminar_quando); ?></span>
 <?php
 $tmp_form_data = $this->field_config['mail_marketing_terminar_quando']['date_format'];
 $tmp_form_data = str_replace('aaaa', 'yyyy', $tmp_form_data);
@@ -2030,7 +1978,6 @@ $tmp_form_data = str_replace('ii'  , $this->Ini->Nm_lang['lang_othr_date_mint'],
 $tmp_form_data = str_replace('ss'  , $this->Ini->Nm_lang['lang_othr_date_scnd'], $tmp_form_data);
 $tmp_form_data = str_replace(';'   , ' '                                       , $tmp_form_data);
 ?>
-&nbsp;<span class="scFormDataHelpOdd"><?php echo $tmp_form_data; ?></span></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_marketing_terminar_quando_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_marketing_terminar_quando_text"></span></td></tr></table></td></tr></table> </TD>
    <?php }?>
 <?php
@@ -2051,199 +1998,18 @@ $tmp_form_data = str_replace(';'   , ' '                                       ,
 
 <?php } 
 ?> 
-<?php if ($sc_hidden_no > 0) { echo "<tr>"; }; 
-      $sc_hidden_yes = 0; $sc_hidden_no = 0; ?>
-
-
-   <?php
-   if (!isset($this->nm_new_label['mail_marketing_gatilho']))
-   {
-       $this->nm_new_label['mail_marketing_gatilho'] = "Mail Marketing Gatilho";
-   }
-   $nm_cor_fun_cel  = ($nm_cor_fun_cel  == $this->Ini->cor_grid_impar ? $this->Ini->cor_grid_par : $this->Ini->cor_grid_impar);
-   $nm_img_fun_cel  = ($nm_img_fun_cel  == $this->Ini->img_fun_imp    ? $this->Ini->img_fun_par  : $this->Ini->img_fun_imp);
-   $mail_marketing_gatilho = $this->mail_marketing_gatilho;
-   $sStyleHidden_mail_marketing_gatilho = '';
-   if (isset($this->nmgp_cmp_hidden['mail_marketing_gatilho']) && $this->nmgp_cmp_hidden['mail_marketing_gatilho'] == 'off')
-   {
-       unset($this->nmgp_cmp_hidden['mail_marketing_gatilho']);
-       $sStyleHidden_mail_marketing_gatilho = 'display: none;';
-   }
-   $bTestReadOnly = true;
-   $sStyleReadLab_mail_marketing_gatilho = 'display: none;';
-   $sStyleReadInp_mail_marketing_gatilho = '';
-   if (/*$this->nmgp_opcao != "novo" && */isset($this->nmgp_cmp_readonly['mail_marketing_gatilho']) && $this->nmgp_cmp_readonly['mail_marketing_gatilho'] == 'on')
-   {
-       $bTestReadOnly = false;
-       unset($this->nmgp_cmp_readonly['mail_marketing_gatilho']);
-       $sStyleReadLab_mail_marketing_gatilho = '';
-       $sStyleReadInp_mail_marketing_gatilho = 'display: none;';
-   }
-?>
-<?php if (isset($this->nmgp_cmp_hidden['mail_marketing_gatilho']) && $this->nmgp_cmp_hidden['mail_marketing_gatilho'] == 'off') { $sc_hidden_yes++; ?>
-<input type=hidden name="mail_marketing_gatilho" value="<?php echo $this->form_encode_input($this->mail_marketing_gatilho) . "\">"; ?>
-<?php } else { $sc_hidden_no++; ?>
-
-    <TD class="scFormDataOdd css_mail_marketing_gatilho_line" id="hidden_field_data_mail_marketing_gatilho" style="<?php echo $sStyleHidden_mail_marketing_gatilho; ?>"> <table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_mail_marketing_gatilho_line" style="vertical-align: top;padding: 0px"><span class="scFormLabelOddFormat css_mail_marketing_gatilho_label"><span id="id_label_mail_marketing_gatilho"><?php echo $this->nm_new_label['mail_marketing_gatilho']; ?></span></span><br>
-<?php if ($bTestReadOnly && $this->nmgp_opcao != "novo" && isset($this->nmgp_cmp_readonly["mail_marketing_gatilho"]) &&  $this->nmgp_cmp_readonly["mail_marketing_gatilho"] == "on") { 
- 
-$nmgp_def_dados = "" ; 
-if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho']))
-{
-    $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho'] = array_unique($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho']); 
-}
-else
-{
-    $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho'] = array(); 
-}
-   $nm_nao_carga = false;
-   $nmgp_def_dados = "" ; 
-   if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho']))
-   {
-       $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho'] = array_unique($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho']); 
-   }
-   else
-   {
-       $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho'] = array(); 
-    }
-
-   $old_value_idmail_marketing = $this->idmail_marketing;
-   $old_value_mail_marketing_iniciar_quando = $this->mail_marketing_iniciar_quando;
-   $old_value_mail_marketing_iniciar_quando_hora = $this->mail_marketing_iniciar_quando_hora;
-   $old_value_mail_marketing_terminar_quando = $this->mail_marketing_terminar_quando;
-   $old_value_mail_marketing_terminar_quando_hora = $this->mail_marketing_terminar_quando_hora;
-   $this->nm_tira_formatacao();
-   $this->nm_converte_datas(false);
-
-
-   $unformatted_value_idmail_marketing = $this->idmail_marketing;
-   $unformatted_value_mail_marketing_iniciar_quando = $this->mail_marketing_iniciar_quando;
-   $unformatted_value_mail_marketing_iniciar_quando_hora = $this->mail_marketing_iniciar_quando_hora;
-   $unformatted_value_mail_marketing_terminar_quando = $this->mail_marketing_terminar_quando;
-   $unformatted_value_mail_marketing_terminar_quando_hora = $this->mail_marketing_terminar_quando_hora;
-
-   $nm_comando = "SELECT idmail_gatilho, mail_descreva  FROM mail_gatilho  ORDER BY idmail_gatilho";
-
-   $this->idmail_marketing = $old_value_idmail_marketing;
-   $this->mail_marketing_iniciar_quando = $old_value_mail_marketing_iniciar_quando;
-   $this->mail_marketing_iniciar_quando_hora = $old_value_mail_marketing_iniciar_quando_hora;
-   $this->mail_marketing_terminar_quando = $old_value_mail_marketing_terminar_quando;
-   $this->mail_marketing_terminar_quando_hora = $old_value_mail_marketing_terminar_quando_hora;
-
-   $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando;
-   $_SESSION['scriptcase']['sc_sql_ult_conexao'] = '';
-   if ($nm_comando != "" && $rs = $this->Db->Execute($nm_comando))
-   {
-       while (!$rs->EOF) 
-       { 
-              $rs->fields[0] = str_replace(',', '.', $rs->fields[0]);
-              $rs->fields[0] = (strpos(strtolower($rs->fields[0]), "e")) ? (float)$rs->fields[0] : $rs->fields[0];
-              $rs->fields[0] = (string)$rs->fields[0];
-              $nmgp_def_dados .= $rs->fields[1] . "?#?" ; 
-              $nmgp_def_dados .= $rs->fields[0] . "?#?N?@?" ; 
-              $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['Lookup_mail_marketing_gatilho'][] = $rs->fields[0];
-              $rs->MoveNext() ; 
-       } 
-       $rs->Close() ; 
-   } 
-   elseif ($GLOBALS["NM_ERRO_IBASE"] != 1 && $nm_comando != "")  
-   {  
-       $this->Erro->mensagem(__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg()); 
-       exit; 
-   } 
-   $GLOBALS["NM_ERRO_IBASE"] = 0; 
-   $x = 0; 
-   $mail_marketing_gatilho_look = ""; 
-   $todox = str_replace("?#?@?#?", "?#?@ ?#?", trim($nmgp_def_dados)) ; 
-   $todo  = explode("?@?", $todox) ; 
-   while (!empty($todo[$x])) 
-   {
-          $cadaselect = explode("?#?", $todo[$x]) ; 
-          if ($cadaselect[1] == "@ ") {$cadaselect[1]= trim($cadaselect[1]); } ; 
-          if (isset($this->Embutida_ronly) && $this->Embutida_ronly && isset($this->mail_marketing_gatilho_1))
-          {
-              foreach ($this->mail_marketing_gatilho_1 as $tmp_mail_marketing_gatilho)
-              {
-                  if (trim($tmp_mail_marketing_gatilho) === trim($cadaselect[1])) { $mail_marketing_gatilho_look .= $cadaselect[0] . '__SC_BREAK_LINE__'; }
-              }
-          }
-          elseif (trim($this->mail_marketing_gatilho) === trim($cadaselect[1])) { $mail_marketing_gatilho_look .= $cadaselect[0]; } 
-          $x++; 
-   }
-
-?>
-<input type="hidden" name="mail_marketing_gatilho" value="<?php echo $this->form_encode_input($mail_marketing_gatilho) . "\">" . $mail_marketing_gatilho_look . ""; ?>
-<?php } else { ?>
-<?php
-   $todo = $this->Form_lookup_mail_marketing_gatilho();
-   $x = 0 ; 
-   $mail_marketing_gatilho_look = ""; 
-   while (!empty($todo[$x])) 
-   {
-          $cadaselect = explode("?#?", $todo[$x]) ; 
-          if ($cadaselect[1] == "@ ") {$cadaselect[1]= trim($cadaselect[1]); } ; 
-          if (isset($this->Embutida_ronly) && $this->Embutida_ronly && isset($this->mail_marketing_gatilho_1))
-          {
-              foreach ($this->mail_marketing_gatilho_1 as $tmp_mail_marketing_gatilho)
-              {
-                  if (trim($tmp_mail_marketing_gatilho) === trim($cadaselect[1])) { $mail_marketing_gatilho_look .= $cadaselect[0] . '__SC_BREAK_LINE__'; }
-              }
-          }
-          elseif (trim($this->mail_marketing_gatilho) === trim($cadaselect[1])) { $mail_marketing_gatilho_look .= $cadaselect[0]; } 
-          $x++; 
-   }
-          if (empty($mail_marketing_gatilho_look))
-          {
-              $mail_marketing_gatilho_look = $this->mail_marketing_gatilho;
-          }
-   $x = 0; 
-   echo "<span id=\"id_read_on_mail_marketing_gatilho\" class=\"css_mail_marketing_gatilho_line\" style=\"" .  $sStyleReadLab_mail_marketing_gatilho . "\">" . $this->form_encode_input($mail_marketing_gatilho_look) . "</span><span id=\"id_read_off_mail_marketing_gatilho\" class=\"css_read_off_mail_marketing_gatilho\" style=\"white-space: nowrap; " . $sStyleReadInp_mail_marketing_gatilho . "\">";
-   echo " <span id=\"idAjaxSelect_mail_marketing_gatilho\"><select class=\"sc-js-input scFormObjectOdd css_mail_marketing_gatilho_obj\" style=\"\" id=\"id_sc_field_mail_marketing_gatilho\" name=\"mail_marketing_gatilho\" size=\"1\" alt=\"{type: 'select', enterTab: false}\">" ; 
-   echo "\r" ; 
-   while (!empty($todo[$x]) && !$nm_nao_carga) 
-   {
-          $cadaselect = explode("?#?", $todo[$x]) ; 
-          if ($cadaselect[1] == "@ ") {$cadaselect[1]= trim($cadaselect[1]); } ; 
-          echo "  <option value=\"$cadaselect[1]\"" ; 
-          if (trim($this->mail_marketing_gatilho) === trim($cadaselect[1])) 
-          {
-              echo " selected" ; 
-          }
-          if (strtoupper($cadaselect[2]) == "S") 
-          {
-              if (empty($this->mail_marketing_gatilho)) 
-              {
-                  echo " selected" ;
-              } 
-           } 
-          echo ">$cadaselect[0] </option>" ; 
-          echo "\r" ; 
-          $x++ ; 
-   }  ; 
-   echo " </select></span>" ; 
-   echo "\r" ; 
-   echo "</span>";
-?> 
-<?php  }?>
-</td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_marketing_gatilho_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_marketing_gatilho_text"></span></td></tr></table></td></tr></table> </TD>
-   <?php }?>
-
 
 
 
 
-<?php if ($sc_hidden_yes > 0) { ?>
 
 
-    <TD class="scFormDataOdd" colspan="<?php echo $sc_hidden_yes * 1; ?>" >&nbsp;</TD>
-
-
-
-
-<?php } ?>
    </td></tr></table>
    </tr>
 </TABLE></div><!-- bloco_f -->
+</td></tr>
+<tr id="sc-id-required-row"><td class="scFormPageText">
+<span class="scFormRequiredOddColor">* <?php echo $this->Ini->Nm_lang['lang_othr_reqr']; ?></span>
 </td></tr> 
 <tr><td>
 <?php
@@ -2259,10 +2025,25 @@ if (($this->Embutida_form || !$this->Embutida_call || $this->Grid_editavel || $t
 if (($this->Embutida_form || !$this->Embutida_call || $this->Grid_editavel || $this->Embutida_multi || ($this->Embutida_call && 'on' == $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['embutida_liga_form_btn_nav'])) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R")
 {
     $NM_btn = false;
+      if ($opcao_botoes != "novo" && $this->nmgp_botoes['goto'] == "on")
+      {
+        $sCondStyle = '';
+?>
+       <?php echo nmButtonOutput($this->arr_buttons, "birpara", "scBtnFn_sys_GridPermiteSeq()", "scBtnFn_sys_GridPermiteSeq()", "brec_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "", "", "", "");?>
+ 
+<?php
+?> 
+   <input type="text" class="scFormToolbarInput" name="nmgp_rec_b" value="" style="width:25px;vertical-align: middle;"/> 
+<?php 
+      }
+?> 
+     </td> 
+     <td nowrap align="center" valign="middle" width="33%" class="scFormToolbarPadding"> 
+<?php 
     if ($opcao_botoes != "novo") {
         $sCondStyle = ($this->nmgp_botoes['first'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "binicio", "scBtnFn_sys_format_ini()", "scBtnFn_sys_format_ini()", "sc_b_ini_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Shift + &#8592;)", "sc-unique-btn-27", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "binicio", "scBtnFn_sys_format_ini()", "scBtnFn_sys_format_ini()", "sc_b_ini_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Shift + &#8592;)", "sc-unique-btn-25", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -2270,21 +2051,21 @@ if (($this->Embutida_form || !$this->Embutida_call || $this->Grid_editavel || $t
     if ($opcao_botoes != "novo") {
         $sCondStyle = ($this->nmgp_botoes['back'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "bretorna", "scBtnFn_sys_format_ret()", "scBtnFn_sys_format_ret()", "sc_b_ret_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + &#8592;)", "sc-unique-btn-28", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "bretorna", "scBtnFn_sys_format_ret()", "scBtnFn_sys_format_ret()", "sc_b_ret_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + &#8592;)", "sc-unique-btn-26", "", "");?>
  
 <?php
         $NM_btn = true;
     }
-if ($opcao_botoes != "novo" && $this->nmgp_botoes['summary'] == "on")
+if ($opcao_botoes != "novo" && $this->nmgp_botoes['navpage'] == "on")
 {
 ?> 
-     <span nowrap id="sc_b_summary_b" class="scFormToolbarPadding"></span> 
+     <span nowrap id="sc_b_navpage_b" class="scFormToolbarPadding"></span> 
 <?php 
 }
     if ($opcao_botoes != "novo") {
         $sCondStyle = ($this->nmgp_botoes['forward'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "bavanca", "scBtnFn_sys_format_ava()", "scBtnFn_sys_format_ava()", "sc_b_avc_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + &#8594;)", "sc-unique-btn-29", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "bavanca", "scBtnFn_sys_format_ava()", "scBtnFn_sys_format_ava()", "sc_b_avc_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + &#8594;)", "sc-unique-btn-27", "", "");?>
  
 <?php
         $NM_btn = true;
@@ -2292,19 +2073,21 @@ if ($opcao_botoes != "novo" && $this->nmgp_botoes['summary'] == "on")
     if ($opcao_botoes != "novo") {
         $sCondStyle = ($this->nmgp_botoes['last'] == "on") ? '' : 'display: none;';
 ?>
-       <?php echo nmButtonOutput($this->arr_buttons, "bfinal", "scBtnFn_sys_format_fim()", "scBtnFn_sys_format_fim()", "sc_b_fim_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Shift + &#8594;)", "sc-unique-btn-30", "", "");?>
+       <?php echo nmButtonOutput($this->arr_buttons, "bfinal", "scBtnFn_sys_format_fim()", "scBtnFn_sys_format_fim()", "sc_b_fim_b", "", "", "" . $sCondStyle . "", "", "", "", $this->Ini->path_botoes, "", "__NM_HINT__ (Ctrl + Shift + &#8594;)", "sc-unique-btn-28", "", "");?>
  
 <?php
         $NM_btn = true;
     }
 ?> 
      </td> 
-     <td nowrap align="center" valign="middle" width="33%" class="scFormToolbarPadding"> 
-<?php 
-?> 
-     </td> 
      <td nowrap align="right" valign="middle" width="33%" class="scFormToolbarPadding"> 
 <?php 
+if ($opcao_botoes != "novo" && $this->nmgp_botoes['summary'] == "on")
+{
+?> 
+     <span nowrap id="sc_b_summary_b" class="scFormToolbarPadding"></span> 
+<?php 
+}
 }
 if (($this->Embutida_form || !$this->Embutida_call || $this->Grid_editavel || $this->Embutida_multi || ($this->Embutida_call && 'on' == $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['embutida_liga_form_btn_nav'])) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R")
 {
@@ -2327,6 +2110,7 @@ unset($NM_ult_sep);
 <?php if ('novo' != $this->nmgp_opcao || $this->Embutida_form) { ?><script>nav_atualiza(Nav_permite_ret, Nav_permite_ava, 'b');</script><?php } ?>
 <?php if (('novo' != $this->nmgp_opcao || $this->Embutida_form) && !$this->nmgp_form_empty && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F") { if ('parcial' == $this->form_paginacao) {?><script>summary_atualiza(<?php echo ($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['reg_start'] + 1). ", " . $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['reg_qtd'] . ", " . ($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['total'] + 1)?>);</script><?php }} ?>
 <?php if (('novo' != $this->nmgp_opcao || $this->Embutida_form) && !$this->nmgp_form_empty && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F") { if ('total' == $this->form_paginacao) {?><script>summary_atualiza(1, <?php echo $this->sc_max_reg . ", " . $this->sc_max_reg?>);</script><?php }} ?>
+<?php if (('novo' != $this->nmgp_opcao || $this->Embutida_form) && !$this->nmgp_form_empty && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "R" && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['run_iframe'] != "F") { ?><script>navpage_atualiza('<?php echo $this->SC_nav_page ?>');</script><?php } ?>
 </td></tr> 
 </table> 
 </div> 
@@ -2343,7 +2127,7 @@ unset($NM_ult_sep);
 </form> 
 <script> 
 <?php
-  $nm_sc_blocos_da_pag = array(0);
+  $nm_sc_blocos_da_pag = array(0,1);
 
   foreach ($this->Ini->nm_hidden_blocos as $bloco => $hidden)
   {
@@ -2557,12 +2341,6 @@ scAjax_displayEmptyForm();
 			 return;
 		}
 	}
-	function scBtnFn_Vizualizar() {
-		if ($("#sc_Vizualizar_top").length && $("#sc_Vizualizar_top").is(":visible")) {
-			sc_btn_Vizualizar()
-			 return;
-		}
-	}
 	function scBtnFn_sys_format_hlp() {
 		if ($("#sc_b_hlp_t").length && $("#sc_b_hlp_t").is(":visible")) {
 			window.open('<?php echo $this->url_webhelp; ?>', '', 'resizable, scrollbars'); 
@@ -2571,43 +2349,43 @@ scAjax_displayEmptyForm();
 	}
 	function scBtnFn_sys_format_sai() {
 		if ($("#sc_b_sai_t.sc-unique-btn-6").length && $("#sc_b_sai_t.sc-unique-btn-6").is(":visible")) {
-			document.F5.action='<?php echo $nm_url_saida; ?>'; document.F5.submit();
+			scFormClose_F5('<?php echo $nm_url_saida; ?>');
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-7").length && $("#sc_b_sai_t.sc-unique-btn-7").is(":visible")) {
-			document.F5.action='<?php echo $nm_url_saida; ?>'; document.F5.submit();
+			scFormClose_F5('<?php echo $nm_url_saida; ?>');
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-8").length && $("#sc_b_sai_t.sc-unique-btn-8").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-9").length && $("#sc_b_sai_t.sc-unique-btn-9").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-10").length && $("#sc_b_sai_t.sc-unique-btn-10").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
+			 return;
+		}
+		if ($("#sc_b_sai_t.sc-unique-btn-20").length && $("#sc_b_sai_t.sc-unique-btn-20").is(":visible")) {
+			scFormClose_F5('<?php echo $nm_url_saida; ?>');
+			 return;
+		}
+		if ($("#sc_b_sai_t.sc-unique-btn-21").length && $("#sc_b_sai_t.sc-unique-btn-21").is(":visible")) {
+			scFormClose_F5('<?php echo $nm_url_saida; ?>');
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-22").length && $("#sc_b_sai_t.sc-unique-btn-22").is(":visible")) {
-			document.F5.action='<?php echo $nm_url_saida; ?>'; document.F5.submit();
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-23").length && $("#sc_b_sai_t.sc-unique-btn-23").is(":visible")) {
-			document.F5.action='<?php echo $nm_url_saida; ?>'; document.F5.submit();
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-24").length && $("#sc_b_sai_t.sc-unique-btn-24").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
-			 return;
-		}
-		if ($("#sc_b_sai_t.sc-unique-btn-25").length && $("#sc_b_sai_t.sc-unique-btn-25").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
-			 return;
-		}
-		if ($("#sc_b_sai_t.sc-unique-btn-26").length && $("#sc_b_sai_t.sc-unique-btn-26").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
 			 return;
 		}
 	}
@@ -2622,7 +2400,7 @@ scAjax_displayEmptyForm();
 			nm_move ('inicio');
 			 return;
 		}
-		if ($("#sc_b_ini_b.sc-unique-btn-27").length && $("#sc_b_ini_b.sc-unique-btn-27").is(":visible")) {
+		if ($("#sc_b_ini_b.sc-unique-btn-25").length && $("#sc_b_ini_b.sc-unique-btn-25").is(":visible")) {
 			nm_move ('inicio');
 			 return;
 		}
@@ -2632,7 +2410,7 @@ scAjax_displayEmptyForm();
 			nm_move ('retorna');
 			 return;
 		}
-		if ($("#sc_b_ret_b.sc-unique-btn-28").length && $("#sc_b_ret_b.sc-unique-btn-28").is(":visible")) {
+		if ($("#sc_b_ret_b.sc-unique-btn-26").length && $("#sc_b_ret_b.sc-unique-btn-26").is(":visible")) {
 			nm_move ('retorna');
 			 return;
 		}
@@ -2642,7 +2420,7 @@ scAjax_displayEmptyForm();
 			nm_move ('avanca');
 			 return;
 		}
-		if ($("#sc_b_avc_b.sc-unique-btn-29").length && $("#sc_b_avc_b.sc-unique-btn-29").is(":visible")) {
+		if ($("#sc_b_avc_b.sc-unique-btn-27").length && $("#sc_b_avc_b.sc-unique-btn-27").is(":visible")) {
 			nm_move ('avanca');
 			 return;
 		}
@@ -2652,20 +2430,8 @@ scAjax_displayEmptyForm();
 			nm_move ('final');
 			 return;
 		}
-		if ($("#sc_b_fim_b.sc-unique-btn-30").length && $("#sc_b_fim_b.sc-unique-btn-30").is(":visible")) {
+		if ($("#sc_b_fim_b.sc-unique-btn-28").length && $("#sc_b_fim_b.sc-unique-btn-28").is(":visible")) {
 			nm_move ('final');
-			 return;
-		}
-	}
-	function scBtnFn_sys_separator() {
-		if ($("#sys_separator.sc-unique-btn-20").length && $("#sys_separator.sc-unique-btn-20").is(":visible")) {
-			return false;
-			 return;
-		}
-	}
-	function scBtnFn_sys_format_copy() {
-		if ($("#sc_b_clone_t.sc-unique-btn-21").length && $("#sc_b_clone_t.sc-unique-btn-21").is(":visible")) {
-			nm_move ('clone');
 			 return;
 		}
 	}

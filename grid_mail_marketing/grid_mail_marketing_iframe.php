@@ -2,7 +2,7 @@
 include_once('grid_mail_marketing_session.php');
 @session_start() ;
 
-$_SESSION['scriptcase']['grid_mail_marketing']['glo_nm_path_imag_temp']  = "/principal/tmp";
+$_SESSION['scriptcase']['grid_mail_marketing']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
 //check tmp
 if(empty($_SESSION['scriptcase']['grid_mail_marketing']['glo_nm_path_imag_temp']))
 {
@@ -284,6 +284,12 @@ if (@is_file($_str_btn_file))
 </head>
 <body class="scExportPage">
 <?php
+if (isset($_SESSION['sc_session'][$aParams['script_case_init']]['grid_mail_marketing']['pdf_name'])) {
+    $Pos = strrpos($_SESSION['sc_session'][$aParams['script_case_init']]['grid_mail_marketing']['pdf_name'], ".");
+    if ($Pos === false) {
+        $_SESSION['sc_session'][$aParams['script_case_init']]['grid_mail_marketing']['pdf_name'] .= ".pdf";
+    }
+}
 $NM_pdfbase = (isset($_SESSION['sc_session'][$aParams['script_case_init']]['grid_mail_marketing']['pdf_name'])) ? $_SESSION['sc_session'][$aParams['script_case_init']]['grid_mail_marketing']['pdf_name'] : 'sc_pdf_' . date('YmdHis') . '_' . rand(0, 1000) . '_grid_mail_marketing.pdf';
 $NM_tit_doc = (isset($_SESSION['sc_session'][$aParams['script_case_init']]['grid_mail_marketing']['pdf_name'])) ? $_SESSION['sc_session'][$aParams['script_case_init']]['grid_mail_marketing']['pdf_name'] : "grid_mail_marketing.pdf";
 $NM_pdf_output = $NM_pdfbase;
@@ -322,7 +328,11 @@ $NM_volta   = "volta_grid";
    {
        if (FALSE !== strpos(strtolower(php_uname()), 'i686')) 
        {
-           if (FALSE !== strpos(php_uname(), 'Debian 4.9')) 
+           if (FALSE !== strpos(php_uname(), 'Debian 4.19')) 
+           {
+               $file_to_test .= '/buster/';
+           }
+           elseif (FALSE !== strpos(php_uname(), 'Debian 4.9')) 
            {
                $file_to_test .= '/stretch/';
            }
@@ -334,7 +344,11 @@ $NM_volta   = "volta_grid";
        }
        else
        {
-           if (FALSE !== strpos(php_uname(), 'Debian 4.9')) 
+           if (FALSE !== strpos(php_uname(), 'Debian 4.19')) 
+           {
+               $file_to_test .= '/buster/';
+           }
+           elseif (FALSE !== strpos(php_uname(), 'Debian 4.9')) 
            {
                $file_to_test .= '/stretch/';
            }

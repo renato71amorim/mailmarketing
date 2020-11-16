@@ -34,9 +34,9 @@ ul#css3menu1 ul span{
 ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li a.pressed{
 	background-color:#ffffff;background-image:none;font-weight:bold;font-style:none;font-size:13px;font-family:Tahoma;color:#868686;text-decoration:none;}
 ul#css3menu1 li.topfirst>a{
-	{theme_main_radius_item3}}
+	border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-webkit-border-radius:5px;-webkit-border-bottom-right-radius:0;-webkit-border-bottom-left-radius:0;}
 ul#css3menu1 li.toplast>a{
-	{theme_main_radius_item4}}
+	border-radius:0 0 5px 5px;-moz-border-radius:0 0 5px 5px;-webkit-border-radius:0;-webkit-border-bottom-right-radius:5px;-webkit-border-bottom-left-radius:5px;}
 ul#css3menu1 img {
     border: none; vertical-align: middle; margin-right: 10px;}
 .scdisabledmain{
@@ -46,5 +46,5 @@ ul#css3menu1 img {
  color:#808080 !important;
 }
 .scMenuHTableCssAlt{
- background-image:url("/scriptcase/devel/conf/scriptcase/img/menu_img/theme_menu_mainbk_3.png");background-color:#C0C0C0;background-repeat:repeat-x;
+ background-image:url("/scriptcase9/devel/conf/scriptcase/img/menu_img/theme_menu_mainbk_3.png");background-color:#C0C0C0;background-repeat:repeat-x;
 }

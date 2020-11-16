@@ -62,7 +62,6 @@ function scEventControl_init(iSeqRow) {
   scEventControl_data["mail_marketing_imagem_rodape" + iSeqRow] = {"blur": false, "change": false, "autocomp": false, "original": "", "calculated": ""};
   scEventControl_data["mail_marketing_iniciar_quando" + iSeqRow] = {"blur": false, "change": false, "autocomp": false, "original": "", "calculated": ""};
   scEventControl_data["mail_marketing_terminar_quando" + iSeqRow] = {"blur": false, "change": false, "autocomp": false, "original": "", "calculated": ""};
-  scEventControl_data["mail_marketing_gatilho" + iSeqRow] = {"blur": false, "change": false, "autocomp": false, "original": "", "calculated": ""};
 }
 
 function scEventControl_active(iSeqRow) {
@@ -132,12 +131,6 @@ function scEventControl_active(iSeqRow) {
   if (scEventControl_data["mail_marketing_terminar_quando" + iSeqRow]["change"]) {
     return true;
   }
-  if (scEventControl_data["mail_marketing_gatilho" + iSeqRow]["blur"]) {
-    return true;
-  }
-  if (scEventControl_data["mail_marketing_gatilho" + iSeqRow]["change"]) {
-    return true;
-  }
   return false;
 } // scEventControl_active
 
@@ -201,9 +194,6 @@ function scJQEventsAdd(iSeqRow) {
                                                             .bind('focus', function() { sc_form_mail_marketing_mail_marketing_terminar_quando_onfocus(this, iSeqRow) });
   $('#id_sc_field_mail_marketing_terminar_quando_hora' + iSeqRow).bind('blur', function() { sc_form_mail_marketing_mail_marketing_terminar_quando_onblur(this, iSeqRow) })
                                                                  .bind('focus', function() { sc_form_mail_marketing_mail_marketing_terminar_quando_onfocus(this, iSeqRow) });
-  $('#id_sc_field_mail_marketing_gatilho' + iSeqRow).bind('blur', function() { sc_form_mail_marketing_mail_marketing_gatilho_onblur(this, iSeqRow) })
-                                                    .bind('change', function() { sc_form_mail_marketing_mail_marketing_gatilho_onchange(this, iSeqRow) })
-                                                    .bind('focus', function() { sc_form_mail_marketing_mail_marketing_gatilho_onfocus(this, iSeqRow) });
 } // scJQEventsAdd
 
 function sc_form_mail_marketing_idmail_marketing_onblur(oThis, iSeqRow) {
@@ -336,23 +326,12 @@ function sc_form_mail_marketing_mail_marketing_terminar_quando_onfocus(oThis, iS
   scCssFocus(oThis);
 }
 
-function sc_form_mail_marketing_mail_marketing_gatilho_onblur(oThis, iSeqRow) {
-  do_ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho();
-  scCssBlur(oThis);
-}
-
-function sc_form_mail_marketing_mail_marketing_gatilho_onchange(oThis, iSeqRow) {
-  nm_recarga_form('bloco_0', 0);
-}
-
-function sc_form_mail_marketing_mail_marketing_gatilho_onfocus(oThis, iSeqRow) {
-  scEventControl_onFocus(oThis, iSeqRow);
-  scCssFocus(oThis);
-}
-
 function displayChange_block(block, status) {
 	if ("0" == block) {
 		displayChange_block_0(status);
+	}
+	if ("1" == block) {
+		displayChange_block_1(status);
 	}
 }
 
@@ -366,9 +345,11 @@ function displayChange_block_0(status) {
 	displayChange_field("mail_marketing_conteudo", "", status);
 	displayChange_field("mail_marketing_link_conteudo", "", status);
 	displayChange_field("mail_marketing_imagem_rodape", "", status);
+}
+
+function displayChange_block_1(status) {
 	displayChange_field("mail_marketing_iniciar_quando", "", status);
 	displayChange_field("mail_marketing_terminar_quando", "", status);
-	displayChange_field("mail_marketing_gatilho", "", status);
 }
 
 function displayChange_row(row, status) {
@@ -383,7 +364,6 @@ function displayChange_row(row, status) {
 	displayChange_field_mail_marketing_imagem_rodape(row, status);
 	displayChange_field_mail_marketing_iniciar_quando(row, status);
 	displayChange_field_mail_marketing_terminar_quando(row, status);
-	displayChange_field_mail_marketing_gatilho(row, status);
 }
 
 function displayChange_field(field, row, status) {
@@ -420,9 +400,6 @@ function displayChange_field(field, row, status) {
 	if ("mail_marketing_terminar_quando" == field) {
 		displayChange_field_mail_marketing_terminar_quando(row, status);
 	}
-	if ("mail_marketing_gatilho" == field) {
-		displayChange_field_mail_marketing_gatilho(row, status);
-	}
 }
 
 function displayChange_field_idmail_marketing(row, status) {
@@ -456,9 +433,6 @@ function displayChange_field_mail_marketing_iniciar_quando(row, status) {
 }
 
 function displayChange_field_mail_marketing_terminar_quando(row, status) {
-}
-
-function displayChange_field_mail_marketing_gatilho(row, status) {
 }
 
 function scRecreateSelect2() {
@@ -597,7 +571,143 @@ elseif ('' != $miniCalendarButton[0]) {
 function scJQUploadAdd(iSeqRow) {
 } // scJQUploadAdd
 
-function scJQSelect2Add(seqRow, specificField) {
+var api_cache_requests = [];
+function ajax_check_file(img_name, field  ,t, p, p_cache, iSeqRow, hasRun, img_before){
+    setTimeout(function(){
+        if(img_name == '') return;
+        iSeqRow= iSeqRow !== undefined && iSeqRow !== null ? iSeqRow : '';
+        var hasVar = p.indexOf('_@NM@_') > -1 || p_cache.indexOf('_@NM@_') > -1 ? true : false;
+
+        p = p.split('_@NM@_');
+        $.each(p, function(i,v){
+            try{
+                p[i] = $('[name='+v+iSeqRow+']').val();
+            }
+            catch(err){
+                p[i] = v;
+            }
+        });
+        p = p.join('');
+
+        p_cache = p_cache.split('_@NM@_');
+        $.each(p_cache, function(i,v){
+            try{
+                p_cache[i] = $('[name='+v+iSeqRow+']').val();
+            }
+            catch(err){
+                p_cache[i] = v;
+            }
+        });
+        p_cache = p_cache.join('');
+
+        img_before = img_before !== undefined ? img_before : $(t).attr('src');
+        var str_key_cache = '<?php echo $this->Ini->sc_page; ?>' + img_name+field+p+p_cache;
+        if(api_cache_requests[ str_key_cache ] !== undefined && api_cache_requests[ str_key_cache ] !== null){
+            if(api_cache_requests[ str_key_cache ] != false){
+                do_ajax_check_file(api_cache_requests[ str_key_cache ], field  ,t, iSeqRow);
+            }
+            return;
+        }
+        //scAjaxProcOn();
+        $(t).attr('src', '<?php echo $this->Ini->path_icones ?>/scriptcase__NM__ajax_load.gif');
+        api_cache_requests[ str_key_cache ] = false;
+        var rs =$.ajax({
+                    type: "POST",
+                    url: 'index.php?script_case_init=<?php echo $this->Ini->sc_page; ?>',
+                    async: true,
+                    data:'nmgp_opcao=ajax_check_file&AjaxCheckImg=' + img_name +'&rsargs='+ field + '&p=' + p + '&p_cache=' + p_cache,
+                    success: function (rs) {
+                        if(rs.indexOf('</span>') != -1){
+                            rs = rs.substr(rs.indexOf('</span>') + 7);
+                        }
+                        if(rs.indexOf('/') != -1 && rs.indexOf('/') != 0){
+                            rs = rs.substr(rs.indexOf('/'));
+                        }
+                        rs = sc_trim(rs);
+
+                        // if(rs == 0 && hasVar && hasRun === undefined){
+                        //     delete window.api_cache_requests[ str_key_cache ];
+                        //     ajax_check_file(img_name, field  ,t, p, p_cache, iSeqRow, 1, img_before);
+                        //     return;
+                        // }
+                        window.api_cache_requests[ str_key_cache ] = rs;
+                        do_ajax_check_file(rs, field  ,t, iSeqRow)
+                        if(rs == 0){
+                            delete window.api_cache_requests[ str_key_cache ];
+
+                           // $(t).attr('src',img_before);
+                            do_ajax_check_file(img_before+'_@@NM@@_' + img_before, field  ,t, iSeqRow)
+
+                        }
+
+
+                    }
+        });
+    },100);
+}
+
+function do_ajax_check_file(rs, field  ,t, iSeqRow){
+    if (rs != 0) {
+        rs_split = rs.split('_@@NM@@_');
+        rs_orig = rs_split[0];
+        rs2 = rs_split[1];
+        try{
+            if(!$(t).is('img')){
+
+                if($('#id_read_on_'+field+iSeqRow).length > 0 ){
+                                    var usa_read_only = false;
+
+                switch(field){
+
+                }
+                     if(usa_read_only && $('a',$('#id_read_on_'+field+iSeqRow)).length == 0){
+                         $(t).html("<a href=\"javascript:nm_mostra_doc('0', '"+rs2+"', 'form_mail_marketing_mob')\">"+$('#id_read_on_'+field+iSeqRow).text()+"</a>");
+                     }
+                }
+                if($('#id_ajax_doc_'+field+iSeqRow+' a').length > 0){
+                    var target = $('#id_ajax_doc_'+field+iSeqRow+' a').attr('href').split(',');
+                    target[1] = "'"+rs2+"'";
+                    $('#id_ajax_doc_'+field+iSeqRow+' a').attr('href', target.join(','));
+                }else{
+                    var target = $(t).attr('href').split(',');
+                     target[1] = "'"+rs2+"'";
+                     $(t).attr('href', target.join(','));
+                }
+            }else{
+                $(t).attr('src', rs2);
+                $(t).css('display', '');
+                if($('#id_ajax_doc_'+field+iSeqRow+' a').length > 0){
+                    var target = $('#id_ajax_doc_'+field+iSeqRow+' a').attr('href').split(',');
+                    target[1] = "'"+rs2+"'";
+                    $(t).attr('href', target.join(','));
+                }else{
+                     var t_link = $(t).parent('a');
+                     var target = $(t_link).attr('href').split(',');
+                     target[0] = "javascript:nm_mostra_img('"+rs_orig+"'";
+                     $(t_link).attr('href', target.join(','));
+                }
+
+            }
+            eval("window.var_ajax_img_"+field+iSeqRow+" = '"+rs_orig+"';");
+
+        } catch(err){
+                        eval("window.var_ajax_img_"+field+iSeqRow+" = '"+rs_orig+"';");
+
+        }
+    }
+   /* hasFalseCacheRequest = false;
+    $.each(api_cache_requests, function(i,v){
+        if(v == false){
+            hasFalseCacheRequest = true;
+        }
+    });
+    if(hasFalseCacheRequest == false){
+        scAjaxProcOff();
+    }*/
+}
+
+$(document).ready(function(){
+});function scJQSelect2Add(seqRow, specificField) {
 } // scJQSelect2Add
 
 
@@ -609,41 +719,27 @@ function scJQElementsAdd(iLine) {
   scJQSelect2Add(iLine);
 } // scJQElementsAdd
 
-var scBtnGrpStatus = {};
-function scBtnGrpShow(sGroup) {
-  if (typeof(scBtnGrpShowMobile) === typeof(function(){})) { return scBtnGrpShowMobile(sGroup); };
-  $('#sc_btgp_btn_' + sGroup).addClass('selected');
-  var btnPos = $('#sc_btgp_btn_' + sGroup).offset();
-  scBtnGrpStatus[sGroup] = 'open';
-  $('#sc_btgp_btn_' + sGroup).mouseout(function() {
-    scBtnGrpStatus[sGroup] = '';
-    setTimeout(function() {
-      scBtnGrpHide(sGroup, false);
-    }, 1000);
-  }).mouseover(function() {
-    scBtnGrpStatus[sGroup] = 'over';
-  });
-  $('#sc_btgp_div_' + sGroup + ' span a').click(function() {
-    scBtnGrpStatus[sGroup] = 'out';
-    scBtnGrpHide(sGroup, false);
-  });
-  $('#sc_btgp_div_' + sGroup).css({
-    'left': btnPos.left
-  })
-  .mouseover(function() {
-    scBtnGrpStatus[sGroup] = 'over';
-  })
-  .mouseleave(function() {
-    scBtnGrpStatus[sGroup] = 'out';
-    setTimeout(function() {
-      scBtnGrpHide(sGroup, false);
-    }, 1000);
-  })
-  .show('fast');
+function scGetFileExtension(fileName)
+{
+    fileNameParts = fileName.split(".");
+
+    if (1 === fileNameParts.length || (2 === fileNameParts.length && "" == fileNameParts[0])) {
+        return "";
+    }
+
+    return fileNameParts.pop().toLowerCase();
 }
-function scBtnGrpHide(sGroup, bForce) {
-  if (bForce || 'over' != scBtnGrpStatus[sGroup]) {
-    $('#sc_btgp_div_' + sGroup).hide('fast');
-    $('#sc_btgp_btn_' + sGroup).addClass('selected');
-  }
+
+function scFormatExtensionSizeErrorMsg(errorMsg)
+{
+    var msgInfo = errorMsg.split("||"), returnMsg = "";
+
+    if ("err_size" == msgInfo[0]) {
+        returnMsg = "<?php echo $this->Ini->Nm_lang['lang_errm_file_size'] ?>. <?php echo $this->Ini->Nm_lang['lang_errm_file_size_extension'] ?>".replace("{SC_EXTENSION}", msgInfo[1]).replace("{SC_LIMIT}", msgInfo[2]);
+    } else if ("err_extension" == msgInfo[0]) {
+        returnMsg = "<?php echo $this->Ini->Nm_lang['lang_errm_file_invl'] ?>";
+    }
+
+    return returnMsg;
 }
+

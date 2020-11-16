@@ -142,26 +142,38 @@ var scEventControl_data = {};
 
 function scJQEventsAdd(iSeqRow) {
   $('#id_sc_field_idmail_meio' + iSeqRow).bind('blur', function() { sc_form_mail_meio_idmail_meio_onblur(this, iSeqRow) })
+                                         .bind('change', function() { sc_form_mail_meio_idmail_meio_onchange(this, iSeqRow) })
                                          .bind('focus', function() { sc_form_mail_meio_idmail_meio_onfocus(this, iSeqRow) });
   $('#id_sc_field_mail_descreva' + iSeqRow).bind('blur', function() { sc_form_mail_meio_mail_descreva_onblur(this, iSeqRow) })
+                                           .bind('change', function() { sc_form_mail_meio_mail_descreva_onchange(this, iSeqRow) })
                                            .bind('focus', function() { sc_form_mail_meio_mail_descreva_onfocus(this, iSeqRow) });
   $('#id_sc_field_mail_usuario' + iSeqRow).bind('blur', function() { sc_form_mail_meio_mail_usuario_onblur(this, iSeqRow) })
+                                          .bind('change', function() { sc_form_mail_meio_mail_usuario_onchange(this, iSeqRow) })
                                           .bind('focus', function() { sc_form_mail_meio_mail_usuario_onfocus(this, iSeqRow) });
   $('#id_sc_field_mail_senha' + iSeqRow).bind('blur', function() { sc_form_mail_meio_mail_senha_onblur(this, iSeqRow) })
+                                        .bind('change', function() { sc_form_mail_meio_mail_senha_onchange(this, iSeqRow) })
                                         .bind('focus', function() { sc_form_mail_meio_mail_senha_onfocus(this, iSeqRow) });
   $('#id_sc_field_mail_smtp' + iSeqRow).bind('blur', function() { sc_form_mail_meio_mail_smtp_onblur(this, iSeqRow) })
+                                       .bind('change', function() { sc_form_mail_meio_mail_smtp_onchange(this, iSeqRow) })
                                        .bind('focus', function() { sc_form_mail_meio_mail_smtp_onfocus(this, iSeqRow) });
   $('#id_sc_field_mail_porta' + iSeqRow).bind('blur', function() { sc_form_mail_meio_mail_porta_onblur(this, iSeqRow) })
+                                        .bind('change', function() { sc_form_mail_meio_mail_porta_onchange(this, iSeqRow) })
                                         .bind('focus', function() { sc_form_mail_meio_mail_porta_onfocus(this, iSeqRow) });
   $('#id_sc_field_mail_seguranca' + iSeqRow).bind('blur', function() { sc_form_mail_meio_mail_seguranca_onblur(this, iSeqRow) })
+                                            .bind('change', function() { sc_form_mail_meio_mail_seguranca_onchange(this, iSeqRow) })
                                             .bind('focus', function() { sc_form_mail_meio_mail_seguranca_onfocus(this, iSeqRow) });
   $('#id_sc_field_mail_ativo' + iSeqRow).bind('blur', function() { sc_form_mail_meio_mail_ativo_onblur(this, iSeqRow) })
+                                        .bind('change', function() { sc_form_mail_meio_mail_ativo_onchange(this, iSeqRow) })
                                         .bind('focus', function() { sc_form_mail_meio_mail_ativo_onfocus(this, iSeqRow) });
 } // scJQEventsAdd
 
 function sc_form_mail_meio_idmail_meio_onblur(oThis, iSeqRow) {
   do_ajax_form_mail_meio_validate_idmail_meio();
   scCssBlur(oThis);
+}
+
+function sc_form_mail_meio_idmail_meio_onchange(oThis, iSeqRow) {
+  scMarkFormAsChanged();
 }
 
 function sc_form_mail_meio_idmail_meio_onfocus(oThis, iSeqRow) {
@@ -174,6 +186,10 @@ function sc_form_mail_meio_mail_descreva_onblur(oThis, iSeqRow) {
   scCssBlur(oThis);
 }
 
+function sc_form_mail_meio_mail_descreva_onchange(oThis, iSeqRow) {
+  scMarkFormAsChanged();
+}
+
 function sc_form_mail_meio_mail_descreva_onfocus(oThis, iSeqRow) {
   scEventControl_onFocus(oThis, iSeqRow);
   scCssFocus(oThis);
@@ -182,6 +198,10 @@ function sc_form_mail_meio_mail_descreva_onfocus(oThis, iSeqRow) {
 function sc_form_mail_meio_mail_usuario_onblur(oThis, iSeqRow) {
   do_ajax_form_mail_meio_validate_mail_usuario();
   scCssBlur(oThis);
+}
+
+function sc_form_mail_meio_mail_usuario_onchange(oThis, iSeqRow) {
+  scMarkFormAsChanged();
 }
 
 function sc_form_mail_meio_mail_usuario_onfocus(oThis, iSeqRow) {
@@ -194,6 +214,10 @@ function sc_form_mail_meio_mail_senha_onblur(oThis, iSeqRow) {
   scCssBlur(oThis);
 }
 
+function sc_form_mail_meio_mail_senha_onchange(oThis, iSeqRow) {
+  scMarkFormAsChanged();
+}
+
 function sc_form_mail_meio_mail_senha_onfocus(oThis, iSeqRow) {
   scEventControl_onFocus(oThis, iSeqRow);
   scCssFocus(oThis);
@@ -202,6 +226,10 @@ function sc_form_mail_meio_mail_senha_onfocus(oThis, iSeqRow) {
 function sc_form_mail_meio_mail_smtp_onblur(oThis, iSeqRow) {
   do_ajax_form_mail_meio_validate_mail_smtp();
   scCssBlur(oThis);
+}
+
+function sc_form_mail_meio_mail_smtp_onchange(oThis, iSeqRow) {
+  scMarkFormAsChanged();
 }
 
 function sc_form_mail_meio_mail_smtp_onfocus(oThis, iSeqRow) {
@@ -214,6 +242,10 @@ function sc_form_mail_meio_mail_porta_onblur(oThis, iSeqRow) {
   scCssBlur(oThis);
 }
 
+function sc_form_mail_meio_mail_porta_onchange(oThis, iSeqRow) {
+  scMarkFormAsChanged();
+}
+
 function sc_form_mail_meio_mail_porta_onfocus(oThis, iSeqRow) {
   scEventControl_onFocus(oThis, iSeqRow);
   scCssFocus(oThis);
@@ -224,6 +256,10 @@ function sc_form_mail_meio_mail_seguranca_onblur(oThis, iSeqRow) {
   scCssBlur(oThis);
 }
 
+function sc_form_mail_meio_mail_seguranca_onchange(oThis, iSeqRow) {
+  scMarkFormAsChanged();
+}
+
 function sc_form_mail_meio_mail_seguranca_onfocus(oThis, iSeqRow) {
   scEventControl_onFocus(oThis, iSeqRow);
   scCssFocus(oThis);
@@ -232,6 +268,10 @@ function sc_form_mail_meio_mail_seguranca_onfocus(oThis, iSeqRow) {
 function sc_form_mail_meio_mail_ativo_onblur(oThis, iSeqRow) {
   do_ajax_form_mail_meio_validate_mail_ativo();
   scCssBlur(oThis);
+}
+
+function sc_form_mail_meio_mail_ativo_onchange(oThis, iSeqRow) {
+  scMarkFormAsChanged();
 }
 
 function sc_form_mail_meio_mail_ativo_onfocus(oThis, iSeqRow) {
@@ -339,7 +379,143 @@ function scCheckNoPageSelected() {
 function scJQUploadAdd(iSeqRow) {
 } // scJQUploadAdd
 
-function scJQSelect2Add(seqRow, specificField) {
+var api_cache_requests = [];
+function ajax_check_file(img_name, field  ,t, p, p_cache, iSeqRow, hasRun, img_before){
+    setTimeout(function(){
+        if(img_name == '') return;
+        iSeqRow= iSeqRow !== undefined && iSeqRow !== null ? iSeqRow : '';
+        var hasVar = p.indexOf('_@NM@_') > -1 || p_cache.indexOf('_@NM@_') > -1 ? true : false;
+
+        p = p.split('_@NM@_');
+        $.each(p, function(i,v){
+            try{
+                p[i] = $('[name='+v+iSeqRow+']').val();
+            }
+            catch(err){
+                p[i] = v;
+            }
+        });
+        p = p.join('');
+
+        p_cache = p_cache.split('_@NM@_');
+        $.each(p_cache, function(i,v){
+            try{
+                p_cache[i] = $('[name='+v+iSeqRow+']').val();
+            }
+            catch(err){
+                p_cache[i] = v;
+            }
+        });
+        p_cache = p_cache.join('');
+
+        img_before = img_before !== undefined ? img_before : $(t).attr('src');
+        var str_key_cache = '<?php echo $this->Ini->sc_page; ?>' + img_name+field+p+p_cache;
+        if(api_cache_requests[ str_key_cache ] !== undefined && api_cache_requests[ str_key_cache ] !== null){
+            if(api_cache_requests[ str_key_cache ] != false){
+                do_ajax_check_file(api_cache_requests[ str_key_cache ], field  ,t, iSeqRow);
+            }
+            return;
+        }
+        //scAjaxProcOn();
+        $(t).attr('src', '<?php echo $this->Ini->path_icones ?>/scriptcase__NM__ajax_load.gif');
+        api_cache_requests[ str_key_cache ] = false;
+        var rs =$.ajax({
+                    type: "POST",
+                    url: 'index.php?script_case_init=<?php echo $this->Ini->sc_page; ?>',
+                    async: true,
+                    data:'nmgp_opcao=ajax_check_file&AjaxCheckImg=' + img_name +'&rsargs='+ field + '&p=' + p + '&p_cache=' + p_cache,
+                    success: function (rs) {
+                        if(rs.indexOf('</span>') != -1){
+                            rs = rs.substr(rs.indexOf('</span>') + 7);
+                        }
+                        if(rs.indexOf('/') != -1 && rs.indexOf('/') != 0){
+                            rs = rs.substr(rs.indexOf('/'));
+                        }
+                        rs = sc_trim(rs);
+
+                        // if(rs == 0 && hasVar && hasRun === undefined){
+                        //     delete window.api_cache_requests[ str_key_cache ];
+                        //     ajax_check_file(img_name, field  ,t, p, p_cache, iSeqRow, 1, img_before);
+                        //     return;
+                        // }
+                        window.api_cache_requests[ str_key_cache ] = rs;
+                        do_ajax_check_file(rs, field  ,t, iSeqRow)
+                        if(rs == 0){
+                            delete window.api_cache_requests[ str_key_cache ];
+
+                           // $(t).attr('src',img_before);
+                            do_ajax_check_file(img_before+'_@@NM@@_' + img_before, field  ,t, iSeqRow)
+
+                        }
+
+
+                    }
+        });
+    },100);
+}
+
+function do_ajax_check_file(rs, field  ,t, iSeqRow){
+    if (rs != 0) {
+        rs_split = rs.split('_@@NM@@_');
+        rs_orig = rs_split[0];
+        rs2 = rs_split[1];
+        try{
+            if(!$(t).is('img')){
+
+                if($('#id_read_on_'+field+iSeqRow).length > 0 ){
+                                    var usa_read_only = false;
+
+                switch(field){
+
+                }
+                     if(usa_read_only && $('a',$('#id_read_on_'+field+iSeqRow)).length == 0){
+                         $(t).html("<a href=\"javascript:nm_mostra_doc('0', '"+rs2+"', 'form_mail_meio')\">"+$('#id_read_on_'+field+iSeqRow).text()+"</a>");
+                     }
+                }
+                if($('#id_ajax_doc_'+field+iSeqRow+' a').length > 0){
+                    var target = $('#id_ajax_doc_'+field+iSeqRow+' a').attr('href').split(',');
+                    target[1] = "'"+rs2+"'";
+                    $('#id_ajax_doc_'+field+iSeqRow+' a').attr('href', target.join(','));
+                }else{
+                    var target = $(t).attr('href').split(',');
+                     target[1] = "'"+rs2+"'";
+                     $(t).attr('href', target.join(','));
+                }
+            }else{
+                $(t).attr('src', rs2);
+                $(t).css('display', '');
+                if($('#id_ajax_doc_'+field+iSeqRow+' a').length > 0){
+                    var target = $('#id_ajax_doc_'+field+iSeqRow+' a').attr('href').split(',');
+                    target[1] = "'"+rs2+"'";
+                    $(t).attr('href', target.join(','));
+                }else{
+                     var t_link = $(t).parent('a');
+                     var target = $(t_link).attr('href').split(',');
+                     target[0] = "javascript:nm_mostra_img('"+rs_orig+"'";
+                     $(t_link).attr('href', target.join(','));
+                }
+
+            }
+            eval("window.var_ajax_img_"+field+iSeqRow+" = '"+rs_orig+"';");
+
+        } catch(err){
+                        eval("window.var_ajax_img_"+field+iSeqRow+" = '"+rs_orig+"';");
+
+        }
+    }
+   /* hasFalseCacheRequest = false;
+    $.each(api_cache_requests, function(i,v){
+        if(v == false){
+            hasFalseCacheRequest = true;
+        }
+    });
+    if(hasFalseCacheRequest == false){
+        scAjaxProcOff();
+    }*/
+}
+
+$(document).ready(function(){
+});function scJQSelect2Add(seqRow, specificField) {
 } // scJQSelect2Add
 
 
@@ -349,4 +525,28 @@ function scJQElementsAdd(iLine) {
   scJQUploadAdd(iLine);
   scJQSelect2Add(iLine);
 } // scJQElementsAdd
+
+function scGetFileExtension(fileName)
+{
+    fileNameParts = fileName.split(".");
+
+    if (1 === fileNameParts.length || (2 === fileNameParts.length && "" == fileNameParts[0])) {
+        return "";
+    }
+
+    return fileNameParts.pop().toLowerCase();
+}
+
+function scFormatExtensionSizeErrorMsg(errorMsg)
+{
+    var msgInfo = errorMsg.split("||"), returnMsg = "";
+
+    if ("err_size" == msgInfo[0]) {
+        returnMsg = "<?php echo $this->Ini->Nm_lang['lang_errm_file_size'] ?>. <?php echo $this->Ini->Nm_lang['lang_errm_file_size_extension'] ?>".replace("{SC_EXTENSION}", msgInfo[1]).replace("{SC_LIMIT}", msgInfo[2]);
+    } else if ("err_extension" == msgInfo[0]) {
+        returnMsg = "<?php echo $this->Ini->Nm_lang['lang_errm_file_invl'] ?>";
+    }
+
+    return returnMsg;
+}
 

@@ -483,9 +483,11 @@ class form_mail_meio_apl
       $this->Ini->Label_sort      = "" == trim($str_label_sort)      ? ""     : $str_label_sort;
       $this->Ini->Label_sort_asc  = "" == trim($str_label_sort_asc)  ? ""     : $str_label_sort_asc;
       $this->Ini->Label_sort_desc = "" == trim($str_label_sort_desc) ? ""     : $str_label_sort_desc;
-      $this->Ini->Img_status_ok   = "" == trim($str_img_status_ok)   ? ""     : $str_img_status_ok;
-      $this->Ini->Img_status_err  = "" == trim($str_img_status_err)  ? ""     : $str_img_status_err;
-      $this->Ini->Css_status      = "scFormInputError";
+      $this->Ini->Img_status_ok       = "" == trim($str_img_status_ok)   ? ""     : $str_img_status_ok;
+      $this->Ini->Img_status_err      = "" == trim($str_img_status_err)  ? ""     : $str_img_status_err;
+      $this->Ini->Css_status          = "scFormInputError";
+      $this->Ini->Css_status_pwd_box  = "scFormInputErrorPwdBox";
+      $this->Ini->Css_status_pwd_text = "scFormInputErrorPwdText";
       $this->Ini->Error_icon_span = "" == trim($str_error_icon_span) ? false  : "message" == $str_error_icon_span;
       $this->Ini->Img_qs_search        = "" == trim($img_qs_search)        ? "scriptcase__NM__qs_lupa.png"  : $img_qs_search;
       $this->Ini->Img_qs_clean         = "" == trim($img_qs_clean)         ? "scriptcase__NM__qs_close.png" : $img_qs_clean;
@@ -651,6 +653,7 @@ class form_mail_meio_apl
       $this->nmgp_botoes['navpage'] = "on";
       $this->nmgp_botoes['goto'] = "on";
       $this->nmgp_botoes['qtline'] = "off";
+      $this->nmgp_botoes['reload'] = "off";
       if (isset($this->NM_btn_cancel) && 'N' == $this->NM_btn_cancel)
       {
           $this->nmgp_botoes['cancel'] = "off";
@@ -2450,8 +2453,7 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
    function nm_conv_data_db($dt_in, $form_in, $form_out, $replaces = array())
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -2459,8 +2461,7 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -2468,8 +2469,18 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out, $replaces);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out, $replaces);
+           return $dt_out;
+       }
    }
 
    function returnWhere($aCond, $sOp = 'AND')
@@ -2959,6 +2970,9 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
               }
 
               $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['db_changed'] = true;
+              if ($this->NM_ajax_flag) {
+                  $this->NM_ajax_info['clearUpload'] = 'S';
+              }
 
 
               if     (isset($NM_val_form) && isset($NM_val_form['idmail_meio'])) { $this->idmail_meio = $NM_val_form['idmail_meio']; }
@@ -3994,6 +4008,49 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
         function hideFormPages() {
         } // hideFormPages
 
+    function form_format_readonly($field, $value)
+    {
+        $result = $value;
+
+        $this->form_highlight_search($result, $field, $value);
+
+        return $result;
+    }
+
+    function form_highlight_search(&$result, $field, $value)
+    {
+        if ($this->proc_fast_search) {
+            $this->form_highlight_search_quicksearch($result, $field, $value);
+        }
+    }
+
+    function form_highlight_search_quicksearch(&$result, $field, $value)
+    {
+        $searchOk = false;
+        if ('SC_all_Cmp' == $this->nmgp_fast_search && in_array($field, array("idmail_meio", "mail_descreva", "mail_usuario", "mail_senha", "mail_smtp", "mail_porta", "mail_seguranca", "mail_ativo"))) {
+            $searchOk = true;
+        }
+        elseif ($field == $this->nmgp_fast_search && in_array($field, array(""))) {
+            $searchOk = true;
+        }
+
+        if (!$searchOk || '' == $this->nmgp_arg_fast_search) {
+            return;
+        }
+
+        $htmlIni = '<div class="highlight" style="background-color: #fafaca; display: inline-block">';
+        $htmlFim = '</div>';
+
+        if ('qp' == $this->nmgp_cond_fast_search) {
+            $result = preg_replace('/'. $this->nmgp_arg_fast_search .'/i', $htmlIni . '$0' . $htmlFim, $result);
+        } elseif ('eq' == $this->nmgp_cond_fast_search) {
+            if (strcasecmp($this->nmgp_arg_fast_search, $value) == 0) {
+                $result = $htmlIni. $result .$htmlFim;
+            }
+        }
+    }
+
+
     function form_encode_input($string)
     {
         if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['table_refresh']) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['table_refresh'])
@@ -4072,6 +4129,35 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
      }
      return str_replace("'", "\'", $charlist);
  }
+
+function sc_file_size($file, $format = false)
+{
+    if ('' == $file) {
+        return '';
+    }
+    if (!@is_file($file)) {
+        return '';
+    }
+    $fileSize = @filesize($file);
+    if ($format) {
+        $suffix = '';
+        if (1024 >= $fileSize) {
+            $fileSize /= 1024;
+            $suffix    = ' KB';
+        }
+        if (1024 >= $fileSize) {
+            $fileSize /= 1024;
+            $suffix    = ' MB';
+        }
+        if (1024 >= $fileSize) {
+            $fileSize /= 1024;
+            $suffix    = ' GB';
+        }
+        $fileSize = $fileSize . $suffix;
+    }
+    return $fileSize;
+}
+
 
  function new_date_format($type, $field)
  {
@@ -4276,8 +4362,9 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
      }
  } // new_date_format
 
-   function SC_fast_search($field, $arg_search, $data_search)
+   function SC_fast_search($in_fields, $arg_search, $data_search)
    {
+      $fields = (strpos($in_fields, "SC_all_Cmp") !== false) ? array("SC_all_Cmp") : explode(";", $in_fields);
       $this->NM_case_insensitive = false;
       if (empty($data_search)) 
       {
@@ -4303,37 +4390,39 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
           $data_search = NM_conv_charset($data_search, $_SESSION['scriptcase']['charset'], "UTF-8");
       }
       $sv_data = $data_search;
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "idmail_meio", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_descreva", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_usuario", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_senha", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_smtp", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_porta", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_seguranca", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_ativo", $arg_search, $data_search);
+      foreach ($fields as $field) {
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "idmail_meio", $arg_search, str_replace(",", ".", $data_search));
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_descreva", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_usuario", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_senha", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_smtp", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_porta", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_seguranca", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_ativo", $arg_search, $data_search);
+          }
       }
       if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['where_detal']) && !empty($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['where_detal']) && !empty($comando)) 
       {

@@ -2,10 +2,11 @@
    include_once('index_session.php');
    @session_start() ;
    $_SESSION['scriptcase']['index']['glo_nm_perfil']          = "principal";
-   $_SESSION['scriptcase']['index']['glo_nm_path_prod']       = "/principal/prod";
+   $_SESSION['scriptcase']['index']['glo_nm_path_prod']       = "/var/www/html/principal/prod";
    $_SESSION['scriptcase']['index']['glo_nm_path_conf']       = "";
-   $_SESSION['scriptcase']['index']['glo_nm_path_imagens']    = "/principal/file/img";
-   $_SESSION['scriptcase']['index']['glo_nm_path_imag_temp']  = "/principal/tmp";
+   $_SESSION['scriptcase']['index']['glo_nm_path_imagens']    = "/var/www/doc/img";
+   $_SESSION['scriptcase']['index']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
+   $_SESSION['scriptcase']['index']['glo_nm_path_cache']      = "";
    $_SESSION['scriptcase']['index']['glo_nm_path_doc']        = "/var/www/doc";
     //check publication with the prod
     $NM_dir_atual = getcwd();
@@ -39,6 +40,11 @@
     if(empty($_SESSION['scriptcase']['index']['glo_nm_path_imag_temp']))
     {
             /*check tmp*/$_SESSION['scriptcase']['index']['glo_nm_path_imag_temp'] = $str_path_apl_url . "_lib/tmp";
+    }
+    //check cache
+    if(empty($_SESSION['scriptcase']['index']['glo_nm_path_cache']))
+    {
+            /*check tmp*/$_SESSION['scriptcase']['index']['glo_nm_path_cache'] = $str_path_apl_dir . "_lib/file/cache";
     }
     //check doc
     if(empty($_SESSION['scriptcase']['index']['glo_nm_path_doc']))
@@ -196,8 +202,8 @@ class index_ini
       $this->nm_dt_criacao   = "20200508"; 
       $this->nm_hr_criacao   = "041928"; 
       $this->nm_autor_alt    = "admin"; 
-      $this->nm_dt_ult_alt   = "20200528"; 
-      $this->nm_hr_ult_alt   = "000305"; 
+      $this->nm_dt_ult_alt   = "20201110"; 
+      $this->nm_hr_ult_alt   = "155402"; 
       $this->Apl_paginacao   = "PARCIAL"; 
       $temp_bug_list         = explode(" ", microtime()); 
       list($NM_usec, $NM_sec) = $temp_bug_list; 
@@ -223,6 +229,7 @@ class index_ini
       $this->path_conf       = $_SESSION['scriptcase']['index']['glo_nm_path_conf'];
       $this->path_imagens    = $_SESSION['scriptcase']['index']['glo_nm_path_imagens'];
       $this->path_imag_temp  = $_SESSION['scriptcase']['index']['glo_nm_path_imag_temp'];
+      $this->path_cache  = $_SESSION['scriptcase']['index']['glo_nm_path_cache'];
       $this->path_doc        = $_SESSION['scriptcase']['index']['glo_nm_path_doc'];
       if (!isset($_SESSION['scriptcase']['str_lang']) || empty($_SESSION['scriptcase']['str_lang']))
       {
@@ -361,7 +368,7 @@ class index_ini
               }
           }
       }
-      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin;
+      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin, $remove_border;
       if (!isset($_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['under_dashboard']))
       {
           $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['under_dashboard'] = false;
@@ -370,6 +377,7 @@ class index_ini
           $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['parent_widget']   = '';
           $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['compact_mode']    = false;
           $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['remove_margin']   = false;
+          $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['remove_border']   = false;
       }
       if (isset($_GET['under_dashboard']) && 1 == $_GET['under_dashboard'])
       {
@@ -387,6 +395,9 @@ class index_ini
               }
               if (isset($_GET['remove_margin'])) {
                   $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['remove_margin'] = 1 == $_GET['remove_margin'];
+              }
+              if (isset($_GET['remove_border'])) {
+                  $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['remove_border'] = 1 == $_GET['remove_border'];
               }
           }
       }
@@ -406,6 +417,9 @@ class index_ini
               }
               if (isset($remove_margin)) {
                   $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['remove_margin'] = 1 == $remove_margin;
+              }
+              if (isset($remove_border)) {
+                  $_SESSION['sc_session'][$this->sc_page]['index']['dashboard_info']['remove_border'] = 1 == $remove_border;
               }
           }
       }
@@ -578,11 +592,11 @@ class index_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -814,7 +828,7 @@ class index_ini
           exit;
       }
       $this->nm_bases_access     = array();
-      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql");
+      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql", "azure_mysql", "azure_mysqlt", "azure_mysqli", "azure_maxsql", "azure_pdo_mysql", "googlecloud_mysql", "googlecloud_mysqlt", "googlecloud_mysqli", "googlecloud_maxsql", "googlecloud_pdo_mysql", "amazonrds_mysql", "amazonrds_mysqlt", "amazonrds_mysqli", "amazonrds_maxsql", "amazonrds_pdo_mysql");
       $this->sqlite_version      = "old";
       $this->nm_bases_sqlite     = array("sqlite", "sqlite3", "pdosqlite");
       $this->nm_bases_all        = array_merge($this->nm_bases_mysql, $this->nm_bases_sqlite);
@@ -826,7 +840,7 @@ class index_ini
       $this->nm_ttf_chi  = array("zh_cn", "zh_hk", "ko");
       $_SESSION['sc_session'][$this->sc_page]['index']['seq_dir'] = 0; 
       $_SESSION['sc_session'][$this->sc_page]['index']['sub_dir'] = array(); 
-      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_v1D9NwDuFaHIBeD5F7HgvsVIBsH5FqDoX7D9BsZ1rqD1rKD5F7HgveZSJqHEFqHIJsD9XsZ9JeD1BeD5F7DMvmVcBUDWFaHIF7HQBqZSBqD1vsZMJeHgBOHArCDuXKZuBOHQXGDuFaZ1N7HQFaHgrwVcBUH5XCHINUHQFYZ1BOHIveHQNUHgBeHArsDWXCHMJsHQXGDuFaHIrwHQJsDMNOVcFeHEX7HMB/DcBwH9B/HIrwV5JeDMBYDkBsH5FYHIF7HQJeH9BiZ1BYHuXGDMvmVIB/H5XCHIFUHQFYZkFGDSvmD5JeHgveZSJqDurmZuBOHQXGDuBqHABYHQXGDMNOVIBsH5FqHMFGHQFYZ1BOD1rwHQXGDMveVkJ3DuFaHIJeDcJUZSX7HIBeD5BqHgvsZSJ3H5FqHIrqHQBqVINUHIBeHuBqHgrKVkJqDWXCHMB/HQXGDQFUHAvOVWXGDMvsVcFeDWJeHIraHQFYZkFGHANOD5JwDMveHErCH5F/HIX7HQXGDuFaHAN7HuX7DMBYVcXKH5B3VErqDcBwH9B/HIrwV5JeDMBYDkBsH5FYDoXGDcJeZSFUZ1rwV5JeHgvsVcFCH5XCDoX7DcNwVIJwZ1BeD5FaDErKHEBUH5BmDoB/HQNmH9X7HABYVWJsDMBYVcBODWFaDoFUDcJUZkFUZ1BeZMBqHgBYHAFKV5FqDoBOD9JKDQJwHANKVWXGDMvOZSJ3V5X7VEF7D9BiH9FaHIBeD5XGDEBOZSXeV5FaZuFaHQXGZSFGD1BeV5FGHuzGVIBOHEFYVorqD9BiZ1F7D1rwD5NUDErKZSXeH5FGDoB/DcJUZSX7HIBeD5BqHgvsZSJ3H5FqVoFGDcBqH9BOZ1BeV5XGDEBOZSJGH5FYZuFaDcXOZSFGHAveV5FGDMvmVcFKV5BmVoBqD9BsZkFGHAvsZMBqDEBeHEXeDWFqHMJeDcXOZSFUD1veHQrqDMvsVcFeH5FqHIJeDcFYH9BqZ1rYHQBOHgNKZSJGH5BmZuJeHQJKDQJsZ1vCV5FGHuNOV9FeDWB3VoraD9JmZ1B/Z1NOV5B/DMzGHEJGDurmVoBiD9NwDQJsHIrKV5JeDMvmVcFKV5BmVoBqD9BsZkFGHArKHQJwDEBODkFeH5FYVoFGHQJKDQJsZ1rwD5JwHuzGDkBsH5XCHIraD9BiH9BqHANOD5rqHgveZSJGH5FYHMFGDcXGDQFaHAN7HuFaHuNOZSrCH5FqDoXGHQJmZ1rqHArKV5FaDMNKZSXeV5FqZuXGD9NwZSFGHArYD5rqHgrYDkBODWJeVoX7D9BsH9B/Z1NOZMJwDMzGHArCDWF/VoBiDcJUZSX7Z1BYHuFaDMvOZSNiDWB3VoX7HQNmZ1BiHAvsZMFaHgveDkXKDuJeHIJsD9XsZ9JeD1BeD5F7DMvmVcXKDuX7VoBOHQFYZkBiHAvmZMJeDMNKZSJ3HEXKDoJeDcBwDuBqHABYHuXGHuvmZSJqDWJeHMBiD9BsVIraD1rwV5X7HgBeHENiDWr/VoB/D9XsH9X7HArYVWJsHuNOZSJ3DWXCHMXGDcBqZ1B/HArYZMB/DMBYHEXeV5XCDoB/DcJUDQFaHArYD5F7HuNODkFCDWJeDoFGD9BsZkFGHArKV5FUDMrYZSXeV5FqHIJsHQJeDuBOZ1vCV5Je";
+      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_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";
       $this->prep_conect();
       $this->conectDB();
       if (!in_array(strtolower($this->nm_tpbanco), $this->nm_bases_all))
@@ -1112,11 +1126,11 @@ class index_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -1283,6 +1297,7 @@ class index_ini
               ob_start();
           } 
       } 
+      $this->Db->debug = true;
       if (!$_SESSION['sc_session'][$this->sc_page]['index']['embutida'])
       {
           if (substr($_POST['nmgp_opcao'], 0, 5) == "ajax_")
@@ -1749,18 +1764,93 @@ class index_apl
       $this->Erro->Ini = $this->Ini;
 //
       $_SESSION['scriptcase']['index']['contr_erro'] = 'on';
- $update_sql = "REPLACE INTO
-	mail_contato
+ $update_sql = "
+CREATE TABLE IF NOT EXISTS `mail_contato` (
+  `cod_cliente` bigint(20) DEFAULT '0',
+  `email` varchar(255) NOT NULL,
+  `data_cadastro` datetime DEFAULT CURRENT_TIMESTAMP,
+  `data_atualizacao` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `data_descadastramento` datetime DEFAULT NULL,
+  `motivo` varchar(255) DEFAULT NULL,
+  `origem` varchar(255) NOT NULL DEFAULT 'Lista',
+  `nome` varchar(155) DEFAULT NULL,
+  `sexo` varchar(1) DEFAULT NULL,
+  `aniversario` date DEFAULT NULL,
+  PRIMARY KEY (`email`,`origem`),
+  KEY `codigo` (`cod_cliente`),
+  KEY `nome` (`nome`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+    
+DELETE FROM mail_contato WHERE origem = 'ANIVERSARIANTE DO MES';
+
+INSERT INTO 
+	mail_contato(cod_cliente,nome,email,sexo,aniversario,origem,data_cadastro,data_atualizacao)
 SELECT 
-	email, data_cadastro, data_atualizacao, data_descadastramento, motivo, 'Todos cadastros com e-mail', nome, sexo, aniversario
+	cod_cliente,
+    nome,
+    email,
+    sexo,
+    aniversario,
+	'ANIVERSARIANTE DO MES',
+    data_cadastro,
+    data_atualizacao
+FROM 
+	mail_contato
+WHERE 
+	month(aniversario) = month(now())
+GROUP BY
+	email;
+
+DROP TABLE IF EXISTS vencendo_5d;
+
+
+DROP TABLE IF EXISTS cadastro_recente;
+
+CREATE TABLE
+	cadastro_recente
+SELECT cod_cliente FROM mail_contato WHERE DATE(data_cadastro) >= date_sub(now(), INTERVAL 1 day);
+
+
+DELETE FROM mail_contato WHERE origem = 'CADASTRO RECENTE';
+
+REPLACE INTO 
+	mail_contato(cod_cliente,nome,email,sexo,aniversario,origem,data_cadastro,data_atualizacao)
+SELECT 
+	t1.cod_cliente,
+    nome,
+    email,
+    sexo,
+    aniversario,
+	'CADASTRO RECENTE',
+    data_cadastro,
+    data_atualizacao
+FROM 
+	mail_contato t1, cadastro_recente t2
+WHERE 
+	t1.cod_cliente = t2.cod_cliente
+GROUP BY
+	email;
+
+
+
+TRUNCATE mail_lista;
+
+INSERT INTO mail_lista(mail_lista_descricao,mail_lista_ativo,mail_lista_sistema)
+SELECT 
+	origem,
+    'S',
+    'S'
 FROM 
 	mail_contato 
-WHERE 
-	origem <> 'Solicitaram descadastramento'  
 GROUP BY 
-	email
-ORDER BY 
-	data_atualizacao;";
+	origem;
+
+SELECT * FROM mail_lista;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+";
+
+
 
      $nm_select = $update_sql; 
          $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select;
@@ -1778,58 +1868,6 @@ ORDER BY
          }
          $rf->Close();
       ;
-
-$update_sql = "DELETE FROM 
-	mail_contato 
-WHERE 
-	origem = 'Aniversariantes do mês' 
-    AND month(aniversario) <> month(now());";
-
-     $nm_select = $update_sql; 
-         $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select;
-      $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-         $rf = $this->Db->Execute($nm_select);
-         if ($rf === false)
-         {
-             $this->Erro->mensagem (__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg());
-             if ($this->Ini->sc_tem_trans_banco)
-             {
-                 $this->Db->RollbackTrans(); 
-                 $this->Ini->sc_tem_trans_banco = false;
-             }
-             exit;
-         }
-         $rf->Close();
-      ;
-
-$update_sql = "REPLACE INTO
-	mail_contato
-SELECT 
-	email, data_cadastro, data_atualizacao, data_descadastramento, motivo, 'Aniversariantes do mês', nome, sexo, aniversario
-FROM 
-	mail_contato 
-WHERE 
-	origem = 'Aniversariantes do mês' 
-    AND month(aniversario) = month(now());";
-
-     $nm_select = $update_sql; 
-         $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select;
-      $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-         $rf = $this->Db->Execute($nm_select);
-         if ($rf === false)
-         {
-             $this->Erro->mensagem (__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg());
-             if ($this->Ini->sc_tem_trans_banco)
-             {
-                 $this->Db->RollbackTrans(); 
-                 $this->Ini->sc_tem_trans_banco = false;
-             }
-             exit;
-         }
-         $rf->Close();
-      ;
-
-
 
  if (!isset($this->Campos_Mens_erro) || empty($this->Campos_Mens_erro))
  {
@@ -2014,8 +2052,7 @@ $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -2023,8 +2060,7 @@ $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -2032,8 +2068,18 @@ $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
 } 
 // 
@@ -2048,6 +2094,7 @@ $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
    }
    SC_dir_app_ini('mail_marketing');
    $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
+   $nm_parms_senha = array();
    $Sc_lig_md5 = false;
    $Sem_Session = (!isset($_SESSION['sc_session'])) ? true : false;
    $_SESSION['scriptcase']['sem_session'] = false;
@@ -2055,6 +2102,7 @@ $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
    {
        foreach ($_POST as $nmgp_var => $nmgp_val)
        {
+            $nm_parms_senha[$nmgp_var] = $nmgp_val;
             if (substr($nmgp_var, 0, 11) == "SC_glo_par_")
             {
                 $nmgp_var = substr($nmgp_var, 11);
@@ -2082,6 +2130,7 @@ $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
    {
        foreach ($_GET as $nmgp_var => $nmgp_val)
        {
+            $nm_parms_senha[$nmgp_var] = $nmgp_val;
             if (substr($nmgp_var, 0, 11) == "SC_glo_par_")
             {
                 $nmgp_var = substr($nmgp_var, 11);
@@ -2271,6 +2320,120 @@ $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
    }
 
    $_POST['script_case_init'] = $script_case_init;
+   $STR_lang    = (isset($_SESSION['scriptcase']['str_lang']) && !empty($_SESSION['scriptcase']['str_lang'])) ? $_SESSION['scriptcase']['str_lang'] : "pt_br";
+   if (isset($_SESSION['scriptcase']['index']['session_timeout']['lang'])) {
+       $STR_lang = $_SESSION['scriptcase']['index']['session_timeout']['lang'];
+   }
+     $STR_schema_all = (isset($_SESSION['scriptcase']['str_schema_all']) && !empty($_SESSION['scriptcase']['str_schema_all'])) ? $_SESSION['scriptcase']['str_schema_all'] : "Sc9_SweetHollyhock/Sc9_SweetHollyhock";
+   $NM_arq_lang = "../_lib/lang/" . $STR_lang . ".lang.php";
+   $Nm_lang = array();
+   if (is_file($NM_arq_lang))
+   {
+       $Lixo = file($NM_arq_lang);
+       foreach ($Lixo as $Cada_lin) 
+       {
+           if (strpos($Cada_lin, "array()") === false && (trim($Cada_lin) != "<?php")  && (trim($Cada_lin) != "?" . ">"))
+           {
+               eval (str_replace("\$this->", "\$", $Cada_lin));
+           }
+       }
+   }
+   $_SESSION['scriptcase']['charset'] = (isset($Nm_lang['Nm_charset']) && !empty($Nm_lang['Nm_charset'])) ? $Nm_lang['Nm_charset'] : "UTF-8";
+   ini_set('default_charset', $_SESSION['scriptcase']['charset']);
+   foreach ($Nm_lang as $ind => $dados)
+   {
+      if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($dados))
+      {
+          $Nm_lang[$ind] = sc_convert_encoding($dados, $_SESSION['scriptcase']['charset'], "UTF-8");
+      }
+   }
+    $nm_tst_protect = "95a110add634003bb5e1f1b8232eb862";
+    if (isset($_SESSION['nm_session']['user']['sec']['pass']) && $_SESSION['nm_session']['user']['sec']['pass'] == "N")
+    { }
+    elseif ((!isset($script_case_senha) || empty($script_case_senha)) && (!isset($_SESSION['sc_session'][$script_case_init]['index']['SCMN_PW']) || empty($_SESSION['sc_session'][$script_case_init]['index']['SCMN_PW'])))
+    { 
+        include("../_lib/css/". $STR_schema_all ."_form.php"); 
+?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+            "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<HTML>
+    <HEAD>    
+        <TITLE></TITLE>
+        <META http-equiv="Content-Type" content="text/html; charset=<?php echo $_SESSION['scriptcase']['charset_html'] ?>" />
+
+        <?php
+        if (isset($_SESSION['scriptcase']['proc_mobile']) && $_SESSION['scriptcase']['proc_mobile'])
+        {
+        ?>
+           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <?php
+        }
+        ?>
+        <META http-equiv="Expires" content="Fri, Jan 01 1900 00:00:00 GMT" />
+        <META http-equiv="Pragma" content="no-cache" />
+        <link rel="shortcut icon" href="../_lib/img/usr__NM__bg__NM__e6885a69-f5bc-4480-bccc-7f780a768f92.png" />
+        <link rel="stylesheet" type="text/css" href="../_lib/css/<?php echo $STR_schema_all ?>_form.css" />
+        <link rel="stylesheet" type="text/css" href="../_lib/buttons/<?php echo $str_button; ?>/<?php echo $str_button; ?>.css" />
+        <?php
+        if(isset($_SESSION['scriptcase']['str_google_fonts']) && !empty($_SESSION['scriptcase']['str_google_fonts']))
+        {
+        ?>
+            <link rel="stylesheet" type="text/css" href="<?php echo $_SESSION['scriptcase']['str_google_fonts']; ?>" />
+        <?php
+        }
+        ?>
+    </HEAD>
+    <body class="scGridPage">
+        <form name="Fsenha" method="post" action="./">    
+            <div style="text-align:center;">  
+                <div class="scFormBorder" style="display:inline-block; padding:1px;">
+                    <div  class='scFormTable' style='display: flex'>
+                        <div class='scFormLabelOdd'  style='display: inline-block'>
+                            <?php echo $Nm_lang['lang_errm_type_pswd']; ?>
+                        </div>
+                        <div class='scFormDataOdd'  style='display: inline-block'>
+                            <?php
+                            foreach ($nm_parms_senha as $nm_nome_parm => $nm_val_parm)
+                            {
+                            ?>
+                               <input type="hidden"   name="<?php echo $nm_nome_parm ?>" value="<?php echo NM_encode_input($nm_val_parm) ?>"/> 
+                            <?php
+                            }
+                            ?>
+                           <input type="hidden"   name="script_case_init" value="<?php echo NM_encode_input($script_case_init) ?>"/> 
+                           <input type="hidden"   name="script_case_session" value="<?php echo NM_encode_input(session_id()) ?>"/>
+                           <input type="hidden"   name="script_case_ref" value="<?php echo isset($_SERVER['HTTP_REFERER']) ? NM_encode_input($_SERVER['HTTP_REFERER']) : ""; ?>"/> 
+                           <input type="password" name="script_case_senha" value="" class="scFormObjectOdd" size=32 required /> 
+                        </div>
+                    </div>
+                    <div class='scFormToolbar'>
+                        <input type="submit" class="scButton_default" name="sc_sai_senha" value="OK"> 
+                    </div>
+                </div>
+            </div>
+        </form>
+        <script type="text/javascript">
+            document.Fsenha.script_case_senha.focus();
+        </script>
+    </body>
+</html><?php
+        exit;
+    } 
+    $nm_usr_nao_aut = false;
+    if (isset($_SESSION['nm_session']['user']['sec']['pass']) && $_SESSION['nm_session']['user']['sec']['pass'] == "N")
+    { }
+    elseif (isset($script_case_senha))
+    { 
+        $_SERVER['HTTP_REFERER'] = $script_case_ref;
+        if ($nm_tst_protect != md5($script_case_senha))
+        { 
+            $nm_usr_nao_aut = true;
+        } 
+        else 
+        { 
+            $_SESSION['sc_session'][$script_case_init]['index']['SCMN_PW'] = $nm_tst_protect;
+        } 
+    } 
    if (isset($_SESSION['scriptcase']['sc_outra_jan']) && $_SESSION['scriptcase']['sc_outra_jan'] == 'index')
    {
        $_SESSION['sc_session'][$script_case_init]['index']['sc_outra_jan'] = true;
@@ -2309,6 +2472,88 @@ $_SESSION['scriptcase']['index']['contr_erro'] = 'off';
        }
    } 
    $GLOBALS["NM_ERRO_IBASE"] = 0;  
+       if (!$_SESSION['sc_session'][$script_case_init]['index']['opc_psq'] && !isset($_SESSION['scriptcase']['index']['session_timeout']['redir'])) 
+       { 
+          if ($nm_usr_nao_aut)
+          { 
+              $NM_Mens_Erro = $Nm_lang['lang_errm_unth_user'];
+              $nm_botao_ok = ($_SESSION['sc_session'][$script_case_init]['index']['iframe_menu']) ? false : true;
+              if (isset($_SESSION['scriptcase']['sc_aba_iframe']))
+              {
+                  foreach ($_SESSION['scriptcase']['sc_aba_iframe'] as $aba => $apls_aba)
+                  {
+                      if (in_array("index", $apls_aba))
+                      {
+                          $nm_botao_ok = false;
+                           break;
+                      }
+                  }
+              }
+              $str_schema_app = (isset($_SESSION['scriptcase']['str_schema_all']) && !empty($_SESSION['scriptcase']['str_schema_all'])) ? $_SESSION['scriptcase']['str_schema_all'] : "Sc9_SweetHollyhock/Sc9_SweetHollyhock";
+?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+            "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+              <HTML>
+               <HEAD>
+                <TITLE></TITLE>
+               <META http-equiv="Content-Type" content="text/html; charset=<?php echo $_SESSION['scriptcase']['charset_html'] ?>" />
+<?php
+              if ($_SESSION['scriptcase']['proc_mobile'])
+              {
+?>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<?php
+              }
+?>
+                <META http-equiv="Expires" content="Fri, Jan 01 1900 00:00:00 GMT"/>                <META http-equiv="Pragma" content="no-cache"/>
+                <link rel="shortcut icon" href="../_lib/img/usr__NM__bg__NM__e6885a69-f5bc-4480-bccc-7f780a768f92.png">
+                <link rel="stylesheet" type="text/css" href="../_lib/css/<?php echo $str_schema_app ?>_grid.css" /> 
+                <link rel="stylesheet" type="text/css" href="../_lib/css/<?php echo $str_schema_app ?>_grid<?php echo $_SESSION['scriptcase']['reg_conf']['css_dir'] ?>.css" /> 
+               </HEAD>
+               <body>
+                <table align="center" class="scGridBorder"><tr><td style="padding: 0">
+                <table style="width: 100%" class="scGridTabela"><tr class="scGridFieldOdd"><td class="scGridFieldOddFont" style="padding: 15px 30px; text-align: center">
+                 <?php echo $NM_Mens_Erro; ?>
+<?php
+              if ($nm_botao_ok)
+              {
+?>
+                <br />
+                <form name="Fseg" method="post" 
+                                    action="<?php echo $nm_url_saida; ?>" 
+                                    target="_self"> 
+                 <input type="hidden" name="script_case_init" value="<?php echo NM_encode_input($script_case_init) ?>"/> 
+                 <input type="hidden" name="script_case_session" value="<?php echo NM_encode_input(session_id()); ?>" />
+                 <input type="submit" name="sc_sai_seg" value="OK"> 
+                </form> 
+<?php
+              }
+?>
+                </td></tr></table>
+                </td></tr></table>
+<?php
+              if (isset($_SESSION['scriptcase']['nm_sc_retorno']) && !empty($_SESSION['scriptcase']['nm_sc_retorno']))
+              {
+?>
+<br /><br /><br />
+<table align="center" class="scGridBorder" style="width: 450px"><tr><td style="padding: 0">
+ <table style="width: 100%" class="scGridTabela">
+  <tr class="scGridFieldOdd">
+   <td class="scGridFieldOddFont" style="padding: 15px 30px">
+    <?php echo $Nm_lang['lang_errm_unth_hwto']; ?>
+   </td>
+  </tr>
+ </table>
+</td></tr></table>
+<?php
+              }
+?>
+               </body>
+              </HTML>
+<?php
+              exit;
+          } 
+       } 
    $contr_index = new index_apl();
    $contr_index->controle();
 //

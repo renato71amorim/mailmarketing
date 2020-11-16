@@ -1847,44 +1847,6 @@ function nm_open_popup(parms)
  </SCRIPT>
 <script type="text/javascript">
  $(function() {
-   $("#id_ac_email").autocomplete({
-     minLength: 1,
-     source: function (request, response) {
-     $.ajax({
-       url: "index.php",
-       dataType: "json",
-       data: {
-          q: request.term,
-          nmgp_opcao: "ajax_autocomp",
-          nmgp_parms: "NM_ajax_opcao?#?autocomp_email",
-          max_itens: "10",
-          cod_desc: "N",
-          script_case_init: <?php echo $this->Ini->sc_page ?>
-        },
-       success: function (data) {
-         if (data == "ss_time_out") {
-             nm_move();
-         }
-         response(data);
-       }
-      });
-    },
-     select: function (event, ui) {
-       $("#SC_email").val(ui.item.value);
-       $(this).val(ui.item.label);
-       event.preventDefault();
-     },
-     focus: function (event, ui) {
-       $("#SC_email").val(ui.item.value);
-       $(this).val(ui.item.label);
-       event.preventDefault();
-     },
-     change: function (event, ui) {
-       if (null == ui.item) {
-          $("#SC_email").val( $(this).val() );
-       }
-     }
-   });
    $("#id_ac_nome").autocomplete({
      minLength: 1,
      source: function (request, response) {
@@ -1920,6 +1882,44 @@ function nm_open_popup(parms)
      change: function (event, ui) {
        if (null == ui.item) {
           $("#SC_nome").val( $(this).val() );
+       }
+     }
+   });
+   $("#id_ac_email").autocomplete({
+     minLength: 1,
+     source: function (request, response) {
+     $.ajax({
+       url: "index.php",
+       dataType: "json",
+       data: {
+          q: request.term,
+          nmgp_opcao: "ajax_autocomp",
+          nmgp_parms: "NM_ajax_opcao?#?autocomp_email",
+          max_itens: "10",
+          cod_desc: "N",
+          script_case_init: <?php echo $this->Ini->sc_page ?>
+        },
+       success: function (data) {
+         if (data == "ss_time_out") {
+             nm_move();
+         }
+         response(data);
+       }
+      });
+    },
+     select: function (event, ui) {
+       $("#SC_email").val(ui.item.value);
+       $(this).val(ui.item.label);
+       event.preventDefault();
+     },
+     focus: function (event, ui) {
+       $("#SC_email").val(ui.item.value);
+       $(this).val(ui.item.label);
+       event.preventDefault();
+     },
+     change: function (event, ui) {
+       if (null == ui.item) {
+          $("#SC_email").val( $(this).val() );
        }
      }
    });
@@ -4030,7 +4030,16 @@ foreach ($Arr_format as $Part_date)
       $trab_mask  = $nm_mask;
       $tam_campo  = strlen($nm_campo);
       $trab_saida = "";
-      $mask_num = false;
+      $str_highlight_ini = "";
+      $str_highlight_fim = "";
+      if(substr($nm_campo, 0, 23) == '<div class="highlight">' && substr($nm_campo, -6) == '</div>')
+      {
+           $str_highlight_ini = substr($nm_campo, 0, 23);
+           $str_highlight_fim = substr($nm_campo, -6);
+
+           $trab_campo = substr($nm_campo, 23, -6);
+           $tam_campo  = strlen($trab_campo);
+      }      $mask_num = false;
       for ($x=0; $x < strlen($trab_mask); $x++)
       {
           if (substr($trab_mask, $x, 1) == "#")
@@ -4073,7 +4082,7 @@ foreach ($Arr_format as $Part_date)
           {
               $trab_saida .= substr($trab_campo, $xdados);
           }
-          $nm_campo = $trab_saida;
+          $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
           return;
       }
       for ($ix = strlen($trab_mask); $ix > 0; $ix--)
@@ -4126,13 +4135,12 @@ foreach ($Arr_format as $Part_date)
                $trab_saida = substr($trab_saida, 0, $iz) . substr($trab_saida, $iz + 1);
            }
       }
-      $nm_campo = $trab_saida;
+      $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
    } 
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -4140,8 +4148,7 @@ foreach ($Arr_format as $Part_date)
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -4149,8 +4156,18 @@ foreach ($Arr_format as $Part_date)
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
 }
 

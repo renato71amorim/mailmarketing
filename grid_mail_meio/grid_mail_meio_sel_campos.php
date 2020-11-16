@@ -7,7 +7,7 @@
    {
      include_once('grid_mail_meio_session.php');
      session_start();
-     $_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']  = "/principal/tmp";
+     $_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
      //check tmp
      if(empty($_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']))
      {
@@ -162,9 +162,11 @@ function Sel_cmp_process()
             $tab_ger_campos['idmail_meio'] = "on";
       $tab_ger_campos['mail_descreva'] = "on";
       $tab_ger_campos['mail_usuario'] = "on";
-      $tab_ger_campos['mail_senha'] = "on";
       $tab_ger_campos['mail_smtp'] = "on";
       $tab_ger_campos['mail_porta'] = "on";
+      $tab_ger_campos['mail_ativo'] = "on";
+      $tab_blk_campos[] = "mail_ativo";
+      $tab_ger_campos['mail_senha'] = "on";
 
 
       if (isset($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_meio']['field_display']) && !empty($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_meio']['field_display']))

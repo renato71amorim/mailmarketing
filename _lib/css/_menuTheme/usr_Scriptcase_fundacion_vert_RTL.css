@@ -1,7 +1,7 @@
 ul#css3menu1,ul#css3menu1 ul{
 	margin:0;list-style:none;padding:0;}
 ul#css3menu1 ul{
-	display:none;position:absolute;right:100%;top:0;-moz-box-shadow:3.5px 3.5px 5px #000000;-webkit-box-shadow:3.5px 3.5px 5px #000000;box-shadow:3.5px 3.5px 5px #000000;background-color:#FF0000;background-image:none;}
+	display:none;position:absolute;right:100%;top:0;-moz-box-shadow:3.5px 3.5px 5px #000000;-webkit-box-shadow:3.5px 3.5px 5px #000000;box-shadow:3.5px 3.5px 5px #000000;background-color:#FF0000;background-image:none;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";opacity:1;filter:alpha(opacity=100);}
 ul#css3menu1 li:hover>*{
 	display:block;}
 ul#css3menu1 li{

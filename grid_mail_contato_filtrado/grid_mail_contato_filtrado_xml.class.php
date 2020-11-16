@@ -197,23 +197,6 @@ class grid_mail_contato_filtrado_xml
       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
       $this->sc_proc_grid = false; 
       $nm_raiz_img  = ""; 
-      if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name']))
-      {
-          $this->Arquivo = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'];
-          $this->Arq_zip = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'];
-          $this->Tit_doc = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'];
-          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'], ".");
-          if ($Pos !== false) {
-              $this->Arq_zip = substr($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'], 0, $Pos);
-          }
-          $this->Arq_zip .= ".zip";
-          $this->Tit_zip  = $this->Arq_zip;
-          unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name']);
-      }
-      if (!$this->Grava_view)
-      {
-          $this->Arquivo_view = $this->Arquivo;
-      }
       if (isset($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_contato_filtrado']['field_display']) && !empty($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_contato_filtrado']['field_display']))
       {
           foreach ($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_contato_filtrado']['field_display'] as $NM_cada_field => $NM_cada_opc)
@@ -277,6 +260,27 @@ class grid_mail_contato_filtrado_xml
           }
           $this->aniversario_2 = $Busca_temp['aniversario_input_2']; 
       } 
+      if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name']))
+      {
+          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'], ".");
+          if ($Pos === false) {
+              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'] .= ".xml";
+          }
+          $this->Arquivo = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'];
+          $this->Arq_zip = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'];
+          $this->Tit_doc = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'];
+          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'], ".");
+          if ($Pos !== false) {
+              $this->Arq_zip = substr($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name'], 0, $Pos);
+          }
+          $this->Arq_zip .= ".zip";
+          $this->Tit_zip  = $this->Arq_zip;
+          unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xml_name']);
+      }
+      if (!$this->Grava_view)
+      {
+          $this->Arquivo_view = $this->Arquivo;
+      }
       $this->arr_export = array('label' => array(), 'lines' => array());
       $this->arr_span   = array();
 
@@ -301,11 +305,11 @@ class grid_mail_contato_filtrado_xml
       $nmgp_select_count = "SELECT count(*) AS countTest from " . $this->Ini->nm_tabela; 
       if (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mysql))
       { 
-          $nmgp_select = "SELECT email, data_atualizacao, data_descadastramento, data_cadastro, motivo, origem from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT nome, email, aniversario, data_atualizacao, data_descadastramento, data_cadastro, motivo, origem from " . $this->Ini->nm_tabela; 
       } 
       else 
       { 
-          $nmgp_select = "SELECT email, data_atualizacao, data_descadastramento, data_cadastro, motivo, origem from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT nome, email, aniversario, data_atualizacao, data_descadastramento, data_cadastro, motivo, origem from " . $this->Ini->nm_tabela; 
       } 
       $nmgp_select .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['where_pesq'];
       $nmgp_select_count .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['where_pesq'];
@@ -363,12 +367,14 @@ class grid_mail_contato_filtrado_xml
          {
              $this->xml_registro = "<grid_mail_contato_filtrado";
          }
-         $this->email = $rs->fields[0] ;  
-         $this->data_atualizacao = $rs->fields[1] ;  
-         $this->data_descadastramento = $rs->fields[2] ;  
-         $this->data_cadastro = $rs->fields[3] ;  
-         $this->motivo = $rs->fields[4] ;  
-         $this->origem = $rs->fields[5] ;  
+         $this->nome = $rs->fields[0] ;  
+         $this->email = $rs->fields[1] ;  
+         $this->aniversario = $rs->fields[2] ;  
+         $this->data_atualizacao = $rs->fields[3] ;  
+         $this->data_descadastramento = $rs->fields[4] ;  
+         $this->data_cadastro = $rs->fields[5] ;  
+         $this->motivo = $rs->fields[6] ;  
+         $this->origem = $rs->fields[7] ;  
          $this->sc_proc_grid = true; 
          foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['field_order'] as $Cada_col)
          { 
@@ -605,6 +611,31 @@ class grid_mail_contato_filtrado_xml
       }
       $rs->Close();
    }
+   //----- nome
+   function NM_export_nome()
+   {
+         if ($_SESSION['scriptcase']['charset'] == "UTF-8" && !NM_is_utf8($this->nome))
+         {
+             $this->nome = sc_convert_encoding($this->nome, "UTF-8", $_SESSION['scriptcase']['charset']);
+         }
+          if ($this->Xml_tag_label)
+          {
+              $SC_Label = (isset($this->New_label['nome'])) ? $this->New_label['nome'] : "Nome"; 
+          }
+          else
+          {
+              $SC_Label = "nome"; 
+          }
+          $this->clear_tag($SC_Label); 
+         if ($this->New_Format)
+         {
+             $this->xml_registro .= " <" . $SC_Label . ">" . $this->trata_dados($this->nome) . "</" . $SC_Label . ">\r\n";
+         }
+         else
+         {
+             $this->xml_registro .= " " . $SC_Label . " =\"" . $this->trata_dados($this->nome) . "\"";
+         }
+   }
    //----- email
    function NM_export_email()
    {
@@ -628,6 +659,34 @@ class grid_mail_contato_filtrado_xml
          else
          {
              $this->xml_registro .= " " . $SC_Label . " =\"" . $this->trata_dados($this->email) . "\"";
+         }
+   }
+   //----- aniversario
+   function NM_export_aniversario()
+   {
+             $conteudo_x =  $this->aniversario;
+             nm_conv_limpa_dado($conteudo_x, "YYYY-MM-DD");
+             if (is_numeric($conteudo_x) && strlen($conteudo_x) > 0) 
+             { 
+                 $this->nm_data->SetaData($this->aniversario, "YYYY-MM-DD  ");
+                 $this->aniversario = $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", "ddmmaaaa"));
+             } 
+          if ($this->Xml_tag_label)
+          {
+              $SC_Label = (isset($this->New_label['aniversario'])) ? $this->New_label['aniversario'] : "Aniversario"; 
+          }
+          else
+          {
+              $SC_Label = "aniversario"; 
+          }
+          $this->clear_tag($SC_Label); 
+         if ($this->New_Format)
+         {
+             $this->xml_registro .= " <" . $SC_Label . ">" . $this->trata_dados($this->aniversario) . "</" . $SC_Label . ">\r\n";
+         }
+         else
+         {
+             $this->xml_registro .= " " . $SC_Label . " =\"" . $this->trata_dados($this->aniversario) . "\"";
          }
    }
    //----- data_atualizacao
@@ -828,8 +887,7 @@ class grid_mail_contato_filtrado_xml
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -837,8 +895,7 @@ class grid_mail_contato_filtrado_xml
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -846,8 +903,18 @@ class grid_mail_contato_filtrado_xml
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
    function progress_bar_end()
    {
@@ -959,7 +1026,16 @@ if ($_SESSION['scriptcase']['proc_mobile'])
       $trab_mask  = $nm_mask;
       $tam_campo  = strlen($nm_campo);
       $trab_saida = "";
-      $mask_num = false;
+      $str_highlight_ini = "";
+      $str_highlight_fim = "";
+      if(substr($nm_campo, 0, 23) == '<div class="highlight">' && substr($nm_campo, -6) == '</div>')
+      {
+           $str_highlight_ini = substr($nm_campo, 0, 23);
+           $str_highlight_fim = substr($nm_campo, -6);
+
+           $trab_campo = substr($nm_campo, 23, -6);
+           $tam_campo  = strlen($trab_campo);
+      }      $mask_num = false;
       for ($x=0; $x < strlen($trab_mask); $x++)
       {
           if (substr($trab_mask, $x, 1) == "#")
@@ -1002,7 +1078,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
           {
               $trab_saida .= substr($trab_campo, $xdados);
           }
-          $nm_campo = $trab_saida;
+          $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
           return;
       }
       for ($ix = strlen($trab_mask); $ix > 0; $ix--)
@@ -1055,7 +1131,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
                $trab_saida = substr($trab_saida, 0, $iz) . substr($trab_saida, $iz + 1);
            }
       }
-      $nm_campo = $trab_saida;
+      $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
    } 
 }
 

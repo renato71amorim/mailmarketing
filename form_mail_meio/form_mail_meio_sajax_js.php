@@ -90,7 +90,7 @@ sajax_show_javascript();
             var $oField = $('#id_sc_field_' + sErrorId);
             if (0 < $oField.length)
             {
-                $oField.removeClass(sc_css_status);
+                scAjax_removeFieldErrorStyle($oField);
             }
         }
     }
@@ -118,7 +118,7 @@ sajax_show_javascript();
       var $oField = $('#id_sc_field_' + sErrorId);
       if (0 < $oField.length)
       {
-        $oField.addClass(sc_css_status);
+        scAjax_applyFieldErrorStyle($oField);
       }
     }
     if (ajax_error_list && ajax_error_list[sErrorId] && ajax_error_list[sErrorId]["timeout"] && 0 < ajax_error_list[sErrorId]["timeout"])
@@ -2364,11 +2364,11 @@ sajax_show_javascript();
       {
         if("off" == sAction)
         {
-          $('#' + sElement + "_dumb").hide();
+          $('#' + sElement + "_dumb").show();
         }
         else
         {
-          $('#' + sElement + "_dumb").show();
+          $('#' + sElement + "_dumb").hide();
         }
       }
     }
@@ -2731,14 +2731,14 @@ sajax_show_javascript();
 	function scAjaxError_markField(fieldName) {
 		var $oField = $("#id_sc_field_" + fieldName);
 		if (0 < $oField.length) {
-			$oField.addClass(sc_css_status);
+			scAjax_applyFieldErrorStyle($oField);
 		}
 	} // scAjaxError_markField
 
 	function scAjaxError_unmarkField(fieldName) {
 		var $oField = $("#id_sc_field_" + fieldName);
 		if (0 < $oField.length) {
-			$oField.removeClass(sc_css_status);
+			scAjax_removeFieldErrorStyle($oField);
 		}
 	} // scAjaxError_unmarkField
 
@@ -2748,6 +2748,52 @@ sajax_show_javascript();
         $("#sc-id-required-row").hide();
         sc_hide_form_mail_meio_form();
 	}
+
+  function scAjax_applyFieldErrorStyle(fieldObj) {
+    if (fieldObj.hasClass("sc-ui-pwd-toggle")) {
+        fieldObj.addClass(sc_css_status_pwd_text);
+        fieldObj.parent().addClass(sc_css_status_pwd_box);
+      } else {
+        fieldObj.addClass(sc_css_status);
+      }
+  }
+
+  function scAjax_removeFieldErrorStyle(fieldObj) {
+    if (fieldObj.hasClass("sc-ui-pwd-toggle")) {
+        fieldObj.removeClass(sc_css_status_pwd_text);
+        fieldObj.parent().removeClass(sc_css_status_pwd_box);
+      } else {
+        fieldObj.removeClass(sc_css_status);
+      }
+  }
+
+  function scAjax_formReload() {
+    nm_move('igual');
+  }
+
+  var scFormHasChanged = false;
+
+  function scMarkFormAsChanged() {
+    scFormHasChanged = true;
+  }
+
+  function scResetFormChanges() {
+    scFormHasChanged = false;
+  }
+
+  function scFormClose_F5(exitUrl) {
+
+    document.F5.action = exitUrl;
+    document.F5.submit();
+
+  }
+
+  function scFormClose_F6(exitUrl) {
+
+    document.F6.action = exitUrl;
+    document.F6.submit();
+
+  }
 
   // ---------- Validate idmail_meio
   function do_ajax_form_mail_meio_validate_idmail_meio()
@@ -3117,7 +3163,7 @@ function _scAjaxShowMessageToast(params) {
 	}
 
 	if (null == sweetAlertParams["position"]) {
-		sweetAlertParams["position"] = "top-end";
+		sweetAlertParams["position"] = "top";
 	}
 
 	if (null == sweetAlertParams["timer"]) {
@@ -3323,7 +3369,7 @@ function scJs_sweetalert_params(params) {
 			sweetAlertConfig['timer'] = 3000;
 		}
 		if (null == sweetAlertConfig["position"]) {
-			sweetAlertConfig["position"] = "top-end";
+			sweetAlertConfig["position"] = "top";
 		}
 	}
 
@@ -3377,6 +3423,7 @@ function scJs_sweetalert_params(params) {
     }
     if (scAjaxIsOk())
     {
+      scResetFormChanges();
       scAjaxShowMessage("success");
       scAjaxHideErrorDisplay("table");
       scAjaxHideErrorDisplay("idmail_meio");
@@ -3431,6 +3478,11 @@ if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['dashbo
   var scStatusDetail = {};
 
   function do_ajax_form_mail_meio_navigate_form()
+  {
+    perform_ajax_form_mail_meio_navigate_form();
+  }
+
+  function perform_ajax_form_mail_meio_navigate_form()
   {
     if (scRefreshTable())
     {
@@ -3491,6 +3543,7 @@ foreach ($this->Ini->sc_lig_iframe as $tmp_i => $tmp_v)
        scAjax_displayEmptyForm();
     }
     scAjaxClearErrors()
+    scResetFormChanges()
     sc_mupload_ok = true;
     scAjaxSetFields(false);
     scAjaxSetVariables();
@@ -3511,12 +3564,8 @@ foreach ($this->Ini->sc_lig_iframe as $tmp_i => $tmp_v)
   function do_ajax_form_mail_meio_navigate_form_cb_after_alert() {
     scAjaxMessage();
     scAjaxJavascript();
-    scQSInit = true;
-    scQSInitVal = $("#SC_fast_search_t").val();
     scQuickSearchKeyUp('t', null);
     $('#SC_fast_search_t').blur();
-    scQuickSearchInit(true, '');
-    scQSInit = false;
     scAjaxSetFocus();
 <?php
 if ($this->Embutida_form)

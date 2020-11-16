@@ -71,6 +71,7 @@ function ajax_navigate(opc, parm)
     }
     parm = parm.replace(/[&]/g, "__NM_AMP__");
     parm = parm.replace(/[%]/g, "__NM_PRC__");
+    parm_save = parm;
     return new Promise(function(resolve, reject) {$.ajax({
       type: "POST",
       url: "index.php",
@@ -190,11 +191,7 @@ function ajax_navigate(opc, parm)
         {
             if (Qsearch_ok)
             {
-                scQSInitVal = $("#SC_fast_search_top").val();
-                scQSInit = true;
-                scQuickSearchInit(false, '');
                 scQuickSearchKeyUp('top', null);
-                scQSInit = false;
             }
             SC_init_jquery(false);
             tb_init('a.thickbox, area.thickbox, input.thickbox');
@@ -211,6 +208,7 @@ function ajax_navigate(opc, parm)
 function ajax_navigate_res(opc, parm)
 {
     nmAjaxProcOn();
+    parm_save = parm;
     $.ajax({
       type: "POST",
       url: "index.php",

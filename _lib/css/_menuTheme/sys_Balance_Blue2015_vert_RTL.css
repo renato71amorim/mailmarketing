@@ -50,9 +50,9 @@ ul#css3menu1 li.toplast>a{
 ul#css3menu1 li.toplast:hover>a,ul#css3menu1 li.toplast a.pressed{
 	-moz-box-shadow:0 -1px 1px #1a5898 inset;-webkit-box-shadow:0 -1px 1px #1a5898 inset;box-shadow:0 -1px 1px #1a5898 inset;background-color:#2872bd;background-image:-o-linear-gradient(-90deg,rgba(255,255,255,0.2),rgba(0,0,0,0)); background-image:-moz-linear-gradient(-90deg,rgba(255,255,255,0.2),rgba(0,0,0,0));   background-image:linear-gradient(180deg,rgba(255,255,255,0.2),rgba(0,0,0,0));  background-image:-webkit-linear-gradient(-90deg,rgba(255,255,255,0.2),rgba(0,0,0,0));border-style:solid;border-color:#72aae2;color:#FFFFFF;text-decoration:none;text-shadow:0 1px rgba(0, 0, 0, 0.2);filter:progid:DXImageTransform.Microsoft.gradient(gradientType=0,startColorstr=#33FFFFFF,endColorstr=#00000000)}
 ul#css3menu1 li.subfirst>a{
-	{theme_sub_radius_item3}}
+	border-radius:7px 7px 0 0;-moz-border-radius:7px 7px 0 0;-webkit-border-radius:7px;-webkit-border-bottom-right-radius:0;-webkit-border-bottom-left-radius:0;}
 ul#css3menu1 li.sublast>a{
-	border-width:1px;{theme_sub_radius_item4}}
+	border-width:1px;border-radius:0 0 7px 7px;-moz-border-radius:0 0 7px 7px;-webkit-border-radius:0;-webkit-border-bottom-right-radius:7px;-webkit-border-bottom-left-radius:7px;}
 ul#css3menu1 img {
     border: none; vertical-align: middle; margin-right: 10px;}
 .scdisabledmain{

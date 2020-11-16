@@ -192,23 +192,6 @@ class grid_mail_lista_xml
       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
       $this->sc_proc_grid = false; 
       $nm_raiz_img  = ""; 
-      if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name']))
-      {
-          $this->Arquivo = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'];
-          $this->Arq_zip = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'];
-          $this->Tit_doc = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'];
-          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'], ".");
-          if ($Pos !== false) {
-              $this->Arq_zip = substr($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'], 0, $Pos);
-          }
-          $this->Arq_zip .= ".zip";
-          $this->Tit_zip  = $this->Arq_zip;
-          unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name']);
-      }
-      if (!$this->Grava_view)
-      {
-          $this->Arquivo_view = $this->Arquivo;
-      }
       if (isset($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_lista']['field_display']) && !empty($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_lista']['field_display']))
       {
           foreach ($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_lista']['field_display'] as $NM_cada_field => $NM_cada_opc)
@@ -265,6 +248,27 @@ class grid_mail_lista_xml
               $this->mail_lista_ativo = substr($this->mail_lista_ativo, 0, $tmp_pos);
           }
       } 
+      if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name']))
+      {
+          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'], ".");
+          if ($Pos === false) {
+              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'] .= ".xml";
+          }
+          $this->Arquivo = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'];
+          $this->Arq_zip = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'];
+          $this->Tit_doc = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'];
+          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'], ".");
+          if ($Pos !== false) {
+              $this->Arq_zip = substr($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name'], 0, $Pos);
+          }
+          $this->Arq_zip .= ".zip";
+          $this->Tit_zip  = $this->Arq_zip;
+          unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['xml_name']);
+      }
+      if (!$this->Grava_view)
+      {
+          $this->Arquivo_view = $this->Arquivo;
+      }
       $this->arr_export = array('label' => array(), 'lines' => array());
       $this->arr_span   = array();
 
@@ -811,8 +815,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -820,8 +823,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -829,8 +831,18 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
    function progress_bar_end()
    {
@@ -942,7 +954,16 @@ if ($_SESSION['scriptcase']['proc_mobile'])
       $trab_mask  = $nm_mask;
       $tam_campo  = strlen($nm_campo);
       $trab_saida = "";
-      $mask_num = false;
+      $str_highlight_ini = "";
+      $str_highlight_fim = "";
+      if(substr($nm_campo, 0, 23) == '<div class="highlight">' && substr($nm_campo, -6) == '</div>')
+      {
+           $str_highlight_ini = substr($nm_campo, 0, 23);
+           $str_highlight_fim = substr($nm_campo, -6);
+
+           $trab_campo = substr($nm_campo, 23, -6);
+           $tam_campo  = strlen($trab_campo);
+      }      $mask_num = false;
       for ($x=0; $x < strlen($trab_mask); $x++)
       {
           if (substr($trab_mask, $x, 1) == "#")
@@ -985,7 +1006,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
           {
               $trab_saida .= substr($trab_campo, $xdados);
           }
-          $nm_campo = $trab_saida;
+          $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
           return;
       }
       for ($ix = strlen($trab_mask); $ix > 0; $ix--)
@@ -1038,7 +1059,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
                $trab_saida = substr($trab_saida, 0, $iz) . substr($trab_saida, $iz + 1);
            }
       }
-      $nm_campo = $trab_saida;
+      $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
    } 
 }
 

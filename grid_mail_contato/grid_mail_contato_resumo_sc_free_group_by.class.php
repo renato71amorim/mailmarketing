@@ -3465,9 +3465,11 @@ if ($_SESSION['scriptcase']['proc_mobile'])
       if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['responsive_chart']['active']) {
           $summary_width = "width=\"100%\"";
           $chart_height = " style=\"height: 100%\"";
+          $border_height = "height: 100%;";
       }
       else {
           $chart_height = '';
+          $border_height = '';
           if ($_SESSION['scriptcase']['proc_mobile'])
           {
               $summary_width = "width=\"100%\"";
@@ -3503,6 +3505,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
       else
       {
           $remove_margin = isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['dashboard_info']['remove_margin']) && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['dashboard_info']['remove_margin'] ? ' style="margin: 0"' : '';
+          $remove_border = '';
           $nm_saida->saida(" <BODY class=\"" . $this->css_scGridPage . "\"" . $remove_margin . ">\r\n");
       }
       if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['opcao'] != "print" && !$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['embutida'])
@@ -3531,7 +3534,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
       $nm_saida->saida("<TABLE id=\"main_table_res\" cellspacing=0 cellpadding=0 align=\"center\" valign=\"top\" " . $summary_width . $chart_height . ">\r\n");
       $nm_saida->saida(" <TR>\r\n");
       $nm_saida->saida("  <TD" . $chart_height . ">\r\n");
-      $nm_saida->saida("  <div class=\"scGridBorder\"" . $chart_height . ">\r\n");
+      $nm_saida->saida("  <div class=\"scGridBorder\" style=\"" . $border_height . (isset($remove_border) ? $remove_border : '') . "\">\r\n");
        if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['doc_word'])
        { 
            $nm_saida->saida("  <div id=\"id_div_process\" style=\"display: none; margin: 10px; whitespace: nowrap\" class=\"scFormProcessFixed\"><span class=\"scFormProcess\"><img border=\"0\" src=\"" . $this->Ini->path_icones . "/scriptcase__NM__ajax_load.gif\" align=\"absmiddle\" />&nbsp;" . $this->Ini->Nm_lang['lang_othr_prcs'] . "...</span></div>\r\n");
@@ -5089,7 +5092,16 @@ if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['doc_word
       $trab_mask  = $nm_mask;
       $tam_campo  = strlen($nm_campo);
       $trab_saida = "";
-      $mask_num = false;
+      $str_highlight_ini = "";
+      $str_highlight_fim = "";
+      if(substr($nm_campo, 0, 23) == '<div class="highlight">' && substr($nm_campo, -6) == '</div>')
+      {
+           $str_highlight_ini = substr($nm_campo, 0, 23);
+           $str_highlight_fim = substr($nm_campo, -6);
+
+           $trab_campo = substr($nm_campo, 23, -6);
+           $tam_campo  = strlen($trab_campo);
+      }      $mask_num = false;
       for ($x=0; $x < strlen($trab_mask); $x++)
       {
           if (substr($trab_mask, $x, 1) == "#")
@@ -5132,7 +5144,7 @@ if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['doc_word
           {
               $trab_saida .= substr($trab_campo, $xdados);
           }
-          $nm_campo = $trab_saida;
+          $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
           return;
       }
       for ($ix = strlen($trab_mask); $ix > 0; $ix--)
@@ -5185,13 +5197,12 @@ if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['doc_word
                $trab_saida = substr($trab_saida, 0, $iz) . substr($trab_saida, $iz + 1);
            }
       }
-      $nm_campo = $trab_saida;
+      $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
    } 
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -5199,8 +5210,7 @@ if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['doc_word
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -5208,8 +5218,18 @@ if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['doc_word
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
    function html_grid_search()
    {
@@ -6626,10 +6646,10 @@ if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato']['doc_word
        $nm_saida->saida("                 return;\r\n");
        $nm_saida->saida("             }\r\n");
        $nm_saida->saida("             eval(\"oResp = \" + json_save_fil);\r\n");
-$nm_saida->saida("             if (oResp[\"ss_time_out\"]) {\r\n");
-$nm_saida->saida("                 nmAjaxProcOff();\r\n");
-$nm_saida->saida("                 nm_move();\r\n");
-$nm_saida->saida("             }\r\n");
+       $nm_saida->saida("             if (oResp[\"ss_time_out\"]) {\r\n");
+       $nm_saida->saida("                 nmAjaxProcOff();\r\n");
+       $nm_saida->saida("                 nm_move();\r\n");
+       $nm_saida->saida("             }\r\n");
        $nm_saida->saida("             if (oResp[\"setValue\"]) {\r\n");
        $nm_saida->saida("               for (i = 0; i < oResp[\"setValue\"].length; i++) {\r\n");
        $nm_saida->saida("                    $(\"#\" + oResp[\"setValue\"][i][\"field\"]).html(oResp[\"setValue\"][i][\"value\"]);\r\n");
@@ -6671,10 +6691,10 @@ $nm_saida->saida("             }\r\n");
        $nm_saida->saida("                return;\r\n");
        $nm_saida->saida("            }\r\n");
        $nm_saida->saida("            eval(\"oResp = \" + json_del_fil);\r\n");
-$nm_saida->saida("             if (oResp[\"ss_time_out\"]) {\r\n");
-$nm_saida->saida("                 nmAjaxProcOff();\r\n");
-$nm_saida->saida("                 nm_move();\r\n");
-$nm_saida->saida("             }\r\n");
+       $nm_saida->saida("             if (oResp[\"ss_time_out\"]) {\r\n");
+       $nm_saida->saida("                 nmAjaxProcOff();\r\n");
+       $nm_saida->saida("                 nm_move();\r\n");
+       $nm_saida->saida("             }\r\n");
        $nm_saida->saida("            if (oResp[\"setValue\"]) {\r\n");
        $nm_saida->saida("              for (i = 0; i < oResp[\"setValue\"].length; i++) {\r\n");
        $nm_saida->saida("                   $(\"#\" + oResp[\"setValue\"][i][\"field\"]).html(oResp[\"setValue\"][i][\"value\"]);\r\n");

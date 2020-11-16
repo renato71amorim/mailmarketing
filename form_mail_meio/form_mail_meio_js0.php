@@ -178,6 +178,16 @@ function nm_move(x, y, z)
             document.F2.nmgp_arg_fast_search.value = '';
             document.F1.elements["nmgp_arg_fast_search_" + y].value = '';
         } 
+        if(document.F2.nmgp_arg_fast_search.value == '') 
+        { 
+            $('#SC_fast_search_close_' + y).hide();
+            $('#SC_fast_search_submit_' + y).show();
+        } 
+        else 
+        { 
+            $('#SC_fast_search_close_' + y).show();
+            $('#SC_fast_search_submit_' + y).hide();
+        } 
         document.F2.nmgp_cond_fast_search.value = scAjaxGetFieldText("nmgp_cond_fast_search_" + y); 
     }
     if ("novo" == x || "edit_novo" == x)
@@ -255,6 +265,7 @@ function nm_atualiza(x, y)
     { 
        if (confirm ("<?php echo html_entity_decode($this->Ini->Nm_lang['lang_errm_remv'], ENT_COMPAT, $_SESSION['scriptcase']['charset']); ?>"))  
        { 
+           scAjaxProcOn();
            document.F1.nmgp_opcao.value = x; 
            document.F1.submit(); 
        } 
@@ -268,6 +279,7 @@ function nm_atualiza(x, y)
        document.F1.nmgp_opcao.value = x; 
        if ("incluir" == x || "muda_form" == x || "recarga" == x || "recarga_mobile" == x)
        {
+           scAjaxProcOn();
            Nm_Proc_Atualiz = true;
            document.F1.submit();
        }
@@ -340,6 +352,7 @@ function scForm_changeForm_prepare(x, y) {
 } // scForm_changeForm_prepare
 
 function scForm_delete_submit(x) {
+    scAjaxProcOn();
 	document.F1.nmgp_opcao.value = x;
 	document.F1.submit();
 }
@@ -434,6 +447,7 @@ function scForm_submit_single(x) {
 	{
 		document.F1.nmgp_opcao.value = x;
 		if ("incluir" == x || "muda_form" == x || "recarga" == x || "recarga_mobile" == x) {
+            scAjaxProcOn();
 			Nm_Proc_Atualiz = true;
 			document.F1.submit();
 		}
@@ -486,16 +500,34 @@ function scCssFocus(oHtmlObj)
 {
   if (navigator.userAgent && 0 < navigator.userAgent.indexOf("MSIE") && "select" == oHtmlObj.type.substr(0, 6))
     return;
-  $(oHtmlObj).addClass('scFormObjectFocusOdd')
-             .removeClass('scFormObjectOdd');
+  if ($(oHtmlObj).hasClass('sc-ui-pwd-toggle')) {
+    $(oHtmlObj).addClass('scFormObjectFocusOddPwdInput')
+               .addClass('scFormObjectFocusOddPwdText')
+               .removeClass('scFormObjectOddPwdInput')
+               .removeClass('scFormObjectOddPwdText');
+    $(oHtmlObj).parent().addClass('scFormObjectFocusOddPwdBox')
+                        .removeClass('scFormObjectOddPwdBox');
+  } else {
+    $(oHtmlObj).addClass('scFormObjectFocusOdd')
+               .removeClass('scFormObjectOdd');
+  }
 }
 
 function scCssBlur(oHtmlObj)
 {
   if (navigator.userAgent && 0 < navigator.userAgent.indexOf("MSIE") && "select" == oHtmlObj.type.substr(0, 6))
     return;
-  $(oHtmlObj).addClass('scFormObjectOdd')
-             .removeClass('scFormObjectFocusOdd');
+  if ($(oHtmlObj).hasClass('sc-ui-pwd-toggle')) {
+    $(oHtmlObj).addClass('scFormObjectOddPwdInput')
+               .addClass('scFormObjectOddPwdText')
+               .removeClass('scFormObjectFocusOddPwdInput')
+               .removeClass('scFormObjectFocusOddPwdText');
+    $(oHtmlObj).parent().addClass('scFormObjectOddPwdBox')
+                        .removeClass('scFormObjectFocusOddPwdBox');
+  } else {
+    $(oHtmlObj).addClass('scFormObjectOdd')
+               .removeClass('scFormObjectFocusOdd');
+  }
 }
 
  function nm_submit_cap(apl_dest, parms)

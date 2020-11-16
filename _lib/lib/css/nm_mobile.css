@@ -87,8 +87,8 @@ body.locked, html.locked {
     display: flex;
     flex-direction: column;
     position: fixed;
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
     transition: all ease .4s;
     top: 0;
     left: 0;
@@ -160,6 +160,7 @@ body.locked, html.locked {
 .modal-pane-container > .modal-pane-wrapper > .modal-pane-content .sc_ui_sortable, .modal-pane-container > .modal-pane-wrapper > .modal-pane-content .sc_ui_sortable_ord{
     display: block;
     min-width: 0;
+    min-height: 50vh;
 }
 .modal-pane-container > .modal-pane-wrapper > .modal-pane-content .scAppDivContent.css_scAppDivContentText table{
     width: 100%;
@@ -205,21 +206,21 @@ td#sc_grid_toobar_bot{
 
 .scGridHeaderFont {
     overflow: hidden;
-    max-width: 100%;
+    max-width: 50%;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .scFilterHeaderFont {
     overflow: hidden;
-    max-width: 100%;
+    max-width: 50%;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .scFormHeaderFont {
     overflow: hidden;
-    max-width: 100%;
+    max-width: 50%;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -267,6 +268,7 @@ body.ready #sc_grid_content {
     align-items: center;
     position: relative;
     height: 100%;
+    min-height: 53px;
     transition: all ease .2s;
 }
 
@@ -328,8 +330,8 @@ body.ready #sc_grid_content {
 .overlayToolbar {
     display: none;
     background-color: rgba(0,0,0,.5);
-    height: 150%;
-    width: 100%;
+    height: 100vh;
+    width: 100vh;
     top: 0;
     left: 0;
     position: fixed;
@@ -487,8 +489,9 @@ body.ready #sc_grid_content {
 }
 .SC_SubMenuApp .scBtnGrpText, #id_dynamic_search_fields .scBtnGrpText {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
     height: 42px;
 }
 
@@ -621,9 +624,9 @@ tr > .scFilterLabelEven {
 
 .scFilterLabelOdd > .SC_Cond_Selector,
 .scFilterLabelEven > .SC_Cond_Selector {
-    position: absolute;
-    top: 0;
-    right: 0;
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*right: 0;*/
     background: transparent;
     border: solid 0px rgba(0,0,0,0.1);
     border-width: 0 0px 1px 0px;
@@ -642,7 +645,7 @@ tr > .scFilterLabelEven {
 }
 
 .SC_Field_label_Mob {
-    max-width: 50%;
+    /*max-width: 50%;*/
     overflow: auto;
     white-space: normal;
     word-break: break-word;
@@ -731,4 +734,61 @@ body #TB_iframeContent {
     margin-bottom: 0px;
     margin-top: 0px;
     margin-bottom: 0px;
+}
+
+.sc.switch > input + span {
+    zoom: 1.6;
+}
+
+.ui-slider span {
+    zoom: 1.6;
+}
+
+.scGridBlock > table {
+    position: sticky;
+    left: 10px;
+    max-width: 100vw;
+}
+
+#id_debug_window {
+    z-index: 1;
+}
+
+body.scAppCalendarPage {
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100vh;
+}
+
+.scCalendarBorder {
+    display: flex;
+    flex-direction: column-reverse;
+    flex-grow: 1;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.scCalendarBorder #calendar {
+    flex-grow: 1;
+    display: inline-flex !important;
+    flex-direction: column;
+    margin-left: 0 !important;
+}
+
+.fc-view-container {
+    flex-grow: 1;
+}
+
+#sc-id-div-config.scGridToolbar {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    box-sizing: border-box;
+}
+
+#tag_filter_over {
+    position: relative;
 }

@@ -34,9 +34,9 @@ ul#css3menu1 ul span{
 ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li a.pressed{
 	background-color:#457C68;background-image:none;font-weight:bold;font-style:none;font-size:12px;font-family:Tahoma, Arial, sans-serif;color:#FFFFFF;text-decoration:none;}
 ul#css3menu1 li.topfirst>a{
-	{theme_main_radius_item3}}
+	border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-webkit-border-radius:5px;-webkit-border-bottom-right-radius:0;-webkit-border-bottom-left-radius:0;}
 ul#css3menu1 li.toplast>a{
-	{theme_main_radius_item4}}
+	border-radius:0 0 5px 5px;-moz-border-radius:0 0 5px 5px;-webkit-border-radius:0;-webkit-border-bottom-right-radius:5px;-webkit-border-bottom-left-radius:5px;}
 ul#css3menu1 img {
     border: none; vertical-align: middle; margin-right: 10px;}
 .scdisabledmain{

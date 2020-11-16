@@ -121,29 +121,6 @@ class grid_mail_lista_grid
            $this->nmgp_barra_top();
            $this->nmgp_embbed_placeholder_top();
        } 
-       if ($nmgrp_apl_opcao != "pdf" && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao_print'] != 'print')
-       { 
-           if ($this->Ini->grid_search_change_fil)
-           { 
-               $seq_search = 1;
-               foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq'] as $cmp => $def)
-               {
-                  $Seq_grid      = $seq_search;
-                  $Cmp_grid      = $cmp;
-                  $Def_grid      = array('descr' => $def['descr'], 'hint' => $def['hint']);
-                  $Lin_grid_add  = $this->grid_search_tag_ini($Cmp_grid, $Def_grid, $Seq_grid);
-                  $NM_func_grid_add = "grid_search_" . $Cmp_grid;
-                  $Lin_grid_add .= $this->$NM_func_grid_add($Seq_grid, 'S', $def['opc'], $def['val'], $nmgp_tab_label[$Cmp_grid]);
-                  $Lin_grid_add .= $this->grid_search_tag_end();
-                  $this->Ini->Arr_result['grid_search_add'][] = array ('field' => $cmp, 'tag' => NM_charset_to_utf8($Lin_grid_add));
-                  $seq_search++;
-               } 
-           } 
-           elseif (!$this->Proc_link_res) 
-           { 
-               $this->html_grid_search();
-           } 
-       } 
        unset ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['save_grid']);
        $this->grid();
        if ($nmgrp_apl_opcao != "pdf")
@@ -241,78 +218,6 @@ class grid_mail_lista_grid
            $this->Css_Cmp[$Tag] = "";
        }
    }
-   if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pesq_tab_label']))
-   {
-       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pesq_tab_label'] = "";
-       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pesq_tab_label'] .= "mail_lista_sistema?#?" . "Mail Lista Sistema" . "?@?";
-       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pesq_tab_label'] .= "idmail_lista?#?" . "Idmail Lista" . "?@?";
-       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pesq_tab_label'] .= "mail_lista_descricao?#?" . "Mail Lista Descricao" . "?@?";
-       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pesq_tab_label'] .= "mail_lista_ativo?#?" . "Mail Lista Ativo" . "?@?";
-   }
-   if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_search_add']))
-   {
-       $nmgp_tab_label = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pesq_tab_label'];
-       if (!empty($nmgp_tab_label))
-       {
-          $nm_tab_campos = explode("?@?", $nmgp_tab_label);
-          $nmgp_tab_label = array();
-          foreach ($nm_tab_campos as $cada_campo)
-          {
-              $parte_campo = explode("?#?", $cada_campo);
-              $nmgp_tab_label[$parte_campo[0]] = $parte_campo[1];
-          }
-       }
-       $Seq_grid      = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_search_add']['seq'];
-       $Cmp_grid      = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_search_add']['cmp'];
-       $Def_grid      = array('descr' => $nmgp_tab_label[$Cmp_grid], 'hint' => $nmgp_tab_label[$Cmp_grid]);
-       $Lin_grid_add  = $this->grid_search_tag_ini($Cmp_grid, $Def_grid, $Seq_grid);
-       $NM_func_grid_add = "grid_search_" . $Cmp_grid;
-       $Lin_grid_add .= $this->$NM_func_grid_add($Seq_grid, 'S', '', array(), $nmgp_tab_label[$Cmp_grid]);
-       $Lin_grid_add .= $this->grid_search_tag_end();
-       $this->Arr_result = array();
-       $Temp = ob_get_clean();
-       if ($Temp !== false && trim($Temp) != "")
-       {
-           $this->Arr_result['htmOutput'] = NM_charset_to_utf8($Temp);
-       }
-       $this->Arr_result['grid_add'][] = NM_charset_to_utf8($Lin_grid_add);
-       $oJson = new Services_JSON();
-       echo $oJson->encode($this->Arr_result);
-       unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_search_add']);
-       exit;
-   }
-   if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dyn_search_aut_comp']))
-   {
-       $NM_func_aut_comp = "lookup_ajax_" . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dyn_search_aut_comp']['cmp'];
-       $parm = ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($_GET['q'])) ? sc_convert_encoding($_GET['q'], $_SESSION['scriptcase']['charset'], "UTF-8") : $_GET['q'];
-       $nmgp_def_dados = $this->$NM_func_aut_comp($parm);
-       ob_end_clean();
-       $count_aut_comp = 0;
-       $resp_aut_comp  = array();
-       foreach ($nmgp_def_dados as $Ind => $Lista)
-       {
-          if (is_array($Lista))
-          {
-              foreach ($Lista as $Cod => $Valor)
-              {
-                  if ($_GET['cod_desc'] == "S")
-                  {
-                      $Valor = $Cod . " - " . $Valor;
-                  }
-                  $resp_aut_comp[] = array('label' => $Valor , 'value' => $Cod);
-                  $count_aut_comp++;
-              }
-          }
-          if ($count_aut_comp == $_GET['max_itens'])
-          {
-              break;
-          }
-       }
-       $oJson = new Services_JSON();
-       echo $oJson->encode($resp_aut_comp);
-       unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dyn_search_aut_comp']);
-       exit;
-   }
    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida'])
    {
        if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['Lig_Md5']))
@@ -398,7 +303,6 @@ class grid_mail_lista_grid
    $this->nmgp_botoes['back'] = "on";
    $this->nmgp_botoes['forward'] = "on";
    $this->nmgp_botoes['last'] = "on";
-   $this->nmgp_botoes['filter'] = "on";
    $this->nmgp_botoes['pdf'] = "on";
    $this->nmgp_botoes['xls'] = "on";
    $this->nmgp_botoes['xml'] = "on";
@@ -415,8 +319,6 @@ class grid_mail_lista_grid
    $this->nmgp_botoes['navpage'] = "on";
    $this->nmgp_botoes['rows'] = "on";
    $this->nmgp_botoes['summary'] = "on";
-   $this->nmgp_botoes['new']    = "on";
-   $this->nmgp_botoes['insert'] = "on";
    $this->nmgp_botoes['sel_col'] = "on";
    $this->nmgp_botoes['sort_col'] = "on";
    $this->nmgp_botoes['qsearch'] = "on";
@@ -535,19 +437,6 @@ class grid_mail_lista_grid
        }
    }
 
-   if (isset($_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['insert']) && $_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['insert'] != '')
-   {
-       $this->nmgp_botoes['new']    = $_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['insert'];
-       $this->nmgp_botoes['insert'] = $_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['insert'];
-   }
-   if (isset($_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['update']) && $_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['update'] != '')
-   {
-       $this->nmgp_botoes['update'] = $_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['update'];
-   }
-   if (isset($_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['delete']) && $_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['delete'] != '')
-   {
-       $this->nmgp_botoes['delete'] = $_SESSION['scriptcase']['sc_apl_conf']['form_mail_lista']['delete'];
-   }
    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida'])
    {
        $nmgp_ordem = ""; 
@@ -622,7 +511,6 @@ class grid_mail_lista_grid
        if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ordem_select']))  
        { 
            $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ordem_select'] = array(); 
-           $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ordem_select_orig'] = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ordem_select']; 
        } 
    }
    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['SC_Ind_Groupby'] == "sc_free_total") 
@@ -767,13 +655,10 @@ class grid_mail_lista_grid
    } 
 // 
    $this->count_ger = 0;
-   if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "final" || $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['qt_reg_grid'] == "all") 
-   { 
-       $Gb_geral = "quebra_geral_" . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['SC_Ind_Groupby'];
-       $this->Tot->$Gb_geral();
-       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['sc_total'] = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tot_geral'][1] ;  
-       $this->count_ger = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tot_geral'][1];
-   } 
+   $Gb_geral = "quebra_geral_" . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['SC_Ind_Groupby'];
+   $this->Tot->$Gb_geral();
+   $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['sc_total'] = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tot_geral'][1] ;  
+   $this->count_ger = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tot_geral'][1];
    if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['where_dinamic']) && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['where_dinamic'] != $this->nm_where_dinamico)  
    { 
        unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tot_geral']);
@@ -1338,6 +1223,8 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   <link rel=\"stylesheet\" href=\"" . $this->Ini->path_prod . "/third/font-awesome/css/all.min.css\" type=\"text/css\" media=\"screen\" />\r\n");
            $nm_saida->saida("   <script type=\"text/javascript\" src=\"" . $this->Ini->path_prod . "/third/jquery_plugin/touch_punch/jquery.ui.touch-punch.min.js\"></script>\r\n");
            $nm_saida->saida("   <script type=\"text/javascript\" src=\"" . $this->Ini->path_prod . "/third/jquery_plugin/malsup-blockui/jquery.blockUI.js\"></script>\r\n");
+           $nm_saida->saida("   <link rel=\"stylesheet\" href=\"" . $this->Ini->path_prod . "/third/jquery_plugin/dropdown_check_list/css/ui.dropdownchecklist.standalone.css\" type=\"text/css\" />\r\n");
+           $nm_saida->saida("   <script type=\"text/javascript\" src=\"" . $this->Ini->path_prod . "/third/jquery_plugin/dropdown_check_list/js/ui.dropdownchecklist.js\"></script>\r\n");
            $nm_saida->saida("        <script type=\"text/javascript\">\r\n");
            $nm_saida->saida("          var sc_pathToTB = '" . $this->Ini->path_prod . "/third/jquery_plugin/thickbox/';\r\n");
            $nm_saida->saida("          var sc_tbLangClose = \"" . html_entity_decode($this->Ini->Nm_lang['lang_tb_close'], ENT_COMPAT, $_SESSION['scriptcase']['charset']) . "\";\r\n");
@@ -1352,8 +1239,6 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/buttons/" . $this->Ini->Str_btn_css . "\" /> \r\n");
            $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_form.css\" /> \r\n");
            $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_form" . $_SESSION['scriptcase']['reg_conf']['css_dir'] . ".css\" /> \r\n");
-           $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_filter.css\" /> \r\n");
-           $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_filter" . $_SESSION['scriptcase']['reg_conf']['css_dir'] . ".css\" /> \r\n");
            $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_appdiv.css\" /> \r\n");
            $nm_saida->saida("   <link rel=\"stylesheet\" type=\"text/css\" href=\"../_lib/css/" . $this->Ini->str_schema_all . "_appdiv" . $_SESSION['scriptcase']['reg_conf']['css_dir'] . ".css\" /> \r\n");
            $nm_saida->saida("   <style type=\"text/css\"> \r\n");
@@ -1364,16 +1249,6 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("     .scGridLabelFont a img{opacity:0;transition:all .2s;} \r\n");
            $nm_saida->saida("     .scGridLabelFont:HOVER a img{opacity:1;transition:all .2s;} \r\n");
            $nm_saida->saida("   </style> \r\n");
-           $nm_saida->saida("   <style type=\"text/css\">\r\n");
-           $nm_saida->saida("     #quicksearchph_top {\r\n");
-           $nm_saida->saida("       position: relative;\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("     #quicksearchph_top img {\r\n");
-           $nm_saida->saida("       position: absolute;\r\n");
-           $nm_saida->saida("       top: 0;\r\n");
-           $nm_saida->saida("       right: 0;\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("   </style>\r\n");
            $nm_saida->saida("   <script type=\"text/javascript\"> \r\n");
            if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida'])
            { 
@@ -1417,25 +1292,6 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            {
                $nm_saida->saida("   var scQtReg  = " . NM_encode_input($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['qt_reg_grid']) . ";\r\n");
            }
-           $nm_saida->saida("   var Dyn_Ini   = true;\r\n");
-           $nm_saida->saida("   var nmdg_Form = \"Fdyn_search\";\r\n");
-           if (is_file($this->Ini->root . $this->Ini->path_link . "_lib/js/tab_erro_" . $this->Ini->str_lang . ".js"))
-           {
-               $Tb_err_js = file($this->Ini->root . $this->Ini->path_link . "_lib/js/tab_erro_" . $this->Ini->str_lang . ".js");
-               foreach ($Tb_err_js as $Lines)
-               {
-                   if (NM_is_utf8($Lines) && $_SESSION['scriptcase']['charset'] != "UTF-8")
-                   {
-                       $Lines = sc_convert_encoding($Lines, $_SESSION['scriptcase']['charset'], "UTF-8");
-                   }
-                   echo "   " . $Lines;
-               }
-           }
-           if (NM_is_utf8($Lines) && $_SESSION['scriptcase']['charset'] != "UTF-8")
-           {
-               $Msg_Inval = sc_convert_encoding("Inv�lido", $_SESSION['scriptcase']['charset'], "UTF-8");
-           }
-           echo "   var SC_crit_inv = \"" . $Msg_Inval . "\";\r\n";
            $gridWidthCorrection = '';
            if (false !== strpos($this->Ini->grid_table_width, 'calc')) {
                $gridWidthCalc = substr($this->Ini->grid_table_width, strpos($this->Ini->grid_table_width, '(') + 1);
@@ -1532,15 +1388,6 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("  }\r\n");
            $nm_saida->saida("  function SC_init_jquery(isScrollNav){ \r\n");
            $nm_saida->saida("   \$(function(){ \r\n");
-           $nm_saida->saida("     if (Dyn_Ini)\r\n");
-           $nm_saida->saida("     {\r\n");
-           $nm_saida->saida("         Dyn_Ini = false;\r\n");
-           if ($nmgrp_apl_opcao != "pdf" && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao_print'] != 'print' && !empty($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq']))
-           { 
-           $nm_saida->saida("         SC_carga_evt_jquery_grid('all');\r\n");
-           } 
-           $nm_saida->saida("         scLoadScInput('input:text.sc-js-input');\r\n");
-           $nm_saida->saida("     }\r\n");
            if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['qsearch'] == "on")
            {
                $nm_saida->saida("     \$('#SC_fast_search_top').keyup(function(e) {\r\n");
@@ -1585,78 +1432,35 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            }
            if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['qsearch'] == "on")
            {
-               $nm_saida->saida("     scQuickSearchInit(false, '');\r\n");
                $nm_saida->saida("     scQuickSearchKeyUp('top', null);\r\n");
-               $nm_saida->saida("     scQSInit = false;\r\n");
            }
            $nm_saida->saida("   });\r\n");
            $nm_saida->saida("   function scQuickSearchSubmit_top() {\r\n");
            $nm_saida->saida("     document.F0_top.nmgp_opcao.value = 'fast_search';\r\n");
            $nm_saida->saida("     document.F0_top.submit();\r\n");
            $nm_saida->saida("   }\r\n");
-           $nm_saida->saida("   function scQuickSearchInit(bPosOnly, sPos) {\r\n");
-           $nm_saida->saida("     if (!bPosOnly) {\r\n");
-           $nm_saida->saida("       if ('' == sPos || 'top' == sPos) scQuickSearchSize('SC_fast_search_top', 'SC_fast_search_close_top', 'SC_fast_search_submit_top', 'quicksearchph_top');\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("   }\r\n");
-           $nm_saida->saida("   var fixedQuickSearchSize = {};\r\n");
-           $nm_saida->saida("   function scQuickSearchSize(sIdInput, sIdClose, sIdSubmit, sPlaceHolder) {\r\n");
-           $nm_saida->saida("     if($('#' + sIdInput).length)\r\n");
-           $nm_saida->saida("     {\r\n");
-           $nm_saida->saida("         if (\"boolean\" == typeof fixedQuickSearchSize[sIdInput] && fixedQuickSearchSize[sIdInput]) {\r\n");
-           $nm_saida->saida("             return;\r\n");
-           $nm_saida->saida("         }\r\n");
-           $nm_saida->saida("         var oInput = $('#' + sIdInput),\r\n");
-           $nm_saida->saida("             oClose = $('#' + sIdClose),\r\n");
-           $nm_saida->saida("             oSubmit = $('#' + sIdSubmit),\r\n");
-           $nm_saida->saida("             oPlace = $('#' + sPlaceHolder),\r\n");
-           $nm_saida->saida("             iInputP = parseInt(oInput.css('padding-right')) || 0,\r\n");
-           $nm_saida->saida("             iInputB = parseInt(oInput.css('border-right-width')) || 0,\r\n");
-           $nm_saida->saida("             iInputW = oInput.outerWidth(),\r\n");
-           $nm_saida->saida("             iPlaceW = oPlace.outerWidth(),\r\n");
-           $nm_saida->saida("             oInputO = oInput.offset(),\r\n");
-           $nm_saida->saida("             oPlaceO = oPlace.offset(),\r\n");
-           $nm_saida->saida("             iNewRight;\r\n");
-           $nm_saida->saida("         iNewRight = (iPlaceW - iInputW) - (oInputO.left - oPlaceO.left) + iInputB + 1;\r\n");
-           $nm_saida->saida("         oInput.css({\r\n");
-           $nm_saida->saida("           'height': Math.max(oInput.height(), 16) + 'px',\r\n");
-           $nm_saida->saida("           'padding-right': iInputP + 16 + " . $this->Ini->Str_qs_image_padding . " + 'px'\r\n");
-           $nm_saida->saida("         });\r\n");
-           $nm_saida->saida("         oClose.css({\r\n");
-           $nm_saida->saida("           'right': iNewRight + " . $this->Ini->Str_qs_image_padding . " + 'px',\r\n");
-           $nm_saida->saida("           'cursor': 'pointer'\r\n");
-           $nm_saida->saida("         });\r\n");
-           $nm_saida->saida("         oSubmit.css({\r\n");
-           $nm_saida->saida("           'right': iNewRight + " . $this->Ini->Str_qs_image_padding . " + 'px',\r\n");
-           $nm_saida->saida("           'cursor': 'pointer'\r\n");
-           $nm_saida->saida("         });\r\n");
-           $nm_saida->saida("         fixedQuickSearchSize[sIdInput] = true;\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scQuickSearchKeyUp(sPos, e) {\r\n");
-           $nm_saida->saida("    if(typeof scQSInitVal !== 'undefined')\r\n");
-           $nm_saida->saida("    {\r\n");
-           $nm_saida->saida("     if ('' != scQSInitVal && $('#SC_fast_search_' + sPos).val() == scQSInitVal && scQSInit) {\r\n");
-           $nm_saida->saida("       $('#SC_fast_search_close_' + sPos).show();\r\n");
-           $nm_saida->saida("       $('#SC_fast_search_submit_' + sPos).hide();\r\n");
-           $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("     else {\r\n");
-           $nm_saida->saida("       $('#SC_fast_search_close_' + sPos).hide();\r\n");
-           $nm_saida->saida("       $('#SC_fast_search_submit_' + sPos).show();\r\n");
-           $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     if (null != e) {\r\n");
            $nm_saida->saida("       var keyPressed = e.charCode || e.keyCode || e.which;\r\n");
            $nm_saida->saida("       if (13 == keyPressed) {\r\n");
            $nm_saida->saida("         if ('top' == sPos) nm_gp_submit_qsearch('top');\r\n");
            $nm_saida->saida("       }\r\n");
+           $nm_saida->saida("       else\r\n");
+           $nm_saida->saida("       {\r\n");
+           $nm_saida->saida("           $('#SC_fast_search_submit_top').show();\r\n");
+           $nm_saida->saida("       }\r\n");
            $nm_saida->saida("     }\r\n");
-           $nm_saida->saida("    }\r\n");
            $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scBtnGroupByShow(sUrl, sPos) {\r\n");
            $nm_saida->saida("     if ($(\"#sc_id_groupby_placeholder_\" + sPos).css('display') != 'none') {\r\n");
-           $nm_saida->saida("         scBtnGroupByHide(sPos);\r\n");
-           $nm_saida->saida("         $(\"#sel_groupby_\" + sPos).removeClass(\"selected\");\r\n");
-           $nm_saida->saida("         return;\r\n");
+           if ($_SESSION['scriptcase']['proc_mobile']) { 
+               $nm_saida->saida("         //return;\r\n");
+           }
+           else {
+               $nm_saida->saida("         scBtnGroupByHide(sPos);\r\n");
+               $nm_saida->saida("         $(\"#sel_groupby_\" + sPos).removeClass(\"selected\");\r\n");
+               $nm_saida->saida("         return;\r\n");
+           }
            $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     $.ajax({\r\n");
            $nm_saida->saida("       type: \"GET\",\r\n");
@@ -1674,9 +1478,14 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scBtnSaveGridShow(origem, embbed, pos) {\r\n");
            $nm_saida->saida("     if ($(\"#sc_id_save_grid_placeholder_\" + pos).css('display') != 'none') {\r\n");
-           $nm_saida->saida("         $(\"#save_grid_\" + pos).removeClass(\"selected\")\r\n");
-           $nm_saida->saida("         scBtnSaveGridHide(pos);\r\n");
-           $nm_saida->saida("         return;\r\n");
+           if ($_SESSION['scriptcase']['proc_mobile']) { 
+               $nm_saida->saida("         // return;\r\n");
+           }
+           else {
+               $nm_saida->saida("         $(\"#save_grid_\" + pos).removeClass(\"selected\")\r\n");
+               $nm_saida->saida("         scBtnSaveGridHide(pos);\r\n");
+               $nm_saida->saida("         return;\r\n");
+           }
            $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     $.ajax({\r\n");
            $nm_saida->saida("       type: \"POST\",\r\n");
@@ -1695,9 +1504,14 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scBtnSelCamposShow(sUrl, sPos) {\r\n");
            $nm_saida->saida("     if ($(\"#sc_id_sel_campos_placeholder_\" + sPos).css('display') != 'none') {\r\n");
-           $nm_saida->saida("         scBtnSelCamposHide(sPos);\r\n");
-           $nm_saida->saida("         $(\"#selcmp_\" + sPos).removeClass(\"selected\");\r\n");
-           $nm_saida->saida("         return;\r\n");
+           if ($_SESSION['scriptcase']['proc_mobile']) { 
+               $nm_saida->saida("         //return;\r\n");
+           }
+           else {
+               $nm_saida->saida("         scBtnSelCamposHide(sPos);\r\n");
+               $nm_saida->saida("         $(\"#selcmp_\" + sPos).removeClass(\"selected\");\r\n");
+               $nm_saida->saida("         return;\r\n");
+           }
            $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     $.ajax({\r\n");
            $nm_saida->saida("       type: \"GET\",\r\n");
@@ -1715,9 +1529,14 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
            $nm_saida->saida("   }\r\n");
            $nm_saida->saida("   function scBtnOrderCamposShow(sUrl, sPos) {\r\n");
            $nm_saida->saida("     if ($(\"#sc_id_order_campos_placeholder_\" + sPos).css('display') != 'none') {\r\n");
-           $nm_saida->saida("         scBtnOrderCamposHide(sPos);\r\n");
-           $nm_saida->saida("         $(\"#ordcmp_\" + sPos).removeClass(\"selected\");\r\n");
-           $nm_saida->saida("         return;\r\n");
+           if ($_SESSION['scriptcase']['proc_mobile']) { 
+               $nm_saida->saida("         //return;\r\n");
+           }
+           else {
+               $nm_saida->saida("         scBtnOrderCamposHide(sPos);\r\n");
+               $nm_saida->saida("         $(\"#ordcmp_\" + sPos).removeClass(\"selected\");\r\n");
+               $nm_saida->saida("         return;\r\n");
+           }
            $nm_saida->saida("     }\r\n");
            $nm_saida->saida("     $.ajax({\r\n");
            $nm_saida->saida("       type: \"GET\",\r\n");
@@ -1993,6 +1812,7 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
        else
        {
           $remove_margin = isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin']) && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin'] ? 'margin: 0; ' : '';
+          $remove_border = '';
            $nm_saida->saida("  <body class=\"" . $this->css_scGridPage . "\" " . $str_iframe_body . " style=\"" . $remove_margin. $css_body . "\">\r\n");
        }
        $nm_saida->saida("  " . $this->Ini->Ajax_result_set . "\r\n");
@@ -2017,7 +1837,7 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
        } 
        $this->Tab_align  = "center";
        $this->Tab_valign = "top";
-       $this->Tab_width = "";
+       $this->Tab_width = " width=\"90%\"";
        if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] != "pdf" && !$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida'])
        { 
            $this->form_navegacao();
@@ -2031,7 +1851,7 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
    {
        $nm_saida->saida("     <TR>\r\n");
        $nm_saida->saida("       <TD>\r\n");
-       $nm_saida->saida("       <div class=\"scGridBorder\">\r\n");
+       $nm_saida->saida("       <div class=\"scGridBorder\" style=\"" . (isset($remove_border) ? $remove_border : '') . "\">\r\n");
        if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['doc_word'])
        { 
            $nm_saida->saida("  <div id=\"id_div_process\" style=\"display: none; margin: 10px; whitespace: nowrap\" class=\"scFormProcessFixed\"><span class=\"scFormProcess\"><img border=\"0\" src=\"" . $this->Ini->path_icones . "/scriptcase__NM__ajax_load.gif\" align=\"absmiddle\" />&nbsp;" . $this->Ini->Nm_lang['lang_othr_prcs'] . "...</span></div>\r\n");
@@ -2360,9 +2180,6 @@ $nm_saida->saida("                        <link rel=\"shortcut icon\" href=\"\">
    $nm_saida->saida("     <TD class=\"" . $this->css_scGridBlockBg . "\" style=\"width: " . $this->width_tabula_quebra . "; display:" . $this->width_tabula_display . ";\"  style=\"" . $this->css_scGridLabelNowrap . "" . $this->Css_Cmp['css_contatos_label'] . "\" >&nbsp;</TD>\r\n");
    } 
    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_psq']) { 
-   $nm_saida->saida("     <TD class=\"" . $this->css_scGridLabelFont . "\"  style=\"" . $this->css_scGridLabelNowrap . "" . $this->Css_Cmp['css_contatos_label'] . "\" >&nbsp;</TD>\r\n");
-   } 
-   if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida'] && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao_print'] != "print" && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] != "pdf") { 
    $nm_saida->saida("     <TD class=\"" . $this->css_scGridLabelFont . "\"  style=\"" . $this->css_scGridLabelNowrap . "" . $this->Css_Cmp['css_contatos_label'] . "\" >&nbsp;</TD>\r\n");
    } 
    foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['field_order'] as $Cada_label)
@@ -2843,7 +2660,7 @@ if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['proc_pdf'] 
 }
 else
 {
-   $nm_saida->saida("  <TD " . $this->Grid_body . " class=\"" . $this->css_scGridTabelaTd . "\" style=\"vertical-align: top;text-align: center;" . $TD_padding . "\">\r\n");
+   $nm_saida->saida("  <TD " . $this->Grid_body . " class=\"" . $this->css_scGridTabelaTd . "\" style=\"vertical-align: top;text-align: center;" . $TD_padding . "\" width=\"100%\">\r\n");
 }
    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
    { 
@@ -3065,54 +2882,6 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
  $Cod_Btn = nmButtonOutput($this->arr_buttons, "bcapture", "document.Fpesq.nm_ret_psq.value='" . $teste . "'; nm_escreve_window();", "document.Fpesq.nm_ret_psq.value='" . $teste . "'; nm_escreve_window();", "", "Rad_psq", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
           $nm_saida->saida(" $Cod_Btn</TD>\r\n");
  } 
- if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida'] && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao_print'] != "print" && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] != "pdf" && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['mostra_edit'] != "N"){ 
-              $Sc_parent = ($this->grid_emb_form_full) ? "S" : "";
-              $linkTarget = isset($this->Ini->sc_lig_target['A_@scinf__@scinf_form_mail_lista']) ? $this->Ini->sc_lig_target['A_@scinf__@scinf_form_mail_lista'] : (isset($this->Ini->sc_lig_target['A_@scinf_']) ? $this->Ini->sc_lig_target['A_@scinf_'] : null);
-              if (isset($this->Ini->sc_lig_md5["form_mail_lista"]) && $this->Ini->sc_lig_md5["form_mail_lista"] == "S")
-              {
-                  $Parms_Edt  = "idmail_lista?#?" . str_replace('"', "@aspasd@", $this->idmail_lista) . "?@?NM_btn_insert?#?S?@?NM_btn_update?#?S?@?NM_btn_delete?#?S?@?NM_btn_navega?#?N?@?nmgp_opcao?#?igual?@?";
-                  if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['under_dashboard'] && isset($linkTarget))
-                  {
-                      if ('' != $Parms_Edt && '?@?' != substr($Parms_Edt, -3) && '*scout' != substr($Parms_Edt, -6))
-                      {
-                          $Parms_Edt .= '*scout';
-                      }
-                      $Parms_Edt .= 'under_dashboard*scin1*scoutdashboard_app*scin' . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['dashboard_app'] . '*scoutown_widget*scin' . $linkTarget . '*scoutparent_widget*scin' . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['own_widget'] . '*scoutcompact_mode*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['compact_mode'] ? '1' : '0') . '*scoutremove_margin*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin'] ? '1' : '0');
-                  }
-                  $Md5_Edt    = "@SC_par@" . NM_encode_input($this->Ini->sc_page) . "@SC_par@grid_mail_lista@SC_par@" . md5($Parms_Edt);
-                  $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['Lig_Md5'][md5($Parms_Edt)] = $Parms_Edt;
-              }
-              else
-              {
-                  $Md5_Edt  = "idmail_lista?#?" . str_replace('"', "@aspasd@", $this->idmail_lista) . "?@?NM_btn_insert?#?S?@?NM_btn_update?#?S?@?NM_btn_delete?#?S?@?NM_btn_navega?#?N?@?nmgp_opcao?#?igual?@?";
-              }
-              $Link_Edit = nmButtonOutput($this->arr_buttons, "bform_editar", "nm_gp_submit4('" .  $this->Ini->link_form_mail_lista . "', '$this->nm_location',  '$Md5_Edt' , '". (isset($linkTarget) ? $linkTarget : '_self') . "', '', 'form_mail_lista', '" . $this->SC_ancora . "')", "nm_gp_submit4('" .  $this->Ini->link_form_mail_lista . "', '$this->nm_location',  '$Md5_Edt' , '". (isset($linkTarget) ? $linkTarget : '_self') . "', '', 'form_mail_lista', '" . $this->SC_ancora . "')", "bedit", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-          $nm_saida->saida("     <TD rowspan=\"" . $this->Rows_span . "\" class=\"" . $this->css_line_fonf . "\"  NOWRAP align=\"center\" valign=\"top\" WIDTH=\"1px\"  HEIGHT=\"0px\"><table style=\"padding: 0px; border-spacing: 0px; border-width: 0px;\"><tr><td style=\"padding: 0px\">" . $Link_Edit . "</td></tr></table></TD>\r\n");
- } 
- if (!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida'] && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao_print'] != "print" && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] != "pdf" && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['mostra_edit'] == "N"){ 
-              $Sc_parent = ($this->grid_emb_form_full) ? "S" : "";
-              $linkTarget = isset($this->Ini->sc_lig_target['A_@scinf__@scinf_form_mail_lista']) ? $this->Ini->sc_lig_target['A_@scinf__@scinf_form_mail_lista'] : (isset($this->Ini->sc_lig_target['A_@scinf_']) ? $this->Ini->sc_lig_target['A_@scinf_'] : null);
-              if (isset($this->Ini->sc_lig_md5["form_mail_lista"]) && $this->Ini->sc_lig_md5["form_mail_lista"] == "S")
-              {
-                  $Parms_Edt  = "idmail_lista?#?" . str_replace('"', "@aspasd@", $this->idmail_lista) . "?@?NM_btn_insert?#?S?@?NM_btn_update?#?S?@?NM_btn_delete?#?S?@?NM_btn_navega?#?N?@?nmgp_opcao?#?igual?@?";
-                  if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['under_dashboard'] && isset($linkTarget))
-                  {
-                      if ('' != $Parms_Edt && '?@?' != substr($Parms_Edt, -3) && '*scout' != substr($Parms_Edt, -6))
-                      {
-                          $Parms_Edt .= '*scout';
-                      }
-                      $Parms_Edt .= 'under_dashboard*scin1*scoutdashboard_app*scin' . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['dashboard_app'] . '*scoutown_widget*scin' . $linkTarget . '*scoutparent_widget*scin' . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['own_widget'] . '*scoutcompact_mode*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['compact_mode'] ? '1' : '0') . '*scoutremove_margin*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin'] ? '1' : '0');
-                  }
-                  $Md5_Edt    = "@SC_par@" . NM_encode_input($this->Ini->sc_page) . "@SC_par@grid_mail_lista@SC_par@" . md5($Parms_Edt);
-                  $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['Lig_Md5'][md5($Parms_Edt)] = $Parms_Edt;
-              }
-              else
-              {
-                  $Md5_Edt  = "idmail_lista?#?" . str_replace('"', "@aspasd@", $this->idmail_lista) . "?@?NM_btn_insert?#?S?@?NM_btn_update?#?S?@?NM_btn_delete?#?S?@?NM_btn_navega?#?N?@?nmgp_opcao?#?igual?@?";
-              }
-              $Link_Edit = nmButtonOutput($this->arr_buttons, "bform_editar", "nm_gp_submit4('" .  $this->Ini->link_form_mail_lista . "', '$this->nm_location',  '$Md5_Edt' , '". (isset($linkTarget) ? $linkTarget : '_self') . "', '', 'form_mail_lista', '" . $this->SC_ancora . "')", "nm_gp_submit4('" .  $this->Ini->link_form_mail_lista . "', '$this->nm_location',  '$Md5_Edt' , '". (isset($linkTarget) ? $linkTarget : '_self') . "', '', 'form_mail_lista', '" . $this->SC_ancora . "')", "bedit", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-          $nm_saida->saida("     <TD rowspan=\"" . $this->Rows_span . "\" class=\"" . $this->css_line_fonf . "\"  NOWRAP align=\"center\" valign=\"top\" WIDTH=\"1px\"  HEIGHT=\"0px\"><table style=\"padding: 0px; border-spacing: 0px; border-width: 0px;\"><tr></tr></table></TD>\r\n");
- } 
           foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['field_order'] as $Cada_col)
           { 
               $NM_func_grid = "NM_grid_" . $Cada_col;
@@ -3213,6 +2982,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       global $nm_saida;
       if (!isset($this->NM_cmp_hidden['idmail_lista']) || $this->NM_cmp_hidden['idmail_lista'] != "off") { 
           $conteudo = NM_encode_input(sc_strip_script($this->idmail_lista)); 
+          $conteudo_original = NM_encode_input(sc_strip_script($this->idmail_lista)); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
@@ -3222,6 +2992,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
           { 
               nmgp_Form_Num_Val($conteudo, $_SESSION['scriptcase']['reg_conf']['grup_num'], $_SESSION['scriptcase']['reg_conf']['dec_num'], "0", "S", "2", "", "N:" . $_SESSION['scriptcase']['reg_conf']['neg_num'] , $_SESSION['scriptcase']['reg_conf']['simb_neg'], $_SESSION['scriptcase']['reg_conf']['num_group_digit']) ; 
           } 
+          $str_tem_display = $conteudo;
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['proc_pdf'])
           {
               $this->SC_nowrap = "NOWRAP";
@@ -3238,11 +3009,13 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       global $nm_saida;
       if (!isset($this->NM_cmp_hidden['mail_lista_descricao']) || $this->NM_cmp_hidden['mail_lista_descricao'] != "off") { 
           $conteudo = sc_strip_script($this->mail_lista_descricao); 
+          $conteudo_original = sc_strip_script($this->mail_lista_descricao); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['proc_pdf'])
           {
               $this->SC_nowrap = "";
@@ -3259,11 +3032,13 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       global $nm_saida;
       if (!isset($this->NM_cmp_hidden['mail_lista_ativo']) || $this->NM_cmp_hidden['mail_lista_ativo'] != "off") { 
           $conteudo = sc_strip_script($this->mail_lista_ativo); 
+          $conteudo_original = sc_strip_script($this->mail_lista_ativo); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['proc_pdf'])
           {
               $this->SC_nowrap = "";
@@ -3280,11 +3055,13 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       global $nm_saida;
       if (!isset($this->NM_cmp_hidden['mail_lista_sistema']) || $this->NM_cmp_hidden['mail_lista_sistema'] != "off") { 
           $conteudo = sc_strip_script($this->mail_lista_sistema); 
+          $conteudo_original = sc_strip_script($this->mail_lista_sistema); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['proc_pdf'])
           {
               $this->SC_nowrap = "";
@@ -3301,11 +3078,13 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       global $nm_saida;
       if (!isset($this->NM_cmp_hidden['quantregistros']) || $this->NM_cmp_hidden['quantregistros'] != "off") { 
           $conteudo = sc_strip_script($this->quantregistros); 
+          $conteudo_original = sc_strip_script($this->quantregistros); 
           if ($conteudo === "") 
           { 
               $conteudo = "&nbsp;" ;  
               $graf = "" ;  
           } 
+          $str_tem_display = $conteudo;
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['proc_pdf'])
           {
               $this->SC_nowrap = "NOWRAP";
@@ -3322,6 +3101,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       global $nm_saida;
       if (!isset($this->NM_cmp_hidden['contatos']) || $this->NM_cmp_hidden['contatos'] != "off") { 
           $conteudo = $this->contatos; 
+          $conteudo_original = $this->contatos; 
           if (!is_file($this->Ini->root  . $this->Ini->path_imag_cab . "/scriptcase__NM__ico__NM__businesspeople_24.png"))
           { 
               $conteudo = "&nbsp;" ;  
@@ -3346,6 +3126,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
                   $conteudo = "<img border=\"0\" src=\"" . $this->NM_raiz_img  . $this->Ini->path_imag_cab . "/scriptcase__NM__ico__NM__businesspeople_24.png\"/>" ; 
               } 
           } 
+          $str_tem_display = $conteudo;
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['proc_pdf'])
           {
               $this->SC_nowrap = "NOWRAP";
@@ -3365,7 +3146,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
                {
                    $Parms_Lig .= '*scout';
                }
-               $Parms_Lig .= 'under_dashboard*scin1*scoutdashboard_app*scin' . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['dashboard_app'] . '*scoutown_widget*scin' . $linkTarget . '*scoutparent_widget*scin' . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['own_widget'] . '*scoutcompact_mode*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['compact_mode'] ? '1' : '0') . '*scoutremove_margin*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin'] ? '1' : '0');
+               $Parms_Lig .= 'under_dashboard*scin1*scoutdashboard_app*scin' . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['dashboard_app'] . '*scoutown_widget*scin' . $linkTarget . '*scoutparent_widget*scin' . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['own_widget'] . '*scoutcompact_mode*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['compact_mode'] ? '1' : '0') . '*scoutremove_margin*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin'] ? '1' : '0') . '*scoutremove_border*scin' . ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['dashboard_info']['remove_border'] ? '1' : '0');
            }
            $Md5_Lig    = "@SC_par@" . NM_encode_input($this->Ini->sc_page) . "@SC_par@grid_mail_lista@SC_par@" . md5($Parms_Lig);
            $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['Lig_Md5'][md5($Parms_Lig)] = $Parms_Lig;
@@ -3381,15 +3162,11 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
  }
  function NM_calc_span()
  {
-   $this->NM_colspan  = 8;
+   $this->NM_colspan  = 7;
    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_psq'])
    {
        $this->NM_colspan++;
    }
-   if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida'] || $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "pdf" || $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['embutida_pdf'] == "pdf")
-   {
-       $this->NM_colspan--;
-   } 
    foreach ($this->NM_cmp_hidden as $Cmp => $Hidden)
    {
        if ($Hidden == "off")
@@ -3446,7 +3223,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
            }
         }
         $nm_saida->saida(" <TR> \r\n");
-        $nm_saida->saida("  <TD style=\"padding: 0px; vertical-align: top;\"> \r\n");
+        $nm_saida->saida("  <TD style=\"padding: 0px; vertical-align: top;\" width=\"100%\"> \r\n");
         $nm_saida->saida("   <TABLE class=\"" . $this->css_scGridTabela . "\" align=\"center\" " . $nm_id_aplicacao . " width=\"100%\">\r\n");
         if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['proc_pdf'] && ($this->pdf_all_cab == "S" || $this->pdf_all_label == "S")) { 
             $nm_saida->saida(" <thead> \r\n");
@@ -3484,8 +3261,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -3493,8 +3269,7 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -3502,8 +3277,18 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
    function nmgp_barra_top_normal()
    {
@@ -3531,10 +3316,10 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       {
       if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['qsearch'] == "on")
       {
+          $nm_saida->saida("           <script type=\"text/javascript\">var change_fast_top = \"\";</script>\r\n");
           $OPC_cmp = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][0] : "";
           $OPC_arg = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][1] : "";
           $OPC_dat = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][2] : "";
-          $nm_saida->saida("           <script type=\"text/javascript\">var change_fast_top = \"\";</script>\r\n");
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
           {
               $this->Ini->Arr_result['setVar'][] = array('var' => 'change_fast_top', 'value' => "");
@@ -3551,14 +3336,25 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
           {
               $OPC_dat = NM_conv_charset($OPC_dat, $_SESSION['scriptcase']['charset'], "UTF-8");
           }
+          $stateSearchIconClose  = 'none';
+          $stateSearchIconSearch = '';
+          if(!empty($OPC_dat))
+          {
+              $stateSearchIconClose  = '';
+              $stateSearchIconSearch = 'none';
+          }
           $nm_saida->saida("          <input type=\"hidden\"  id=\"fast_search_f0_top\" name=\"nmgp_fast_search\" value=\"SC_all_Cmp\">\r\n");
-          $nm_saida->saida("          <input type=\"hidden\" id=\"cond_fast_search_f0_top\" name=\"nmgp_cond_fast_search\" value=\"qp\">\r\n");
-          $nm_saida->saida("          <script type=\"text/javascript\">var scQSInitVal = \"" . NM_encode_input($OPC_dat) . "\";</script>\r\n");
-          $nm_saida->saida("          <span id=\"quicksearchph_top\">\r\n");
-          $nm_saida->saida("           <input type=\"text\" id=\"SC_fast_search_top\" class=\"" . $this->css_css_toolbar_obj . "\" style=\"vertical-align: middle;\" name=\"nmgp_arg_fast_search\" value=\"" . NM_encode_input($OPC_dat) . "\" size=\"10\" onChange=\"change_fast_top = 'CH';\" alt=\"{maxLength: 255}\" placeholder=\"" . $this->Ini->Nm_lang['lang_othr_qk_watermark'] . "\">\r\n");
-          $nm_saida->saida("           <img style=\"display: none\" id=\"SC_fast_search_close_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_clean . "\" onclick=\"document.getElementById('SC_fast_search_top').value = '__Clear_Fast__'; nm_gp_submit_qsearch('top');\">\r\n");
-          $nm_saida->saida("           <img style=\"display: none\" id=\"SC_fast_search_submit_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_search . "\" onclick=\"nm_gp_submit_qsearch('top');\">\r\n");
-          $nm_saida->saida("          </span>\r\n");
+          $nm_saida->saida("          <select id=\"cond_fast_search_f0_top\" class=\"" . $this->css_css_toolbar_obj . "\" style=\"vertical-align: middle;display:none;\" name=\"nmgp_cond_fast_search\" onChange=\"change_fast_top = 'CH';\">\r\n");
+          $OPC_sel = " selected='selected'";
+          $nm_saida->saida("           <option value=\"qp\"$OPC_sel>" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>\r\n");
+          $nm_saida->saida("          </select>\r\n");
+          $nm_saida->saida("          <span id=\"quicksearchph_top\" class=\"" . $this->css_css_toolbar_obj . "\" style='display: inline-block; vertical-align: inherit;'>\r\n");
+          $nm_saida->saida("           <span>\r\n");
+          $nm_saida->saida("             <input type=\"text\" id=\"SC_fast_search_top\" class=\"" . $this->css_css_toolbar_obj . "_text\" style=\"border-width: 0px;\" name=\"nmgp_arg_fast_search\" value=\"" . NM_encode_input($OPC_dat) . "\" size=\"10\" onChange=\"change_fast_top = 'CH';\" alt=\"{maxLength: 255}\" placeholder=\"" . $this->Ini->Nm_lang['lang_othr_qk_watermark'] . "\">&nbsp;\r\n");
+          $nm_saida->saida("             <img style=\"display: " . $stateSearchIconSearch . "\" id=\"SC_fast_search_submit_top\" class='css_toolbar_obj_qs_search_img' src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_search . "\" onclick=\"nm_gp_submit_qsearch('top');\">\r\n");
+          $nm_saida->saida("             <img style=\"display: " . $stateSearchIconClose . "\" class='css_toolbar_obj_qs_search_img' id=\"SC_fast_search_close_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_clean . "\" onclick=\"document.getElementById('SC_fast_search_top').value = '__Clear_Fast__'; nm_gp_submit_qsearch('top');\">\r\n");
+          $nm_saida->saida("            </span>\r\n");
+          $nm_saida->saida("          </span>");
           $NM_btn = true;
       }
           $nm_saida->saida("         </td> \r\n");
@@ -3730,28 +3526,8 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
               $nm_saida->saida("          <img id=\"NM_sep_1\" src=\"" . $this->Ini->path_img_global . $this->Ini->Img_sep_grid . "\" align=\"absmiddle\" style=\"vertical-align: middle;\">\r\n");
           }
       }
-      if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['filter'] == "on"  && !$this->grid_emb_form)
-      {
-           $Cod_Btn = nmButtonOutput($this->arr_buttons, "bpesquisa", "nm_gp_move('busca', '0', 'grid');", "nm_gp_move('busca', '0', 'grid');", "pesq_top", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-           $nm_saida->saida("           $Cod_Btn \r\n");
-           $NM_btn = true;
-      }
           $nm_saida->saida("         </td> \r\n");
           $nm_saida->saida("          <td class=\"" . $this->css_scGridToolbarPadd . "\" nowrap valign=\"middle\" align=\"right\" width=\"33%\"> \r\n");
-        if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['new'] == "on" && $this->nmgp_botoes['insert'] == "on" && !$this->grid_emb_form)
-        {
-           $Sc_parent = ($this->grid_emb_form_full) ? "S" : "";
-           if (isset($this->Ini->sc_lig_md5["form_mail_lista"]) && $this->Ini->sc_lig_md5["form_mail_lista"] == "S") {
-               $Parms_Lig  = "NM_cancel_insert_new*scin1*scoutNM_cancel_return_new*scin1*scoutnmgp_opcao*scinnovo*scoutNM_btn_insert*scinS*scoutNM_btn_new*scinS*scoutNM_btn_update*scinS*scoutNM_btn_delete*scinS*scoutNM_btn_navega*scinN*scout";
-               $Md5_Lig    = "@SC_par@" . NM_encode_input($this->Ini->sc_page) . "@SC_par@grid_mail_lista@SC_par@" . md5($Parms_Lig);
-               $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['Lig_Md5'][md5($Parms_Lig)] = $Parms_Lig;
-           } else {
-               $Md5_Lig  = "NM_cancel_insert_new*scin1*scoutNM_cancel_return_new*scin1*scoutnmgp_opcao*scinnovo*scoutNM_btn_insert*scinS*scoutNM_btn_new*scinS*scoutNM_btn_update*scinS*scoutNM_btn_delete*scinS*scoutNM_btn_navega*scinN*scout";
-           }
-         $Cod_Btn = nmButtonOutput($this->arr_buttons, "bnovo", "nm_gp_submit1('" .  $this->Ini->link_form_mail_lista . "', '$this->nm_location', '$Md5_Lig', '_self', 'form_mail_lista'); return false;;", "nm_gp_submit1('" .  $this->Ini->link_form_mail_lista . "', '$this->nm_location', '$Md5_Lig', '_self', 'form_mail_lista'); return false;;", "sc_b_new_top", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-         $nm_saida->saida("           $Cod_Btn \r\n");
-         $NM_btn = true;
-        }
         if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['SC_Ind_Groupby'] != "sc_free_total")
         {
         }
@@ -4056,10 +3832,10 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       {
       if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['qsearch'] == "on")
       {
+          $nm_saida->saida("           <script type=\"text/javascript\">var change_fast_top = \"\";</script>\r\n");
           $OPC_cmp = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][0] : "";
           $OPC_arg = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][1] : "";
           $OPC_dat = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][2] : "";
-          $nm_saida->saida("           <script type=\"text/javascript\">var change_fast_top = \"\";</script>\r\n");
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
           {
               $this->Ini->Arr_result['setVar'][] = array('var' => 'change_fast_top', 'value' => "");
@@ -4076,14 +3852,25 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
           {
               $OPC_dat = NM_conv_charset($OPC_dat, $_SESSION['scriptcase']['charset'], "UTF-8");
           }
+          $stateSearchIconClose  = 'none';
+          $stateSearchIconSearch = '';
+          if(!empty($OPC_dat))
+          {
+              $stateSearchIconClose  = '';
+              $stateSearchIconSearch = 'none';
+          }
           $nm_saida->saida("          <input type=\"hidden\"  id=\"fast_search_f0_top\" name=\"nmgp_fast_search\" value=\"SC_all_Cmp\">\r\n");
-          $nm_saida->saida("          <input type=\"hidden\" id=\"cond_fast_search_f0_top\" name=\"nmgp_cond_fast_search\" value=\"qp\">\r\n");
-          $nm_saida->saida("          <script type=\"text/javascript\">var scQSInitVal = \"" . NM_encode_input($OPC_dat) . "\";</script>\r\n");
-          $nm_saida->saida("          <span id=\"quicksearchph_top\">\r\n");
-          $nm_saida->saida("           <input type=\"text\" id=\"SC_fast_search_top\" class=\"" . $this->css_css_toolbar_obj . "\" style=\"vertical-align: middle;\" name=\"nmgp_arg_fast_search\" value=\"" . NM_encode_input($OPC_dat) . "\" size=\"10\" onChange=\"change_fast_top = 'CH';\" alt=\"{maxLength: 255}\" placeholder=\"" . $this->Ini->Nm_lang['lang_othr_qk_watermark'] . "\">\r\n");
-          $nm_saida->saida("           <img style=\"display: none\" id=\"SC_fast_search_close_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_clean . "\" onclick=\"document.getElementById('SC_fast_search_top').value = '__Clear_Fast__'; nm_gp_submit_qsearch('top');\">\r\n");
-          $nm_saida->saida("           <img style=\"display: none\" id=\"SC_fast_search_submit_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_search . "\" onclick=\"nm_gp_submit_qsearch('top');\">\r\n");
-          $nm_saida->saida("          </span>\r\n");
+          $nm_saida->saida("          <select id=\"cond_fast_search_f0_top\" class=\"" . $this->css_css_toolbar_obj . "\" style=\"vertical-align: middle;display:none;\" name=\"nmgp_cond_fast_search\" onChange=\"change_fast_top = 'CH';\">\r\n");
+          $OPC_sel = " selected='selected'";
+          $nm_saida->saida("           <option value=\"qp\"$OPC_sel>" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>\r\n");
+          $nm_saida->saida("          </select>\r\n");
+          $nm_saida->saida("          <span id=\"quicksearchph_top\" class=\"" . $this->css_css_toolbar_obj . "\" style='display: inline-block; vertical-align: inherit;'>\r\n");
+          $nm_saida->saida("           <span>\r\n");
+          $nm_saida->saida("             <input type=\"text\" id=\"SC_fast_search_top\" class=\"" . $this->css_css_toolbar_obj . "_text\" style=\"border-width: 0px;\" name=\"nmgp_arg_fast_search\" value=\"" . NM_encode_input($OPC_dat) . "\" size=\"10\" onChange=\"change_fast_top = 'CH';\" alt=\"{maxLength: 255}\" placeholder=\"" . $this->Ini->Nm_lang['lang_othr_qk_watermark'] . "\">&nbsp;\r\n");
+          $nm_saida->saida("             <img style=\"display: " . $stateSearchIconSearch . "\" id=\"SC_fast_search_submit_top\" class='css_toolbar_obj_qs_search_img' src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_search . "\" onclick=\"nm_gp_submit_qsearch('top');\">\r\n");
+          $nm_saida->saida("             <img style=\"display: " . $stateSearchIconClose . "\" class='css_toolbar_obj_qs_search_img' id=\"SC_fast_search_close_top\" src=\"" . $this->Ini->path_botoes . "/" . $this->Ini->Img_qs_clean . "\" onclick=\"document.getElementById('SC_fast_search_top').value = '__Clear_Fast__'; nm_gp_submit_qsearch('top');\">\r\n");
+          $nm_saida->saida("            </span>\r\n");
+          $nm_saida->saida("          </span>");
           $NM_btn = true;
       }
           $nm_saida->saida("         </td> \r\n");
@@ -4255,28 +4042,8 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
               $nm_saida->saida("          <img id=\"NM_sep_2\" src=\"" . $this->Ini->path_img_global . $this->Ini->Img_sep_grid . "\" align=\"absmiddle\" style=\"vertical-align: middle;\">\r\n");
           }
       }
-      if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['filter'] == "on"  && !$this->grid_emb_form)
-      {
-           $Cod_Btn = nmButtonOutput($this->arr_buttons, "bpesquisa", "nm_gp_move('busca', '0', 'grid');", "nm_gp_move('busca', '0', 'grid');", "pesq_top", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-           $nm_saida->saida("           $Cod_Btn \r\n");
-           $NM_btn = true;
-      }
           $nm_saida->saida("         </td> \r\n");
           $nm_saida->saida("          <td class=\"" . $this->css_scGridToolbarPadd . "\" nowrap valign=\"middle\" align=\"right\" width=\"33%\"> \r\n");
-        if (!$this->Ini->SC_Link_View && $this->nmgp_botoes['new'] == "on" && $this->nmgp_botoes['insert'] == "on" && !$this->grid_emb_form)
-        {
-           $Sc_parent = ($this->grid_emb_form_full) ? "S" : "";
-           if (isset($this->Ini->sc_lig_md5["form_mail_lista"]) && $this->Ini->sc_lig_md5["form_mail_lista"] == "S") {
-               $Parms_Lig  = "NM_cancel_insert_new*scin1*scoutNM_cancel_return_new*scin1*scoutnmgp_opcao*scinnovo*scoutNM_btn_insert*scinS*scoutNM_btn_new*scinS*scoutNM_btn_update*scinS*scoutNM_btn_delete*scinS*scoutNM_btn_navega*scinN*scout";
-               $Md5_Lig    = "@SC_par@" . NM_encode_input($this->Ini->sc_page) . "@SC_par@grid_mail_lista@SC_par@" . md5($Parms_Lig);
-               $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['Lig_Md5'][md5($Parms_Lig)] = $Parms_Lig;
-           } else {
-               $Md5_Lig  = "NM_cancel_insert_new*scin1*scoutNM_cancel_return_new*scin1*scoutnmgp_opcao*scinnovo*scoutNM_btn_insert*scinS*scoutNM_btn_new*scinS*scoutNM_btn_update*scinS*scoutNM_btn_delete*scinS*scoutNM_btn_navega*scinN*scout";
-           }
-         $Cod_Btn = nmButtonOutput($this->arr_buttons, "bnovo", "nm_gp_submit1('" .  $this->Ini->link_form_mail_lista . "', '$this->nm_location', '$Md5_Lig', '_self', 'form_mail_lista'); return false;;", "nm_gp_submit1('" .  $this->Ini->link_form_mail_lista . "', '$this->nm_location', '$Md5_Lig', '_self', 'form_mail_lista'); return false;;", "sc_b_new_top", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-         $nm_saida->saida("           $Cod_Btn \r\n");
-         $NM_btn = true;
-        }
         if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['SC_Ind_Groupby'] != "sc_free_total")
         {
         }
@@ -4625,1339 +4392,22 @@ $_SESSION['scriptcase']['grid_mail_lista']['contr_erro'] = 'off';
       $nm_saida->saida("      </td>\r\n");
       $nm_saida->saida("     </tr>\r\n");
    }
-   function html_grid_search()
-   {
-       global $nm_saida;
-       $this->grid_search_seq = 0;
-       $this->grid_search_str = "";
-       $this->grid_search_dat = array();
-       $this->grid_search_str = "";
-        if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
-        { 
-           $_SESSION['scriptcase']['saida_html'] = "";
-        } 
-       $this->NM_case_insensitive = false;
-       $tmp = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['cond_pesq'];
-       $pos = strrpos($tmp, "##*@@");
-       if ($pos !== false)
-       {
-           $and_or = (substr($tmp, ($pos + 5)) == "and") ? $this->Ini->Nm_lang['lang_srch_and_cond'] : $this->Ini->Nm_lang['lang_srch_orr_cond'];
-           $tmp    = substr($tmp, 0, $pos);
-           $this->grid_search_str = str_replace("##*@@", ", " . $and_or . " ", $tmp);
-       }
-       $str_display = empty($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq'])?'none':'';
-       if(!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
-       {
-          $nm_saida->saida("   <tr id=\"NM_Grid_Search\" ajax='' style='display:" . $str_display . "'>\r\n");
-       }
-       if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'] && !empty($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq']))
-       { 
-           $_SESSION['scriptcase']['saida_html'] = "";
-           foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq'] as $cmp => $def)
-           {
-               $this->Ini->Arr_result['setValue'][] = array('field' => 'grid_search_label_' . $cmp, 'value' => NM_charset_to_utf8(trim($def['descr'])));
-               $this->Ini->Arr_result['setTitle'][] = array('field' => 'grid_search_label_' . $cmp, 'value' => NM_charset_to_utf8(trim($def['hint'])));
-           }
-           $lin_obj = $this->grid_search_add_tag();
-           $this->Ini->Arr_result['setValue'][] = array('field' => 'id_grid_search_add_tag', 'value' => NM_charset_to_utf8($lin_obj));
-           $this->Ini->Arr_result['setValue'][] = array('field' => 'id_grid_search_cmd_str', 'value' => NM_charset_to_utf8($this->grid_search_str));
-           if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['save_grid']))
-           {
-               return;
-           }
-           else
-           {
-               $this->Ini->Arr_result['setDisplay'][] = array('field' => 'NM_Grid_Search', 'value' => '');
-           }
-       } 
-           if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['save_grid']))
-           {
-               $str_display = empty($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq']) ? 'none' : '';
-               $this->Ini->Arr_result['setDisplay'][] = array('field' => 'NM_Grid_Search', 'value' => $str_display);
-           }
-       $nm_saida->saida("   <td  colspan=3 valign=\"top\"> \r\n");
-       $nm_saida->saida("   <div id='id_grid_search_cmd_string' class=\"" . $this->css_scAppDivMoldura . "\" style='cursor:pointer; display:none;' onclick=\"$('#id_grid_search_cmd_string').hide();$('#div_grid_search').show();\"> \r\n");
-             if (is_file($this->Ini->root . $this->Ini->path_img_global . '/' . $this->Ini->App_div_tree_img_exp))
-             {
-       $nm_saida->saida("                             <img id='id_app_div_tree_img_exp' src=\"" . $this->Ini->path_img_global . "/" . $this->Ini->App_div_tree_img_exp . "\" border=0 align='absmiddle' class='scGridFilterTagIconExp'>\r\n");
-             }
-       $nm_saida->saida("     <span class=\"" . $this->css_scAppDivHeaderText . "\">\r\n");
-       $nm_saida->saida("             " . $this->Ini->Nm_lang['lang_othr_dynamicsearch_title_outside'] . "\r\n");
-       $nm_saida->saida("     </span>\r\n");
-       $nm_saida->saida("     <span id='id_grid_search_cmd_str' class=\"" . $this->css_scAppDivContentText . "\">" . NM_encode_input(trim($this->grid_search_str)) . "</span>\r\n");
-       $nm_saida->saida("   </div> \r\n");
-       $nm_saida->saida("   <div id=\"div_grid_search\" class=\"" . $this->css_scAppDivMoldura . " scGridFilterTag\" style='display:;'> \r\n");
-             if (is_file($this->Ini->root . $this->Ini->path_img_global . '/' . $this->Ini->App_div_tree_img_col))
-             {
-       $nm_saida->saida("                             <a href=\"#\" onclick=\"$('#id_grid_search_cmd_string').show();$('#div_grid_search').hide();\" class='scGridFilterTagIconCol'><img id='id_app_div_tree_img_col' src=\"" . $this->Ini->path_img_global . "/" . $this->Ini->App_div_tree_img_col . "\" border=0 align='absmiddle' style='vertical-align: middle; margin-right:4px;'></a>\r\n");
-             }
-       $nm_saida->saida("    <div id='icon_grid_search' class='scGridFilterTagIcon'><svg height='1792' viewBox='0 0 1792 1792' width='1792' xmlns='http://www.w3.org/2000/svg'><path d='M1595 295q17 41-14 70l-493 493v742q0 42-39 59-13 5-25 5-27 0-45-19l-256-256q-19-19-19-45v-486l-493-493q-31-29-14-70 17-39 59-39h1280q42 0 59 39z'/></svg></div> \r\n");
-       $nm_saida->saida("    <div id=\"tags_grid_search\" class='scGridFilterTagList'> \r\n");
-       $nm_saida->saida("        <form id= \"id_Fgrid_search\" name=\"Fgrid_search\" method=\"post\" action=\"./\" target=\"_self\"> \r\n");
-       $nm_saida->saida("            <input type=\"hidden\" name=\"script_case_init\" value=\"" . NM_encode_input($this->Ini->sc_page) . "\"/> \r\n");
-       $nm_saida->saida("            <input type=hidden name=\"script_case_session\" value=\"" . NM_encode_input(session_id()) . "\"/>\r\n");
-       $nm_saida->saida("            <input type=\"hidden\" name=\"nmgp_opcao\" value=\"grid_search\"/> \r\n");
-       $nm_saida->saida("            <input type=\"hidden\" name=\"parm\" value=\"\"/> \r\n");
-            if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq']) && !empty($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq']))
-            {
-                foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq'] as $cmp => $def)
-                {
-                    if (isset($def['label'])) {
-                        $this->grid_search_seq++;
-                        $lin_obj = $this->grid_search_tag_ini($cmp, $def, $this->grid_search_seq);
-                        $nm_saida->saida("" . $lin_obj . "\r\n");
-                        if ($cmp == "mail_lista_sistema")
-                        {
-                           $this->grid_search_dat[$this->grid_search_seq] = "mail_lista_sistema";
-                           $lin_obj = $this->grid_search_mail_lista_sistema($this->grid_search_seq, 'N', $def['opc'], $def['val'], $def['label']);
-                           $nm_saida->saida("" . $lin_obj . "\r\n");
-                        }
-                        if ($cmp == "idmail_lista")
-                        {
-                           $this->grid_search_dat[$this->grid_search_seq] = "idmail_lista";
-                           $lin_obj = $this->grid_search_idmail_lista($this->grid_search_seq, 'N', $def['opc'], $def['val'], $def['label']);
-                           $nm_saida->saida("" . $lin_obj . "\r\n");
-                        }
-                        if ($cmp == "mail_lista_descricao")
-                        {
-                           $this->grid_search_dat[$this->grid_search_seq] = "mail_lista_descricao";
-                           $lin_obj = $this->grid_search_mail_lista_descricao($this->grid_search_seq, 'N', $def['opc'], $def['val'], $def['label']);
-                           $nm_saida->saida("" . $lin_obj . "\r\n");
-                        }
-                        if ($cmp == "mail_lista_ativo")
-                        {
-                           $this->grid_search_dat[$this->grid_search_seq] = "mail_lista_ativo";
-                           $lin_obj = $this->grid_search_mail_lista_ativo($this->grid_search_seq, 'N', $def['opc'], $def['val'], $def['label']);
-                           $nm_saida->saida("" . $lin_obj . "\r\n");
-                        }
-                        $lin_obj = $this->grid_search_tag_end();
-                        $nm_saida->saida("" . $lin_obj . "\r\n");
-                    }
-                }
-            }
-       $nm_saida->saida("            <div id='add_grid_search' class='scGridFilterTagAdd SC_SubMenuApp' onclick=\"nm_show_advancedsearch_fields();\">\r\n");
-       $nm_saida->saida("                " . $this->Ini->Nm_lang['lang_srch_addfields'] . "\r\n");
-       $nm_saida->saida("                <div id='id_grid_search_add_tag' style='position: absolute; border-collapse: collapse; z-index: 1000; display:none;'>\r\n");
-       $lin_obj = $this->grid_search_add_tag();
-       $nm_saida->saida("" . $lin_obj . "\r\n");
-       $nm_saida->saida("                </div>\r\n");
-       $nm_saida->saida("            </div>\r\n");
-       $nm_saida->saida("        </form>\r\n");
-       $nm_saida->saida("    </div>\r\n");
-       $this->NM_fil_ant = $this->gera_array_filtros();
-       $strDisplayFilter = (empty($this->NM_fil_ant))?'none':'';
-       $nm_saida->saida("   <div id='save_grid_search' class='scGridFilterTagSave'>\r\n");
-       $nm_saida->saida("    <form name='Fgrid_search_save'>\r\n");
-       $nm_saida->saida("     <span id=\"id_NM_filters_save\" style=\"display: " . $strDisplayFilter . "\">\r\n");
-       $nm_saida->saida("       <SELECT class=\"scFilterToolbar_obj\" id=\"id_sel_recup_filters\" name=\"sel_recup_filters\" onChange=\"nm_change_grid_search(this)\" size=\"1\">\r\n");
-       $nm_saida->saida("           <option value=\"\"></option>\r\n");
-       $Nome_filter = "";
-       foreach ($this->NM_fil_ant as $Cada_filter => $Tipo_filter)
-       {
-           $Select = "";
-           if (isset($this->NM_curr_fil) && $Cada_filter == $this->NM_curr_fil)
-           {
-               $Select = "selected";
-           }
-           if (NM_is_utf8($Cada_filter) && $_SESSION['scriptcase']['charset'] != "UTF-8")
-           {
-               $Cada_filter    = sc_convert_encoding($Cada_filter, $_SESSION['scriptcase']['charset'], "UTF-8");
-               $Tipo_filter[0] = sc_convert_encoding($Tipo_filter[0], $_SESSION['scriptcase']['charset'], "UTF-8");
-           }
-           elseif (!NM_is_utf8($Cada_filter) && $_SESSION['scriptcase']['charset'] == "UTF-8")
-           {
-               $Cada_filter    = sc_convert_encoding($Cada_filter, "UTF-8", $_SESSION['scriptcase']['charset']);
-               $Tipo_filter[0] = sc_convert_encoding($Tipo_filter[0], "UTF-8", $_SESSION['scriptcase']['charset']);
-           }
-           if ($Tipo_filter[1] != $Nome_filter)
-           {
-               $Nome_filter = $Tipo_filter[1];
-                   $nm_saida->saida("       <option value=''>" . NM_encode_input($Nome_filter) . "</option>\r\n");
-           }
-              $nm_saida->saida("        <option value='" . NM_encode_input($Tipo_filter[0]) . "' " . $Select . ">.." . $Cada_filter . "</option>\r\n");
-       }
-       $nm_saida->saida("       </SELECT>\r\n");
-       $nm_saida->saida("     </span>\r\n");
-       $Cod_Btn = nmButtonOutput($this->arr_buttons, "bedit_filter_appdiv", "document.getElementById('Salvar_filters').style.display = ''; document.Fgrid_search_save.nmgp_save_name.focus()", "document.getElementById('Salvar_filters').style.display = ''; document.Fgrid_search_save.nmgp_save_name.focus()", "Ativa_save", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-       $nm_saida->saida("       $Cod_Btn \r\n");
-       $nm_saida->saida("    <DIV id=\"Salvar_filters\" style=\"display:none;z-index:9999;position: absolute;\">\r\n");
-       $nm_saida->saida("     <TABLE align=\"center\" class=\"scFilterTable\">\r\n");
-       $nm_saida->saida("      <TR>\r\n");
-       $nm_saida->saida("       <TD class=\"scFilterBlock\">\r\n");
-       $nm_saida->saida("        <table style=\"border-width: 0px; border-collapse: collapse\" width=\"100%\">\r\n");
-       $nm_saida->saida("         <tr>\r\n");
-       $nm_saida->saida("          <td style=\"padding: 0px\" valign=\"top\" class=\"scFilterBlockFont\">" . $this->Ini->Nm_lang['lang_othr_srch_head'] . "</td>\r\n");
-       $nm_saida->saida("          <td style=\"padding: 0px\" align=\"right\" valign=\"top\">\r\n");
-       $Cod_Btn = nmButtonOutput($this->arr_buttons, "bcancelar_appdiv", "document.getElementById('Salvar_filters').style.display = 'none'", "document.getElementById('Salvar_filters').style.display = 'none'", "Cancel_frm", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-       $nm_saida->saida("       $Cod_Btn \r\n");
-       $nm_saida->saida("          </td>\r\n");
-       $nm_saida->saida("         </tr>\r\n");
-       $nm_saida->saida("        </table>\r\n");
-       $nm_saida->saida("       </TD>\r\n");
-       $nm_saida->saida("      </TR>\r\n");
-       $nm_saida->saida("      <TR>\r\n");
-       $nm_saida->saida("       <TD class=\"scFilterFieldOdd\">\r\n");
-       $nm_saida->saida("        <table style=\"border-width: 0px; border-collapse: collapse\" width=\"100%\">\r\n");
-       $nm_saida->saida("         <tr>\r\n");
-       $nm_saida->saida("          <td style=\"padding: 0px\" valign=\"top\">\r\n");
-       $nm_saida->saida("           <input class=\"scFilterObjectOdd\" type=\"text\" id=\"SC_nmgp_save_name\" name=\"nmgp_save_name\" value=\"\">\r\n");
-       $nm_saida->saida("          </td>\r\n");
-       $nm_saida->saida("          <td style=\"padding: 0px\" align=\"right\" valign=\"top\">\r\n");
-       $Cod_Btn = nmButtonOutput($this->arr_buttons, "bsalvar_appdiv", "nm_save_grid_search()", "nm_save_grid_search()", "Save_frm", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-       $nm_saida->saida("       $Cod_Btn \r\n");
-       $nm_saida->saida("          </td>\r\n");
-       $nm_saida->saida("         </tr>\r\n");
-       $nm_saida->saida("        </table>\r\n");
-       $nm_saida->saida("       </TD>\r\n");
-       $nm_saida->saida("      </TR>\r\n");
-       $style_del_filter = (!empty($this->NM_fil_ant)) ? '' : 'none';
-       $nm_saida->saida("      <TR>\r\n");
-       $nm_saida->saida("       <TD class=\"scFilterFieldEven\">\r\n");
-       $nm_saida->saida("       <DIV id=\"Apaga_filters\" style=\"display: " . $style_del_filter . "\">\r\n");
-       $nm_saida->saida("        <table style=\"border-width: 0px; border-collapse: collapse\" width=\"100%\">\r\n");
-       $nm_saida->saida("         <tr>\r\n");
-       $nm_saida->saida("          <td style=\"padding: 0px\" valign=\"top\">\r\n");
-       $nm_saida->saida("          <div id=\"id_sel_filters_del\">\r\n");
-       $nm_saida->saida("           <SELECT class=\"scFilterObjectOdd\" id=\"sel_filters_del\" name=\"NM_filters_del\" size=\"1\">\r\n");
-       $nm_saida->saida("            <option value=\"\"></option>\r\n");
-       $Nome_filter = "";
-       foreach ($this->NM_fil_ant as $Cada_filter => $Tipo_filter)
-       {
-           $Select = "";
-           if ($Cada_filter == $this->NM_curr_fil)
-           {
-               $Select = "selected";
-           }
-           if (NM_is_utf8($Cada_filter) && $_SESSION['scriptcase']['charset'] != "UTF-8")
-           {
-               $Cada_filter    = sc_convert_encoding($Cada_filter, $_SESSION['scriptcase']['charset'], "UTF-8");
-               $Tipo_filter[0] = sc_convert_encoding($Tipo_filter[0], $_SESSION['scriptcase']['charset'], "UTF-8");
-           }
-           elseif (!NM_is_utf8($Cada_filter) && $_SESSION['scriptcase']['charset'] == "UTF-8")
-           {
-               $Cada_filter    = sc_convert_encoding($Cada_filter, "UTF-8", $_SESSION['scriptcase']['charset']);
-               $Tipo_filter[0] = sc_convert_encoding($Tipo_filter[0], "UTF-8", $_SESSION['scriptcase']['charset']);
-           }
-           if ($Tipo_filter[1] != $Nome_filter)
-           {
-               $Nome_filter = $Tipo_filter[1];
-               $nm_saida->saida("           <option value=''>" . NM_encode_input($Nome_filter) . "</option>\r\n");
-           }
-          $nm_saida->saida("           <option value='" . NM_encode_input($Tipo_filter[0]) . "' " . $Select . ">.." . $Cada_filter . "</option>\r\n");
-       }
-       $nm_saida->saida("           </SELECT>\r\n");
-       $nm_saida->saida("          </div>\r\n");
-       $nm_saida->saida("          </td>\r\n");
-       $nm_saida->saida("          <td style=\"padding: 0px\" align=\"right\" valign=\"top\">\r\n");
-       $Cod_Btn = nmButtonOutput($this->arr_buttons, "bexcluir", "nm_del_grid_search()", "nm_del_grid_search()", "Exc_filtro", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-       $nm_saida->saida("       $Cod_Btn \r\n");
-       $nm_saida->saida("          </td>\r\n");
-       $nm_saida->saida("         </tr>\r\n");
-       $nm_saida->saida("        </table>\r\n");
-       $nm_saida->saida("       </DIV>\r\n");
-       $nm_saida->saida("       </TD>\r\n");
-       $nm_saida->saida("      </TR>\r\n");
-       $nm_saida->saida("     </TABLE>\r\n");
-       $nm_saida->saida("    </DIV> \r\n");
-       $nm_saida->saida("   </form>\r\n");
-       $nm_saida->saida("  </div> \r\n");
-       $nm_saida->saida("    <div id='close_grid_search' class='scGridFilterTagClose' onclick=\"checkLastTag(true);setTimeout(function() {nm_proc_grid_search(0, 'del_grid_search_all', 'grid_search')}, 200);\"></div>\r\n");
-       $nm_saida->saida("   </div>\r\n");
-       $nm_saida->saida("   </td>\r\n");
-       if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
-       { 
-           $this->Ini->Arr_result['setValue'][] = array('field' => 'NM_Grid_Search', 'value' => NM_charset_to_utf8($_SESSION['scriptcase']['saida_html']));
-           $_SESSION['scriptcase']['saida_html'] = "";
-           if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['save_grid']) && !empty($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq']))
-           { 
-               $this->Ini->Arr_result['exec_JS'][] = array('function' => 'SC_carga_evt_jquery_grid', 'parm' => 'all');
-           } 
-       } 
-       if(!$_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
-       {
-           $nm_saida->saida("   </tr>\r\n");
-       }
-       $this->JS_grid_search();
-   }
-   function grid_search_tag_ini($cmp, $def, $seq)
-   {
-       global $nm_saida;
-       $lin_obj  = "";
-       $lin_obj .= "<div class='scGridFilterTagListItem' id='grid_search_" . $cmp . "'>";
-       $lin_obj .= "<span class='scGridFilterTagListItemLabel' id='grid_search_label_" . $cmp . "' title='" . NM_encode_input($def['hint']) . "' style='cursor:pointer;' onclick=\"closeAllTags();$('#grid_search_" . $cmp . " .scGridFilterTagListFilter').toggle();\">" . NM_encode_input($def['descr']) . "</span>";
-       $lin_obj .= "<span class='scGridFilterTagListItemClose' onclick=\"$(this).parent().remove();checkLastTag(false);setTimeout(function() {nm_proc_grid_search('" . $seq . "', 'del_grid_search', 'grid_search'); return false;}, 200); return false;
-    \"></span>";
-       return $lin_obj;
-   }
-   function grid_search_tag_end()
-   {
-       global $nm_saida;
-       $lin_obj  = "</div>";
-       return $lin_obj;
-   }
-   function grid_search_add_tag()
-   {
-       $lin_obj  = "";
-       $All_cmp_search = array('mail_lista_sistema','idmail_lista','mail_lista_descricao','mail_lista_ativo');
-       $nmgp_tab_label = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pesq_tab_label'];
-       if (!empty($nmgp_tab_label))
-       {
-          $nm_tab_campos = explode("?@?", $nmgp_tab_label);
-          $nmgp_tab_label = array();
-          foreach ($nm_tab_campos as $cada_campo)
-          {
-              $parte_campo = explode("?#?", $cada_campo);
-              $nmgp_tab_label[$parte_campo[0]] = $parte_campo[1];
-          }
-       }
-       if (count($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq']) < 4)
-       {
-           $lin_obj .= "<table id='id_grid_search_all_cmp' cellpadding=0 cellspacing=0>";
-           foreach ($All_cmp_search as $cada_cmp)
-           {
-               if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq'][$cada_cmp]))
-               {
-                   $lin_obj .= "  <tr>";
-                   $lin_obj .= "    <td class='scBtnGrpBackground'>";
-                   $lin_obj .= "        <div class='scBtnGrpText' style='cursor:pointer; right:80px;' onClick=\"ajax_add_grid_search(this, 'grid', '" . $cada_cmp . "'); return false;\">";
-                   $lin_obj .= "            " . $nmgp_tab_label[$cada_cmp] . "";
-                   $lin_obj .= "        </div>";
-                   $lin_obj .= "    </td>";
-                   $lin_obj .= "  </tr>";
-               }
-           }
-           $lin_obj .= "</table>";
-       }
-       return $lin_obj;
-   }
-   function grid_search_mail_lista_sistema($ind, $ajax, $opc="", $val=array(), $label='')
-   {
-       $lin_obj  = "";
-       $lin_obj .= "     <div class='scGridFilterTagListFilter' id='grid_search_mail_lista_sistema_" . $ind . "' style='display:none'>";
-       $lin_obj .= "         <div class='scGridFilterTagListFilterLabel'>". NM_encode_input($label) ." <span class='scGridFilterTagListFilterLabelClose' onclick='closeAllTags(this);'></span></div>";
-       $lin_obj .= "         <div class='scGridFilterTagListFilterInputs'>";
-       if (empty($opc))
-       {
-           $opc = "qp";
-       }
-       $lin_obj .= "       <select id='grid_search_mail_lista_sistema_cond_" . $ind . "' name='cond_grid_search_mail_lista_sistema_" . $ind . "' class='" . $this->css_scAppDivToolbarInput . "' style='vertical-align: middle;' onChange='grid_search_hide_input(\"mail_lista_sistema\", $ind)'>";
-       $selected = ($opc == "qp") ? " selected" : "";
-       $lin_obj .= "        <option value='qp'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>";
-       $selected = ($opc == "np") ? " selected" : "";
-       $lin_obj .= "        <option value='np'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_not_like'] . "</option>";
-       $selected = ($opc == "eq") ? " selected" : "";
-       $lin_obj .= "        <option value='eq'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_exac'] . "</option>";
-       $selected = ($opc == "ep") ? " selected" : "";
-       $lin_obj .= "        <option value='ep'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_empty'] . "</option>";
-       $lin_obj .= "       </select>";
-       if ($opc == "nu" || $opc == "nn" || $opc == "ep" || $opc == "ne")
-       {
-           $display_in_1 = "none";
-       }
-       else
-       {
-           $display_in_1 = "''";
-       }
-       $lin_obj .= "       <span id=\"grid_mail_lista_sistema_" . $ind . "\" style=\"display:" . $display_in_1 . "\">";
-       $val_cmp = (isset($val[0][0])) ? $val[0][0] : "";
-       $mail_lista_sistema = $val_cmp;
-       if ($mail_lista_sistema != "")
-       {
-       $mail_lista_sistema_look = substr($this->Db->qstr($mail_lista_sistema), 1, -1); 
-       $nmgp_def_dados = array(); 
-       $nm_comando = "select distinct mail_lista_sistema from " . $this->Ini->nm_tabela . " where mail_lista_sistema = '$mail_lista_sistema_look' order by mail_lista_sistema"; 
-       $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando; 
-       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-      if ($rs = $this->Db->SelectLimit($nm_comando, 10, 0)) 
-       { 
-          while (!$rs->EOF) 
-          { 
-            $cmp1 = trim($rs->fields[0]);
-            $nmgp_def_dados[] = array($cmp1 => $cmp1); 
-             $rs->MoveNext(); 
-          } 
-          $rs->Close(); 
-       } 
-       else  
-       {  
-           if  ($ajax == 'N')
-           {  
-              $this->Erro->mensagem (__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg()); 
-              exit; 
-           } 
-           else
-           {  
-              echo $this->Db->ErrorMsg(); 
-           } 
-       } 
-       }
-       if (isset($nmgp_def_dados[0][$mail_lista_sistema]))
-       {
-           $sAutocompValue = $nmgp_def_dados[0][$mail_lista_sistema];
-       }
-       else
-       {
-           $sAutocompValue = $val_cmp;
-           $val[0][0]      = $val_cmp;
-       }
-       $val_cmp = (isset($val[0][0])) ? $val[0][0] : "";
-       $lin_obj .= "     <input  type=\"text\" class='sc-js-input " . $this->css_scAppDivToolbarInput . "' id='grid_search_mail_lista_sistema_val_" . $ind . "' name='val_grid_search_mail_lista_sistema_" . $ind . "' value=\"" . NM_encode_input($val_cmp) . "\" size=45 alt=\"{datatype: 'text', maxLength: 45, allowedChars: '', lettersCase: '', autoTab: false, enterTab: false}\" style='display: none'>";
-       $tmp_pos = strpos($val_cmp, "##@@");
-       if ($tmp_pos !== false) {
-           $val_cmp = substr($val_cmp, ($tmp_pos + 4));
-           $sAutocompValue = substr($sAutocompValue, ($tmp_pos + 4));
-       }
-       $lin_obj .= "     <input class='sc-js-input " . $this->css_scAppDivToolbarInput . "' type='text' id='id_ac_grid_mail_lista_sistema" . $ind . "' name='val_grid_search_mail_lista_sistema_autocomp" . $ind . "' size='45' value='" . NM_encode_input($sAutocompValue) . "' alt=\"{datatype: 'text', maxLength: 45, allowedChars: '', lettersCase: '', autoTab: false, enterTab: false}\">";
-       $lin_obj .= "       </span>";
-       $lin_obj .= "          </div>";
-       $lin_obj .= "          <div class='scGridFilterTagListFilterBar'>";
-       $lin_obj .= nmButtonOutput($this->arr_buttons, "bapply_appdiv", "closeAllTags();setTimeout(function() {nm_proc_grid_search($ind, 'proc_grid_search', 'grid_search')}, 200);", "closeAllTags();setTimeout(function() {nm_proc_grid_search($ind, 'proc_grid_search', 'grid_search')}, 200);", "grid_search_apply_" . $ind . "", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-       $lin_obj .= "          </div>";
-       $lin_obj .= "      </div>";
-       return $lin_obj;
-   }
-   function grid_search_idmail_lista($ind, $ajax, $opc="", $val=array(), $label='')
-   {
-       $lin_obj  = "";
-       $lin_obj .= "     <div class='scGridFilterTagListFilter' id='grid_search_idmail_lista_" . $ind . "' style='display:none'>";
-       $lin_obj .= "         <div class='scGridFilterTagListFilterLabel'>". NM_encode_input($label) ." <span class='scGridFilterTagListFilterLabelClose' onclick='closeAllTags(this);'></span></div>";
-       $lin_obj .= "         <div class='scGridFilterTagListFilterInputs'>";
-       if (empty($opc))
-       {
-           $opc = "gt";
-       }
-       $lin_obj .= "       <select id='grid_search_idmail_lista_cond_" . $ind . "' name='cond_grid_search_idmail_lista_" . $ind . "' class='" . $this->css_scAppDivToolbarInput . "' style='vertical-align: middle;' onChange='grid_search_hide_input(\"idmail_lista\", $ind)'>";
-       $selected = ($opc == "gt") ? " selected" : "";
-       $lin_obj .= "        <option value='gt'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_grtr'] . "</option>";
-       $selected = ($opc == "lt") ? " selected" : "";
-       $lin_obj .= "        <option value='lt'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_less'] . "</option>";
-       $selected = ($opc == "eq") ? " selected" : "";
-       $lin_obj .= "        <option value='eq'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_exac'] . "</option>";
-       $lin_obj .= "       </select>";
-       if ($opc == "nu" || $opc == "nn" || $opc == "ep" || $opc == "ne")
-       {
-           $display_in_1 = "none";
-       }
-       else
-       {
-           $display_in_1 = "''";
-       }
-       $lin_obj .= "       <span id=\"grid_idmail_lista_" . $ind . "\" style=\"display:" . $display_in_1 . "\">";
-       $val_cmp = (isset($val[0][0])) ? $val[0][0] : "";
-       nmgp_Form_Num_Val($val_cmp, $_SESSION['scriptcase']['reg_conf']['grup_num'], $_SESSION['scriptcase']['reg_conf']['dec_num'], "0", "S", "1", "", "N:" . $_SESSION['scriptcase']['reg_conf']['neg_num'] , $_SESSION['scriptcase']['reg_conf']['simb_neg'], $_SESSION['scriptcase']['reg_conf']['num_group_digit']) ; 
-       $lin_obj .= "     <input  type=\"text\" class='sc-js-input " . $this->css_scAppDivToolbarInput . "' id='grid_search_idmail_lista_val_" . $ind . "' name='val_grid_search_idmail_lista_" . $ind . "' value=\"" . NM_encode_input($val_cmp) . "\" size=11 alt=\"{datatype: 'decimal', maxLength: 11, precision: 0, decimalSep: '" . $_SESSION['scriptcase']['reg_conf']['dec_num'] . "', thousandsSep: '" . $_SESSION['scriptcase']['reg_conf']['grup_num'] . "', allowNegative: false, onlyNegative: false, enterTab: false}\">";
-       $lin_obj .= "       </span>";
-       $lin_obj .= "          </div>";
-       $lin_obj .= "          <div class='scGridFilterTagListFilterBar'>";
-       $lin_obj .= nmButtonOutput($this->arr_buttons, "bapply_appdiv", "closeAllTags();setTimeout(function() {nm_proc_grid_search($ind, 'proc_grid_search', 'grid_search')}, 200);", "closeAllTags();setTimeout(function() {nm_proc_grid_search($ind, 'proc_grid_search', 'grid_search')}, 200);", "grid_search_apply_" . $ind . "", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-       $lin_obj .= "          </div>";
-       $lin_obj .= "      </div>";
-       return $lin_obj;
-   }
-   function grid_search_mail_lista_descricao($ind, $ajax, $opc="", $val=array(), $label='')
-   {
-       $lin_obj  = "";
-       $lin_obj .= "     <div class='scGridFilterTagListFilter' id='grid_search_mail_lista_descricao_" . $ind . "' style='display:none'>";
-       $lin_obj .= "         <div class='scGridFilterTagListFilterLabel'>". NM_encode_input($label) ." <span class='scGridFilterTagListFilterLabelClose' onclick='closeAllTags(this);'></span></div>";
-       $lin_obj .= "         <div class='scGridFilterTagListFilterInputs'>";
-       if (empty($opc))
-       {
-           $opc = "qp";
-       }
-       $lin_obj .= "       <select id='grid_search_mail_lista_descricao_cond_" . $ind . "' name='cond_grid_search_mail_lista_descricao_" . $ind . "' class='" . $this->css_scAppDivToolbarInput . "' style='vertical-align: middle;' onChange='grid_search_hide_input(\"mail_lista_descricao\", $ind)'>";
-       $selected = ($opc == "qp") ? " selected" : "";
-       $lin_obj .= "        <option value='qp'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>";
-       $selected = ($opc == "np") ? " selected" : "";
-       $lin_obj .= "        <option value='np'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_not_like'] . "</option>";
-       $selected = ($opc == "eq") ? " selected" : "";
-       $lin_obj .= "        <option value='eq'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_exac'] . "</option>";
-       $selected = ($opc == "ep") ? " selected" : "";
-       $lin_obj .= "        <option value='ep'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_empty'] . "</option>";
-       $lin_obj .= "       </select>";
-       if ($opc == "nu" || $opc == "nn" || $opc == "ep" || $opc == "ne")
-       {
-           $display_in_1 = "none";
-       }
-       else
-       {
-           $display_in_1 = "''";
-       }
-       $lin_obj .= "       <span id=\"grid_mail_lista_descricao_" . $ind . "\" style=\"display:" . $display_in_1 . "\">";
-       $val_cmp = (isset($val[0][0])) ? $val[0][0] : "";
-       $mail_lista_descricao = $val_cmp;
-       if ($mail_lista_descricao != "")
-       {
-       $mail_lista_descricao_look = substr($this->Db->qstr($mail_lista_descricao), 1, -1); 
-       $nmgp_def_dados = array(); 
-       $nm_comando = "select distinct mail_lista_descricao from " . $this->Ini->nm_tabela . " where mail_lista_descricao = '$mail_lista_descricao_look' order by mail_lista_descricao"; 
-       $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando; 
-       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-      if ($rs = $this->Db->SelectLimit($nm_comando, 10, 0)) 
-       { 
-          while (!$rs->EOF) 
-          { 
-            $cmp1 = trim($rs->fields[0]);
-            $nmgp_def_dados[] = array($cmp1 => $cmp1); 
-             $rs->MoveNext(); 
-          } 
-          $rs->Close(); 
-       } 
-       else  
-       {  
-           if  ($ajax == 'N')
-           {  
-              $this->Erro->mensagem (__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg()); 
-              exit; 
-           } 
-           else
-           {  
-              echo $this->Db->ErrorMsg(); 
-           } 
-       } 
-       }
-       if (isset($nmgp_def_dados[0][$mail_lista_descricao]))
-       {
-           $sAutocompValue = $nmgp_def_dados[0][$mail_lista_descricao];
-       }
-       else
-       {
-           $sAutocompValue = $val_cmp;
-           $val[0][0]      = $val_cmp;
-       }
-       $val_cmp = (isset($val[0][0])) ? $val[0][0] : "";
-       $lin_obj .= "     <input  type=\"text\" class='sc-js-input " . $this->css_scAppDivToolbarInput . "' id='grid_search_mail_lista_descricao_val_" . $ind . "' name='val_grid_search_mail_lista_descricao_" . $ind . "' value=\"" . NM_encode_input($val_cmp) . "\" size=45 alt=\"{datatype: 'text', maxLength: 45, allowedChars: '', lettersCase: '', autoTab: false, enterTab: false}\" style='display: none'>";
-       $tmp_pos = strpos($val_cmp, "##@@");
-       if ($tmp_pos !== false) {
-           $val_cmp = substr($val_cmp, ($tmp_pos + 4));
-           $sAutocompValue = substr($sAutocompValue, ($tmp_pos + 4));
-       }
-       $lin_obj .= "     <input class='sc-js-input " . $this->css_scAppDivToolbarInput . "' type='text' id='id_ac_grid_mail_lista_descricao" . $ind . "' name='val_grid_search_mail_lista_descricao_autocomp" . $ind . "' size='45' value='" . NM_encode_input($sAutocompValue) . "' alt=\"{datatype: 'text', maxLength: 45, allowedChars: '', lettersCase: '', autoTab: false, enterTab: false}\">";
-       $lin_obj .= "       </span>";
-       $lin_obj .= "          </div>";
-       $lin_obj .= "          <div class='scGridFilterTagListFilterBar'>";
-       $lin_obj .= nmButtonOutput($this->arr_buttons, "bapply_appdiv", "closeAllTags();setTimeout(function() {nm_proc_grid_search($ind, 'proc_grid_search', 'grid_search')}, 200);", "closeAllTags();setTimeout(function() {nm_proc_grid_search($ind, 'proc_grid_search', 'grid_search')}, 200);", "grid_search_apply_" . $ind . "", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-       $lin_obj .= "          </div>";
-       $lin_obj .= "      </div>";
-       return $lin_obj;
-   }
-   function grid_search_mail_lista_ativo($ind, $ajax, $opc="", $val=array(), $label='')
-   {
-       $lin_obj  = "";
-       $lin_obj .= "     <div class='scGridFilterTagListFilter' id='grid_search_mail_lista_ativo_" . $ind . "' style='display:none'>";
-       $lin_obj .= "         <div class='scGridFilterTagListFilterLabel'>". NM_encode_input($label) ." <span class='scGridFilterTagListFilterLabelClose' onclick='closeAllTags(this);'></span></div>";
-       $lin_obj .= "         <div class='scGridFilterTagListFilterInputs'>";
-       if (empty($opc))
-       {
-           $opc = "qp";
-       }
-       $lin_obj .= "       <select id='grid_search_mail_lista_ativo_cond_" . $ind . "' name='cond_grid_search_mail_lista_ativo_" . $ind . "' class='" . $this->css_scAppDivToolbarInput . "' style='vertical-align: middle;' onChange='grid_search_hide_input(\"mail_lista_ativo\", $ind)'>";
-       $selected = ($opc == "qp") ? " selected" : "";
-       $lin_obj .= "        <option value='qp'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>";
-       $selected = ($opc == "np") ? " selected" : "";
-       $lin_obj .= "        <option value='np'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_not_like'] . "</option>";
-       $selected = ($opc == "eq") ? " selected" : "";
-       $lin_obj .= "        <option value='eq'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_exac'] . "</option>";
-       $selected = ($opc == "ep") ? " selected" : "";
-       $lin_obj .= "        <option value='ep'" . $selected . ">" . $this->Ini->Nm_lang['lang_srch_empty'] . "</option>";
-       $lin_obj .= "       </select>";
-       if ($opc == "nu" || $opc == "nn" || $opc == "ep" || $opc == "ne")
-       {
-           $display_in_1 = "none";
-       }
-       else
-       {
-           $display_in_1 = "''";
-       }
-       $lin_obj .= "       <span id=\"grid_mail_lista_ativo_" . $ind . "\" style=\"display:" . $display_in_1 . "\">";
-       $val_cmp = (isset($val[0][0])) ? $val[0][0] : "";
-       $mail_lista_ativo = $val_cmp;
-       if ($mail_lista_ativo != "")
-       {
-       $mail_lista_ativo_look = substr($this->Db->qstr($mail_lista_ativo), 1, -1); 
-       $nmgp_def_dados = array(); 
-       $nm_comando = "select distinct mail_lista_ativo from " . $this->Ini->nm_tabela . " where mail_lista_ativo = '$mail_lista_ativo_look' order by mail_lista_ativo"; 
-       $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando; 
-       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-      if ($rs = $this->Db->SelectLimit($nm_comando, 10, 0)) 
-       { 
-          while (!$rs->EOF) 
-          { 
-            $cmp1 = trim($rs->fields[0]);
-            $nmgp_def_dados[] = array($cmp1 => $cmp1); 
-             $rs->MoveNext(); 
-          } 
-          $rs->Close(); 
-       } 
-       else  
-       {  
-           if  ($ajax == 'N')
-           {  
-              $this->Erro->mensagem (__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg()); 
-              exit; 
-           } 
-           else
-           {  
-              echo $this->Db->ErrorMsg(); 
-           } 
-       } 
-       }
-       if (isset($nmgp_def_dados[0][$mail_lista_ativo]))
-       {
-           $sAutocompValue = $nmgp_def_dados[0][$mail_lista_ativo];
-       }
-       else
-       {
-           $sAutocompValue = $val_cmp;
-           $val[0][0]      = $val_cmp;
-       }
-       $val_cmp = (isset($val[0][0])) ? $val[0][0] : "";
-       $lin_obj .= "     <input  type=\"text\" class='sc-js-input " . $this->css_scAppDivToolbarInput . "' id='grid_search_mail_lista_ativo_val_" . $ind . "' name='val_grid_search_mail_lista_ativo_" . $ind . "' value=\"" . NM_encode_input($val_cmp) . "\" size=1 alt=\"{datatype: 'text', maxLength: 1, allowedChars: '', lettersCase: '', autoTab: false, enterTab: false}\" style='display: none'>";
-       $tmp_pos = strpos($val_cmp, "##@@");
-       if ($tmp_pos !== false) {
-           $val_cmp = substr($val_cmp, ($tmp_pos + 4));
-           $sAutocompValue = substr($sAutocompValue, ($tmp_pos + 4));
-       }
-       $lin_obj .= "     <input class='sc-js-input " . $this->css_scAppDivToolbarInput . "' type='text' id='id_ac_grid_mail_lista_ativo" . $ind . "' name='val_grid_search_mail_lista_ativo_autocomp" . $ind . "' size='1' value='" . NM_encode_input($sAutocompValue) . "' alt=\"{datatype: 'text', maxLength: 1, allowedChars: '', lettersCase: '', autoTab: false, enterTab: false}\">";
-       $lin_obj .= "       </span>";
-       $lin_obj .= "          </div>";
-       $lin_obj .= "          <div class='scGridFilterTagListFilterBar'>";
-       $lin_obj .= nmButtonOutput($this->arr_buttons, "bapply_appdiv", "closeAllTags();setTimeout(function() {nm_proc_grid_search($ind, 'proc_grid_search', 'grid_search')}, 200);", "closeAllTags();setTimeout(function() {nm_proc_grid_search($ind, 'proc_grid_search', 'grid_search')}, 200);", "grid_search_apply_" . $ind . "", "", "", "", "absmiddle", "", "0px", $this->Ini->path_botoes, "", "", "", "", "", "only_text", "text_right", "", "", "", "", "", "", "");
-       $lin_obj .= "          </div>";
-       $lin_obj .= "      </div>";
-       return $lin_obj;
-   }
-   function lookup_ajax_mail_lista_sistema($mail_lista_sistema)
-   {
-       $mail_lista_sistema = substr($this->Db->qstr($mail_lista_sistema), 1, -1);
-       $this->NM_case_insensitive = false;
-       $mail_lista_sistema_look = substr($this->Db->qstr($mail_lista_sistema), 1, -1); 
-       $nmgp_def_dados = array(); 
-       $nm_comando = "select distinct mail_lista_sistema from " . $this->Ini->nm_tabela . " where  mail_lista_sistema like '%" . $mail_lista_sistema . "%' order by mail_lista_sistema"; 
-       $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando; 
-       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-      if ($rs = $this->Db->SelectLimit($nm_comando, 10, 0)) 
-       { 
-          while (!$rs->EOF) 
-          { 
-            $cmp1 = NM_charset_to_utf8(trim($rs->fields[0]));
-            $cmp1 = grid_mail_lista_pack_protect_string($cmp1);
-            $nmgp_def_dados[] = array($cmp1 => $cmp1); 
-             $rs->MoveNext(); 
-          } 
-          $rs->Close(); 
-          return $nmgp_def_dados; 
-       } 
-       else  
-       {  
-          echo $this->Db->ErrorMsg(); 
-       } 
-   }
-   function lookup_ajax_mail_lista_descricao($mail_lista_descricao)
-   {
-       $mail_lista_descricao = substr($this->Db->qstr($mail_lista_descricao), 1, -1);
-       $this->NM_case_insensitive = false;
-       $mail_lista_descricao_look = substr($this->Db->qstr($mail_lista_descricao), 1, -1); 
-       $nmgp_def_dados = array(); 
-       $nm_comando = "select distinct mail_lista_descricao from " . $this->Ini->nm_tabela . " where  mail_lista_descricao like '%" . $mail_lista_descricao . "%' order by mail_lista_descricao"; 
-       $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando; 
-       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-      if ($rs = $this->Db->SelectLimit($nm_comando, 10, 0)) 
-       { 
-          while (!$rs->EOF) 
-          { 
-            $cmp1 = NM_charset_to_utf8(trim($rs->fields[0]));
-            $cmp1 = grid_mail_lista_pack_protect_string($cmp1);
-            $nmgp_def_dados[] = array($cmp1 => $cmp1); 
-             $rs->MoveNext(); 
-          } 
-          $rs->Close(); 
-          return $nmgp_def_dados; 
-       } 
-       else  
-       {  
-          echo $this->Db->ErrorMsg(); 
-       } 
-   }
-   function lookup_ajax_mail_lista_ativo($mail_lista_ativo)
-   {
-       $mail_lista_ativo = substr($this->Db->qstr($mail_lista_ativo), 1, -1);
-       $this->NM_case_insensitive = false;
-       $mail_lista_ativo_look = substr($this->Db->qstr($mail_lista_ativo), 1, -1); 
-       $nmgp_def_dados = array(); 
-       $nm_comando = "select distinct mail_lista_ativo from " . $this->Ini->nm_tabela . " where  mail_lista_ativo like '%" . $mail_lista_ativo . "%' order by mail_lista_ativo"; 
-       $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando; 
-       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-      if ($rs = $this->Db->SelectLimit($nm_comando, 10, 0)) 
-       { 
-          while (!$rs->EOF) 
-          { 
-            $cmp1 = NM_charset_to_utf8(trim($rs->fields[0]));
-            $cmp1 = grid_mail_lista_pack_protect_string($cmp1);
-            $nmgp_def_dados[] = array($cmp1 => $cmp1); 
-             $rs->MoveNext(); 
-          } 
-          $rs->Close(); 
-          return $nmgp_def_dados; 
-       } 
-       else  
-       {  
-          echo $this->Db->ErrorMsg(); 
-       } 
-   }
-   function gera_array_filtros()
-   {
-       $this->NM_fil_ant = array();
-       $pos_path = strrpos($this->Ini->path_prod, "/");
-       $this->NM_path_filter = $this->Ini->root . substr($this->Ini->path_prod, 0, $pos_path) . "/conf/filters/";
-       $NM_patch   = "mail_marketing/grid_mail_lista";
-       if (is_dir($this->NM_path_filter . $NM_patch))
-       {
-           $NM_dir = @opendir($this->NM_path_filter . $NM_patch);
-           while (FALSE !== ($NM_arq = @readdir($NM_dir)))
-           {
-             if (@is_file($this->NM_path_filter . $NM_patch . "/" . $NM_arq))
-             {
-                 $Sc_v6 = false;
-                 $NMcmp_filter = file($this->NM_path_filter . $NM_patch . "/" . $NM_arq);
-                 $NMcmp_filter = explode("@NMF@", $NMcmp_filter[0]);
-                 if (substr($NMcmp_filter[0], 0, 6) == "SC_V6_" || substr($NMcmp_filter[0], 0, 6) == "SC_V8_")
-                 {
-                     $Name_filter = substr($NMcmp_filter[0], 6);
-                     if (!empty($Name_filter))
-                     {
-                         $nmgp_save_name = str_replace('/', ' ', $Name_filter);
-                         $nmgp_save_name = str_replace('\\', ' ', $nmgp_save_name);
-                         $nmgp_save_name = str_replace('.', ' ', $nmgp_save_name);
-                         $this->NM_fil_ant[$Name_filter][0] = $NM_patch . "/" . $nmgp_save_name;
-                         $this->NM_fil_ant[$Name_filter][1] = "" . $this->Ini->Nm_lang['lang_srch_public']  . "";
-                         $Sc_v6 = true;
-                     }
-                 }
-                 if (!$Sc_v6)
-                 {
-                     $this->NM_fil_ant[$NM_arq][0] = $NM_patch . "/" . $NM_arq;
-                     $this->NM_fil_ant[$NM_arq][1] = "" . $this->Ini->Nm_lang['lang_srch_public']  . "";
-                 }
-             }
-           }
-       }
-       return $this->NM_fil_ant;
-   }
-   function JS_grid_search()
-   {
-       global $nm_saida;
-       $nm_saida->saida("   <script type=\"text/javascript\">\r\n");
-       $nm_saida->saida("     var Tot_obj_grid_search = " . $this->grid_search_seq . ";\r\n");
-       $nm_saida->saida("     Tab_obj_grid_search = new Array();\r\n");
-       $nm_saida->saida("     Tab_evt_grid_search = new Array();\r\n");
-       foreach ($this->grid_search_dat as $seq => $cmp)
-       {
-           $nm_saida->saida("     Tab_obj_grid_search[" . $seq . "] = '" . $cmp . "';\r\n");
-       }
-       if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
-       { 
-           $this->Ini->Arr_result['setArr'][] = array('var' => 'Tab_obj_grid_search', 'value' => '');
-           $this->Ini->Arr_result['setArr'][] = array('var' => 'Tab_evt_grid_search', 'value' => '');
-           $this->Ini->Arr_result['setVar'][] = array('var' => 'Tot_obj_grid_search', 'value' => $this->grid_search_seq);
-           foreach ($this->grid_search_dat as $seq => $cmp)
-           {
-               $this->Ini->Arr_result['setVar'][] = array('var' => 'Tab_obj_grid_search[' . $seq . ']', 'value' => $cmp);
-           }
-       } 
-       $nm_saida->saida("     function SC_carga_evt_jquery_grid(tp_carga)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("         for (i = 1; i <= Tot_obj_grid_search; i++)\r\n");
-       $nm_saida->saida("         {\r\n");
-       $nm_saida->saida("             if (Tab_obj_grid_search[i] != 'NMSC_Grid_Null' && (tp_carga == 'all' || tp_carga == i))\r\n");
-       $nm_saida->saida("             {\r\n");
-       $nm_saida->saida("                 x   = 0;\r\n");
-       $nm_saida->saida("                 tmp = Tab_obj_grid_search[i];\r\n");
-       $nm_saida->saida("                 cps = new Array();\r\n");
-       $nm_saida->saida("                 cps[x] = tmp;\r\n");
-       $nm_saida->saida("                 for (x = 0; x < cps.length ; x++)\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     cmp = cps[x];\r\n");
-       $nm_saida->saida("                     if (Tab_evt_grid_search[cmp])\r\n");
-       $nm_saida->saida("                     {\r\n");
-       $nm_saida->saida("                         eval (\"$('#grid_search_\" + cmp + \"_val_\" + i + \"').bind('change', function() {\" + Tab_evt_grid_search[cmp] + \"})\");\r\n");
-       $nm_saida->saida("                     }\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("         }\r\n");
-       $nm_saida->saida("         for (i = 1; i <= Tot_obj_grid_search; i++)\r\n");
-       $nm_saida->saida("         {\r\n");
-       $nm_saida->saida("             if (Tab_obj_grid_search[i] != 'NMSC_Grid_Null' && (tp_carga == 'all' || tp_carga == i))\r\n");
-       $nm_saida->saida("             {\r\n");
-       $nm_saida->saida("                 tmp = Tab_obj_grid_search[i];\r\n");
-       $nm_saida->saida("                 if (tmp == 'mail_lista_sistema')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                      var x_mail_lista_sistema = i;\r\n");
-       $nm_saida->saida("                      $(\"#id_ac_grid_mail_lista_sistema\" + i).autocomplete({\r\n");
-       $nm_saida->saida("                        minLength: 1,\r\n");
-       $nm_saida->saida("                        source: function (request, response) {\r\n");
-       $nm_saida->saida("                        $.ajax({\r\n");
-       $nm_saida->saida("                          url: \"index.php\",\r\n");
-       $nm_saida->saida("                          dataType: \"json\",\r\n");
-       $nm_saida->saida("                          data: {\r\n");
-       $nm_saida->saida("                             q: request.term,\r\n");
-       $nm_saida->saida("                             nmgp_opcao: \"ajax_aut_comp_dyn_search\",\r\n");
-       $nm_saida->saida("                             origem: \"grid\",\r\n");
-       $nm_saida->saida("                             field: \"mail_lista_sistema\",\r\n");
-       $nm_saida->saida("                             max_itens: \"10\",\r\n");
-       $nm_saida->saida("                             cod_desc: \"N\",\r\n");
-       $nm_saida->saida("                             script_case_init: " . $this->Ini->sc_page . "\r\n");
-       $nm_saida->saida("                           },\r\n");
-       $nm_saida->saida("                          success: function (data) {\r\n");
-       $nm_saida->saida("                            if (data == \"ss_time_out\") {\r\n");
-       $nm_saida->saida("                                nm_move();\r\n");
-       $nm_saida->saida("                            }\r\n");
-       $nm_saida->saida("                            response(data);\r\n");
-       $nm_saida->saida("                          }\r\n");
-       $nm_saida->saida("                         });\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        select: function (event, ui) {\r\n");
-       $nm_saida->saida("                          $(\"#grid_search_mail_lista_sistema_val_\" + x_mail_lista_sistema).val(ui.item.value);\r\n");
-       $nm_saida->saida("                          $(this).val(ui.item.label);\r\n");
-       $nm_saida->saida("                          event.preventDefault();\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        focus: function (event, ui) {\r\n");
-       $nm_saida->saida("                          $(\"#grid_search_mail_lista_sistema_val_\" + x_mail_lista_sistema).val(ui.item.value);\r\n");
-       $nm_saida->saida("                          $(this).val(ui.item.label);\r\n");
-       $nm_saida->saida("                          event.preventDefault();\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        change: function (event, ui) {\r\n");
-       $nm_saida->saida("                          if (null == ui.item) {\r\n");
-       $nm_saida->saida("                             $(\"#grid_search_mail_lista_sistema_val_\" + x_mail_lista_sistema).val( $(this).val() );\r\n");
-       $nm_saida->saida("                          }\r\n");
-       $nm_saida->saida("                        }\r\n");
-       $nm_saida->saida("                      });\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if (tmp == 'mail_lista_descricao')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                      var x_mail_lista_descricao = i;\r\n");
-       $nm_saida->saida("                      $(\"#id_ac_grid_mail_lista_descricao\" + i).autocomplete({\r\n");
-       $nm_saida->saida("                        minLength: 1,\r\n");
-       $nm_saida->saida("                        source: function (request, response) {\r\n");
-       $nm_saida->saida("                        $.ajax({\r\n");
-       $nm_saida->saida("                          url: \"index.php\",\r\n");
-       $nm_saida->saida("                          dataType: \"json\",\r\n");
-       $nm_saida->saida("                          data: {\r\n");
-       $nm_saida->saida("                             q: request.term,\r\n");
-       $nm_saida->saida("                             nmgp_opcao: \"ajax_aut_comp_dyn_search\",\r\n");
-       $nm_saida->saida("                             origem: \"grid\",\r\n");
-       $nm_saida->saida("                             field: \"mail_lista_descricao\",\r\n");
-       $nm_saida->saida("                             max_itens: \"10\",\r\n");
-       $nm_saida->saida("                             cod_desc: \"N\",\r\n");
-       $nm_saida->saida("                             script_case_init: " . $this->Ini->sc_page . "\r\n");
-       $nm_saida->saida("                           },\r\n");
-       $nm_saida->saida("                          success: function (data) {\r\n");
-       $nm_saida->saida("                            if (data == \"ss_time_out\") {\r\n");
-       $nm_saida->saida("                                nm_move();\r\n");
-       $nm_saida->saida("                            }\r\n");
-       $nm_saida->saida("                            response(data);\r\n");
-       $nm_saida->saida("                          }\r\n");
-       $nm_saida->saida("                         });\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        select: function (event, ui) {\r\n");
-       $nm_saida->saida("                          $(\"#grid_search_mail_lista_descricao_val_\" + x_mail_lista_descricao).val(ui.item.value);\r\n");
-       $nm_saida->saida("                          $(this).val(ui.item.label);\r\n");
-       $nm_saida->saida("                          event.preventDefault();\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        focus: function (event, ui) {\r\n");
-       $nm_saida->saida("                          $(\"#grid_search_mail_lista_descricao_val_\" + x_mail_lista_descricao).val(ui.item.value);\r\n");
-       $nm_saida->saida("                          $(this).val(ui.item.label);\r\n");
-       $nm_saida->saida("                          event.preventDefault();\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        change: function (event, ui) {\r\n");
-       $nm_saida->saida("                          if (null == ui.item) {\r\n");
-       $nm_saida->saida("                             $(\"#grid_search_mail_lista_descricao_val_\" + x_mail_lista_descricao).val( $(this).val() );\r\n");
-       $nm_saida->saida("                          }\r\n");
-       $nm_saida->saida("                        }\r\n");
-       $nm_saida->saida("                      });\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if (tmp == 'mail_lista_ativo')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                      var x_mail_lista_ativo = i;\r\n");
-       $nm_saida->saida("                      $(\"#id_ac_grid_mail_lista_ativo\" + i).autocomplete({\r\n");
-       $nm_saida->saida("                        minLength: 1,\r\n");
-       $nm_saida->saida("                        source: function (request, response) {\r\n");
-       $nm_saida->saida("                        $.ajax({\r\n");
-       $nm_saida->saida("                          url: \"index.php\",\r\n");
-       $nm_saida->saida("                          dataType: \"json\",\r\n");
-       $nm_saida->saida("                          data: {\r\n");
-       $nm_saida->saida("                             q: request.term,\r\n");
-       $nm_saida->saida("                             nmgp_opcao: \"ajax_aut_comp_dyn_search\",\r\n");
-       $nm_saida->saida("                             origem: \"grid\",\r\n");
-       $nm_saida->saida("                             field: \"mail_lista_ativo\",\r\n");
-       $nm_saida->saida("                             max_itens: \"10\",\r\n");
-       $nm_saida->saida("                             cod_desc: \"N\",\r\n");
-       $nm_saida->saida("                             script_case_init: " . $this->Ini->sc_page . "\r\n");
-       $nm_saida->saida("                           },\r\n");
-       $nm_saida->saida("                          success: function (data) {\r\n");
-       $nm_saida->saida("                            if (data == \"ss_time_out\") {\r\n");
-       $nm_saida->saida("                                nm_move();\r\n");
-       $nm_saida->saida("                            }\r\n");
-       $nm_saida->saida("                            response(data);\r\n");
-       $nm_saida->saida("                          }\r\n");
-       $nm_saida->saida("                         });\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        select: function (event, ui) {\r\n");
-       $nm_saida->saida("                          $(\"#grid_search_mail_lista_ativo_val_\" + x_mail_lista_ativo).val(ui.item.value);\r\n");
-       $nm_saida->saida("                          $(this).val(ui.item.label);\r\n");
-       $nm_saida->saida("                          event.preventDefault();\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        focus: function (event, ui) {\r\n");
-       $nm_saida->saida("                          $(\"#grid_search_mail_lista_ativo_val_\" + x_mail_lista_ativo).val(ui.item.value);\r\n");
-       $nm_saida->saida("                          $(this).val(ui.item.label);\r\n");
-       $nm_saida->saida("                          event.preventDefault();\r\n");
-       $nm_saida->saida("                        },\r\n");
-       $nm_saida->saida("                        change: function (event, ui) {\r\n");
-       $nm_saida->saida("                          if (null == ui.item) {\r\n");
-       $nm_saida->saida("                             $(\"#grid_search_mail_lista_ativo_val_\" + x_mail_lista_ativo).val( $(this).val() );\r\n");
-       $nm_saida->saida("                          }\r\n");
-       $nm_saida->saida("                        }\r\n");
-       $nm_saida->saida("                      });\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("         }\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function grid_search_hide_input(field, ind)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        var index = document.getElementById('grid_search_' + field + '_cond_' + ind).selectedIndex;\r\n");
-       $nm_saida->saida("        var parm  = document.getElementById('grid_search_' + field + '_cond_' + ind).options[index].value;\r\n");
-       $nm_saida->saida("        if (parm == \"nu\" || parm == \"nn\" || parm == \"ep\" || parm == \"ne\")\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            $('#grid_' + field + '_' + ind).css('display','none');\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        else\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            $('#grid_' + field + '_' + ind).css('display','');\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     var addfilter_status = 'out';\r\n");
-       $nm_saida->saida("     function nm_show_advancedsearch_fields()\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("       var btn_id = 'add_grid_search';\r\n");
-       $nm_saida->saida("       var obj_id = 'id_grid_search_add_tag';\r\n");
-       $nm_saida->saida("       if($('#' + btn_id).offset().left + $('#' + obj_id).width() > $(document).width())\r\n");
-       $nm_saida->saida("       {\r\n");
-       $nm_saida->saida("            $('#' + obj_id).css('margin-left', ( $(document).width() - $('#' + btn_id).offset().left - $('#' + obj_id).width() - 10 ));\r\n");
-       $nm_saida->saida("       }\r\n");
-       $nm_saida->saida("       addfilter_status = 'open';\r\n");
-       $nm_saida->saida("       $('#' + btn_id).mouseout(function() {\r\n");
-       $nm_saida->saida("         setTimeout(function() {\r\n");
-       $nm_saida->saida("           nm_hide_advancedsearch_fields(obj_id);\r\n");
-       $nm_saida->saida("         }, 1000);\r\n");
-       $nm_saida->saida("       });\r\n");
-       $nm_saida->saida("       $('#' + obj_id + ' div').click(function() {\r\n");
-       $nm_saida->saida("         addfilter_status = 'out';\r\n");
-       $nm_saida->saida("         nm_hide_advancedsearch_fields(obj_id);\r\n");
-       $nm_saida->saida("       });\r\n");
-       $nm_saida->saida("       $('#' + obj_id).css({\r\n");
-       $nm_saida->saida("         'left': $('#' + btn_id).left\r\n");
-       $nm_saida->saida("       })\r\n");
-       $nm_saida->saida("       .mouseover(function() {\r\n");
-       $nm_saida->saida("         addfilter_status = 'over';\r\n");
-       $nm_saida->saida("       })\r\n");
-       $nm_saida->saida("       .mouseleave(function() {\r\n");
-       $nm_saida->saida("         addfilter_status = 'out';\r\n");
-       $nm_saida->saida("         setTimeout(function() {\r\n");
-       $nm_saida->saida("           nm_hide_advancedsearch_fields(obj_id);\r\n");
-       $nm_saida->saida("         }, 1000);\r\n");
-       $nm_saida->saida("       })\r\n");
-       $nm_saida->saida("       .show('fast');\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function nm_hide_advancedsearch_fields(obj_id) {\r\n");
-       $nm_saida->saida("      if ('over' != addfilter_status) {\r\n");
-       $nm_saida->saida("        $('#' + obj_id).hide('fast');\r\n");
-       $nm_saida->saida("      }\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function closeAllTags(obj)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("         if (obj !== undefined)\r\n");
-       $nm_saida->saida("         {\r\n");
-       $nm_saida->saida("             if($(obj).parent().parent().parent().attr('new') == 'new')\r\n");
-       $nm_saida->saida("             {\r\n");
-       $nm_saida->saida("                 $(obj).parent().parent().parent().find('.scGridFilterTagListItemClose').click();\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("         }\r\n");
-       $nm_saida->saida("         $('.scGridFilterTagListFilter').hide();\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function checkLastTag(bol_force)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("         if(bol_force || $('.scGridFilterTagListItem').length == 0)\r\n");
-       $nm_saida->saida("         {\r\n");
-       $nm_saida->saida("             $('#NM_Grid_Search').remove();\r\n");
-       $nm_saida->saida("         }\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     var nm_empty_data_cond = ['ep','ne','nu','nn'];\r\n");
-       $nm_saida->saida("     function nm_proc_grid_search(Seq, Tp_Proc, Origem)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("         var out_dyn = \"\";\r\n");
-       $nm_saida->saida("         var i       = Seq;\r\n");
-       $nm_saida->saida("         if (Tp_Proc == 'del_grid_search' || Tp_Proc == 'del_grid_search_all')\r\n");
-       $nm_saida->saida("         {\r\n");
-       $nm_saida->saida("             $('#add_grid_search').removeClass('scGridFilterTagAddDisabled');\r\n");
-       $nm_saida->saida("             out_dyn += Tab_obj_grid_search[i] + \"_DYN_\" + Tp_Proc;\r\n");
-       $nm_saida->saida("             if (Tp_Proc == 'del_grid_search_all')\r\n");
-       $nm_saida->saida("             {\r\n");
-       $nm_saida->saida("                 Tab_obj_grid_search = new Array();\r\n");
-       $nm_saida->saida("                 checkLastTag(true);\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("             else\r\n");
-       $nm_saida->saida("             {\r\n");
-       $nm_saida->saida("                 Tab_obj_grid_search[i] = 'NMSC_Grid_Null';\r\n");
-       $nm_saida->saida("                 eval('Dropdownchecklist_'+ Tab_obj_grid_search[i] +'=false;');\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("         }\r\n");
-       $nm_saida->saida("         else\r\n");
-       $nm_saida->saida("         {\r\n");
-       $nm_saida->saida("             $('#grid_search_' + Tab_obj_grid_search[i]).attr('new', '');\r\n");
-       $nm_saida->saida("             if (Tab_obj_grid_search[i] != 'NMSC_Grid_Null')\r\n");
-       $nm_saida->saida("             {\r\n");
-       $nm_saida->saida("                 out_dyn += Tab_obj_grid_search[i];\r\n");
-       $nm_saida->saida("                 obj_dyn  = 'grid_search_' + Tab_obj_grid_search[i] + '_cond_' + i;\r\n");
-       $nm_saida->saida("                 out_cond = grid_search_get_sel_cond(obj_dyn);\r\n");
-       $nm_saida->saida("                 out_dyn += \"_DYN_\" + out_cond;\r\n");
-       $nm_saida->saida("                 obj_dyn  = 'grid_search_' + Tab_obj_grid_search[i] + '_val_';\r\n");
-       $nm_saida->saida("                 if (Tab_obj_grid_search[i] == 'mail_lista_sistema')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     obj_ac  = 'id_ac_grid_' + Tab_obj_grid_search[i] + i;\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, obj_ac);\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if (Tab_obj_grid_search[i] == 'idmail_lista')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, '');\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if (Tab_obj_grid_search[i] == 'mail_lista_descricao')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     obj_ac  = 'id_ac_grid_' + Tab_obj_grid_search[i] + i;\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, obj_ac);\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if (Tab_obj_grid_search[i] == 'mail_lista_ativo')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     obj_ac  = 'id_ac_grid_' + Tab_obj_grid_search[i] + i;\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, obj_ac);\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if((result == '' || result == '_VLS2_' || result == 'Y:_VLS_M:_VLS_D:_VLS2_Y:_VLS_M:_VLS_D:' || result == 'Y:_VLS_M:_VLS_D:_VLS_H:_VLS_I:_VLS_S:_VLS2_Y:_VLS_M:_VLS_D:_VLS_H:_VLS_I:_VLS_S:') && nm_empty_data_cond.indexOf(out_cond) == -1 && out_cond.substring(0, 3) != 'bi_')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     alert(\"" . $this->Ini->Nm_lang['lang_srch_req_field'] . "\");\r\n");
-       $nm_saida->saida("                     return false;\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 out_dyn += \"_DYN_\" + result;\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("         }\r\n");
-       $nm_saida->saida("         ajax_navigate(Origem, out_dyn);\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function nm_save_grid_search()\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("         if (document.Fgrid_search_save.nmgp_save_name.value == '')\r\n");
-       $nm_saida->saida("         {\r\n");
-       $nm_saida->saida("             alert(\"" . $this->Ini->Nm_lang['lang_srch_req_field'] . "\");\r\n");
-       $nm_saida->saida("             document.Fgrid_search_save.nmgp_save_name.focus();\r\n");
-       $nm_saida->saida("             return false;\r\n");
-       $nm_saida->saida("         }\r\n");
-       $nm_saida->saida("         save_name = document.Fgrid_search_save.nmgp_save_name.value;\r\n");
-       $nm_saida->saida("         save_opt  = \"\"\r\n");
-       $nm_saida->saida("         str_out = \"\";\r\n");
-       $nm_saida->saida("         for (i = 1; i <= Tot_obj_grid_search; i++)\r\n");
-       $nm_saida->saida("         {\r\n");
-       $nm_saida->saida("             if (Tab_obj_grid_search[i] != 'NMSC_Grid_Null')\r\n");
-       $nm_saida->saida("             {\r\n");
-       $nm_saida->saida("                 obj_dyn  = 'grid_search_' + Tab_obj_grid_search[i] + '_cond_' + i;\r\n");
-       $nm_saida->saida("                 out_cond = grid_search_get_sel_cond(obj_dyn);\r\n");
-       $nm_saida->saida("                 str_out += \"SC_\" + Tab_obj_grid_search[i] + \"_cond#NMF#\" + out_cond + \"@NMF@\";\r\n");
-       $nm_saida->saida("                 obj_dyn  = 'grid_search_' + Tab_obj_grid_search[i] + '_val_';\r\n");
-       $nm_saida->saida("                 obj_dyn2 = 'grid_search_' + Tab_obj_grid_search[i] + '_v2__val_';\r\n");
-       $nm_saida->saida("                 if (Tab_obj_grid_search[i] == 'mail_lista_sistema')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, '');\r\n");
-       $nm_saida->saida("                     str_out += \"SC_\" + Tab_obj_grid_search[i] + \"#NMF#\" + result + \"@NMF@\";\r\n");
-       $nm_saida->saida("                     obj_ac  = 'id_ac_grid_' + Tab_obj_grid_search[i] + i;\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, obj_ac);\r\n");
-       $nm_saida->saida("                     str_out += \"id_ac_\" + Tab_obj_grid_search[i] + \"#NMF#\" + result + \"@NMF@\";\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if (Tab_obj_grid_search[i] == 'idmail_lista')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, '');\r\n");
-       $nm_saida->saida("                     str_out += \"SC_\" + Tab_obj_grid_search[i] + \"#NMF#\" + result + \"@NMF@\";\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if (Tab_obj_grid_search[i] == 'mail_lista_descricao')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, '');\r\n");
-       $nm_saida->saida("                     str_out += \"SC_\" + Tab_obj_grid_search[i] + \"#NMF#\" + result + \"@NMF@\";\r\n");
-       $nm_saida->saida("                     obj_ac  = 'id_ac_grid_' + Tab_obj_grid_search[i] + i;\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, obj_ac);\r\n");
-       $nm_saida->saida("                     str_out += \"id_ac_\" + Tab_obj_grid_search[i] + \"#NMF#\" + result + \"@NMF@\";\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("                 if (Tab_obj_grid_search[i] == 'mail_lista_ativo')\r\n");
-       $nm_saida->saida("                 {\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, '');\r\n");
-       $nm_saida->saida("                     str_out += \"SC_\" + Tab_obj_grid_search[i] + \"#NMF#\" + result + \"@NMF@\";\r\n");
-       $nm_saida->saida("                     obj_ac  = 'id_ac_grid_' + Tab_obj_grid_search[i] + i;\r\n");
-       $nm_saida->saida("                     result  = grid_search_get_text(obj_dyn + i, obj_ac);\r\n");
-       $nm_saida->saida("                     str_out += \"id_ac_\" + Tab_obj_grid_search[i] + \"#NMF#\" + result + \"@NMF@\";\r\n");
-       $nm_saida->saida("                 }\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("         }\r\n");
-       $nm_saida->saida("         nmAjaxProcOn();\r\n");
-       $nm_saida->saida("         $.ajax({\r\n");
-       $nm_saida->saida("           type: \"POST\",\r\n");
-       $nm_saida->saida("           url: \"index.php\",\r\n");
-       $nm_saida->saida("           data: \"nmgp_opcao=ajax_filter_save&script_case_init=\" + document.Fgrid_search.script_case_init.value + \"&script_case_session=\" + document.Fgrid_search.script_case_session.value + \"&nmgp_save_name=\" + save_name + \"&nmgp_save_option=\" + save_opt + \"&NM_filters_save=\" + str_out + \"&nmgp_save_origem=grid\"\r\n");
-       $nm_saida->saida("          })\r\n");
-       $nm_saida->saida("          .done(function(json_save_fil) {\r\n");
-       $nm_saida->saida("             var i, oResp;\r\n");
-       $nm_saida->saida("             Tst_integrid = json_save_fil.trim();\r\n");
-       $nm_saida->saida("             if (\"{\" != Tst_integrid.substr(0, 1)) {\r\n");
-       $nm_saida->saida("                 nmAjaxProcOff();\r\n");
-       $nm_saida->saida("                 alert (json_save_fil);\r\n");
-       $nm_saida->saida("                 return;\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("             eval(\"oResp = \" + json_save_fil);\r\n");
-$nm_saida->saida("             if (oResp[\"ss_time_out\"]) {\r\n");
-$nm_saida->saida("                 nmAjaxProcOff();\r\n");
-$nm_saida->saida("                 nm_move();\r\n");
-$nm_saida->saida("             }\r\n");
-       $nm_saida->saida("             if (oResp[\"setValue\"]) {\r\n");
-       $nm_saida->saida("               for (i = 0; i < oResp[\"setValue\"].length; i++) {\r\n");
-       $nm_saida->saida("                    $(\"#\" + oResp[\"setValue\"][i][\"field\"]).html(oResp[\"setValue\"][i][\"value\"]);\r\n");
-       $nm_saida->saida("               }\r\n");
-       $nm_saida->saida("             }\r\n");
-       $nm_saida->saida("             if (oResp[\"htmOutput\"]) {\r\n");
-       $nm_saida->saida("                 nmAjaxShowDebug(oResp);\r\n");
-       $nm_saida->saida("              }\r\n");
-       $nm_saida->saida("             document.getElementById('SC_nmgp_save_name').value = '';\r\n");
-       $nm_saida->saida("             document.getElementById('Apaga_filters').style.display = '';\r\n");
-       $nm_saida->saida("             document.getElementById('id_sel_recup_filters').style.display = '';\r\n");
-       $nm_saida->saida("             document.getElementById('Salvar_filters').style.display = 'none';\r\n");
-       $nm_saida->saida("             document.getElementById('id_sel_recup_filters').selectedIndex = -1;\r\n");
-       $nm_saida->saida("             document.getElementById('sel_filters_del').selectedIndex = -1;\r\n");
-       $nm_saida->saida("             nmAjaxProcOff();\r\n");
-       $nm_saida->saida("         });\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function nm_del_grid_search()\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        obj_sel = document.Fgrid_search_save.elements['NM_filters_del'];\r\n");
-       $nm_saida->saida("        index   = obj_sel.selectedIndex;\r\n");
-       $nm_saida->saida("        if (index == -1 || obj_sel.options[index].value == \"\") \r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            return false;\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        parm = obj_sel.options[index].value;\r\n");
-       $nm_saida->saida("        nmAjaxProcOn();\r\n");
-       $nm_saida->saida("        $.ajax({\r\n");
-       $nm_saida->saida("          type: \"POST\",\r\n");
-       $nm_saida->saida("          url: \"index.php\",\r\n");
-       $nm_saida->saida("          data: \"nmgp_opcao=ajax_filter_delete&script_case_init=\" + document.Fgrid_search.script_case_init.value + \"&script_case_session=\" + document.Fgrid_search.script_case_session.value + \"&NM_filters_del=\" + parm + \"&nmgp_save_origem=grid\"\r\n");
-       $nm_saida->saida("         })\r\n");
-       $nm_saida->saida("         .done(function(json_del_fil) {\r\n");
-       $nm_saida->saida("            var i, oResp;\r\n");
-       $nm_saida->saida("            Tst_integrid = json_del_fil.trim();\r\n");
-       $nm_saida->saida("            if (\"{\" != Tst_integrid.substr(0, 1)) {\r\n");
-       $nm_saida->saida("                nmAjaxProcOff();\r\n");
-       $nm_saida->saida("                alert (json_del_fil);\r\n");
-       $nm_saida->saida("                return;\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            eval(\"oResp = \" + json_del_fil);\r\n");
-$nm_saida->saida("             if (oResp[\"ss_time_out\"]) {\r\n");
-$nm_saida->saida("                 nmAjaxProcOff();\r\n");
-$nm_saida->saida("                 nm_move();\r\n");
-$nm_saida->saida("             }\r\n");
-       $nm_saida->saida("            if (oResp[\"setValue\"]) {\r\n");
-       $nm_saida->saida("              for (i = 0; i < oResp[\"setValue\"].length; i++) {\r\n");
-       $nm_saida->saida("                   $(\"#\" + oResp[\"setValue\"][i][\"field\"]).html(oResp[\"setValue\"][i][\"value\"]);\r\n");
-       $nm_saida->saida("              }\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            if (oResp[\"htmOutput\"]) {\r\n");
-       $nm_saida->saida("                nmAjaxShowDebug(oResp);\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            nmAjaxProcOff();\r\n");
-       $nm_saida->saida("        });\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function nm_change_grid_search(obj_sel)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        index = obj_sel.selectedIndex;\r\n");
-       $nm_saida->saida("        if (index == -1 || obj_sel.options[index].value == \"\") \r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            return false;\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        for (i = 1; i <= Tot_obj_grid_search; i++)\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            $('#grid_search_' + Tab_obj_grid_search[i]).remove();\r\n");
-       $nm_saida->saida("             eval('Dropdownchecklist_'+ Tab_obj_grid_search[i] +'=false;');\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        Tot_obj_grid_search = 0;\r\n");
-       $nm_saida->saida("        Tab_obj_grid_search = new Array();\r\n");
-       $nm_saida->saida("        ajax_navigate('grid_search_change_fil', obj_sel.options[index].value);;\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function grid_search_get_sel_cond(obj_id)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        var index = document.getElementById(obj_id).selectedIndex;\r\n");
-       $nm_saida->saida("        return document.getElementById(obj_id).options[index].value;\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function grid_search_get_select(obj_id, str_type)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        if(str_type == '')\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            var obj = document.getElementById(obj_id);\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        else\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            var obj = $('#' + obj_id).multipleSelect('getSelects');\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        var val = \"\";\r\n");
-       $nm_saida->saida("        for (iSelect = 0; iSelect < obj.length; iSelect++)\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            if ((str_type == '' && obj[iSelect].selected) || (str_type=='RADIO' || str_type=='CHECKBOX'))\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                if(str_type == '' && obj[iSelect].selected)\r\n");
-       $nm_saida->saida("                {\r\n");
-       $nm_saida->saida("                    new_val = obj[iSelect].value;\r\n");
-       $nm_saida->saida("                }\r\n");
-       $nm_saida->saida("                else\r\n");
-       $nm_saida->saida("                {\r\n");
-       $nm_saida->saida("                    new_val = obj[iSelect];\r\n");
-       $nm_saida->saida("                }\r\n");
-       $nm_saida->saida("                val += (val != \"\") ? \"_VLS_\" : \"\";\r\n");
-       $nm_saida->saida("                val += new_val;\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        return val;\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function grid_search_get_Dselelect(obj_id)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        var obj = document.getElementById(obj_id);\r\n");
-       $nm_saida->saida("        var val = \"\";\r\n");
-       $nm_saida->saida("        for (iSelect = 0; iSelect < obj.length; iSelect++)\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            val += (val != \"\") ? \"_VLS_\" : \"\";\r\n");
-       $nm_saida->saida("            val += obj[iSelect].value;\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        return val;\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function grid_search_get_radio(obj_id)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        var Nobj = document.getElementById(obj_id).name;\r\n");
-       $nm_saida->saida("        var obj  = document.getElementsByName(Nobj);\r\n");
-       $nm_saida->saida("        var val  = \"\";\r\n");
-       $nm_saida->saida("        for (iRadio = 0; iRadio < obj.length; iRadio++)\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            if (obj[iRadio].checked)\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                val += (val != \"\") ? \"_VLS_\" : \"\";\r\n");
-       $nm_saida->saida("                val += obj[iRadio].value;\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        return val;\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function grid_search_get_checkbox(obj_id)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        var Nobj = document.getElementById(obj_id).name;\r\n");
-       $nm_saida->saida("        var obj  = document.getElementsByName(Nobj);\r\n");
-       $nm_saida->saida("        var val  = \"\";\r\n");
-       $nm_saida->saida("        if (!obj.length)\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            if (obj.checked)\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                val = obj.value;\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            return val;\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        else\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            for (iCheck = 0; iCheck < obj.length; iCheck++)\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                if (obj[iCheck].checked)\r\n");
-       $nm_saida->saida("                {\r\n");
-       $nm_saida->saida("                    val += (val != \"\") ? \"_VLS_\" : \"\";\r\n");
-       $nm_saida->saida("                    val += obj[iCheck].value;\r\n");
-       $nm_saida->saida("                }\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        return val;\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function grid_search_get_text(obj_id, obj_ac)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        var obj = document.getElementById(obj_id);\r\n");
-       $nm_saida->saida("        var val = \"\";\r\n");
-       $nm_saida->saida("        if (obj)\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            val = obj.value;\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        if (obj_ac != '' && val == '')\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            obj = document.getElementById(obj_ac);\r\n");
-       $nm_saida->saida("            if (obj)\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                val = obj.value;\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        return val;\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("     function grid_search_get_dt_h(obj_id, ind, TP)\r\n");
-       $nm_saida->saida("     {\r\n");
-       $nm_saida->saida("        var val = new Array();\r\n");
-       $nm_saida->saida("        if (TP == 'DT' || TP == 'DH')\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            obj_part  = document.getElementById(obj_id + '_ano_val_' + ind);\r\n");
-       $nm_saida->saida("            val      += \"Y:\";\r\n");
-       $nm_saida->saida("            if (obj_part && obj_part.type.substr(0, 6) == 'select')\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                Tval = grid_search_get_sel_cond(obj_id + '_ano_val_' + ind);\r\n");
-       $nm_saida->saida("                val += (Tval != -1) ? Tval : '';\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            else\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                val += (obj_part) ? obj_part.value : '';\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            obj_part  = document.getElementById(obj_id + '_mes_val_' + ind);\r\n");
-       $nm_saida->saida("            val      += \"_VLS_M:\";\r\n");
-       $nm_saida->saida("            if (obj_part && obj_part.type.substr(0, 6) == 'select')\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                Tval = grid_search_get_sel_cond(obj_id + '_mes_val_' + ind);\r\n");
-       $nm_saida->saida("                val += (Tval != -1) ? Tval : '';\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            else\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                val += (obj_part) ? obj_part.value : '';\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            obj_part  = document.getElementById(obj_id + '_dia_val_' + ind);\r\n");
-       $nm_saida->saida("            val      += \"_VLS_D:\";\r\n");
-       $nm_saida->saida("            if (obj_part && obj_part.type.substr(0, 6) == 'select')\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                Tval = grid_search_get_sel_cond(obj_id + '_dia_val_' + ind);\r\n");
-       $nm_saida->saida("                val += (Tval != -1) ? Tval : '';\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("            else\r\n");
-       $nm_saida->saida("            {\r\n");
-       $nm_saida->saida("                val += (obj_part) ? obj_part.value : '';\r\n");
-       $nm_saida->saida("            }\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        if (TP == 'HH' || TP == 'DH')\r\n");
-       $nm_saida->saida("        {\r\n");
-       $nm_saida->saida("            val            += (val != \"\") ? \"_VLS_\" : \"\";\r\n");
-       $nm_saida->saida("            obj_part        = document.getElementById(obj_id + '_hor_val_' + ind);\r\n");
-       $nm_saida->saida("            val            += \"H:\";\r\n");
-       $nm_saida->saida("            val            += (obj_part) ? obj_part.value : '';\r\n");
-       $nm_saida->saida("            obj_part        = document.getElementById(obj_id + '_min_val_' + ind);\r\n");
-       $nm_saida->saida("            val            += \"_VLS_I:\";\r\n");
-       $nm_saida->saida("            val            += (obj_part) ? obj_part.value : '';\r\n");
-       $nm_saida->saida("            obj_part        = document.getElementById(obj_id + '_seg_val_' + ind);\r\n");
-       $nm_saida->saida("            val            += \"_VLS_S:\";\r\n");
-       $nm_saida->saida("            val            += (obj_part) ? obj_part.value : '';\r\n");
-       $nm_saida->saida("        }\r\n");
-       $nm_saida->saida("        return val;\r\n");
-       $nm_saida->saida("     }\r\n");
-       $nm_saida->saida("   </script>\r\n");
-   }
    function nm_gera_mask(&$nm_campo, $nm_mask)
    { 
       $trab_campo = $nm_campo;
       $trab_mask  = $nm_mask;
       $tam_campo  = strlen($nm_campo);
       $trab_saida = "";
-      $mask_num = false;
+      $str_highlight_ini = "";
+      $str_highlight_fim = "";
+      if(substr($nm_campo, 0, 23) == '<div class="highlight">' && substr($nm_campo, -6) == '</div>')
+      {
+           $str_highlight_ini = substr($nm_campo, 0, 23);
+           $str_highlight_fim = substr($nm_campo, -6);
+
+           $trab_campo = substr($nm_campo, 23, -6);
+           $tam_campo  = strlen($trab_campo);
+      }      $mask_num = false;
       for ($x=0; $x < strlen($trab_mask); $x++)
       {
           if (substr($trab_mask, $x, 1) == "#")
@@ -6000,7 +4450,7 @@ $nm_saida->saida("             }\r\n");
           {
               $trab_saida .= substr($trab_campo, $xdados);
           }
-          $nm_campo = $trab_saida;
+          $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
           return;
       }
       for ($ix = strlen($trab_mask); $ix > 0; $ix--)
@@ -6053,7 +4503,7 @@ $nm_saida->saida("             }\r\n");
                $trab_saida = substr($trab_saida, 0, $iz) . substr($trab_saida, $iz + 1);
            }
       }
-      $nm_campo = $trab_saida;
+      $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
    } 
  function check_btns()
  {
@@ -6184,12 +4634,10 @@ $nm_saida->saida("             }\r\n");
    }
    if ($this->Rec_ini == 0 && empty($this->nm_grid_sem_reg) && !$this->Print_All && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] != "pdf" && !$_SESSION['scriptcase']['proc_mobile'])
    { 
-       $nm_saida->saida("   document.getElementById('first_bot').disabled = true;\r\n");
        if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
        {
            $this->Ini->Arr_result['setDisabled'][] = array('field' => 'first_bot', 'value' => "true");
        }
-       $nm_saida->saida("   document.getElementById('back_bot').disabled = true;\r\n");
        if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
        {
            $this->Ini->Arr_result['setDisabled'][] = array('field' => 'back_bot', 'value' => "true");
@@ -6197,12 +4645,10 @@ $nm_saida->saida("             }\r\n");
    } 
    elseif ($this->Rec_ini == 0 && empty($this->nm_grid_sem_reg) && !$this->Print_All && $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] != "pdf" && $_SESSION['scriptcase']['proc_mobile'])
    { 
-       $nm_saida->saida("   document.getElementById('first_bot').disabled = true;\r\n");
        if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
        {
            $this->Ini->Arr_result['setDisabled'][] = array('field' => 'first_bot', 'value' => "true");
        }
-       $nm_saida->saida("   document.getElementById('back_bot').disabled = true;\r\n");
        if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
        {
            $this->Ini->Arr_result['setDisabled'][] = array('field' => 'back_bot', 'value' => "true");
@@ -6218,8 +4664,6 @@ $nm_saida->saida("             }\r\n");
        if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] != "pdf" && !isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_liga']['nav']) && !$_SESSION['scriptcase']['proc_mobile'])
        { 
            { 
-               $nm_saida->saida("   document.getElementById('forward_bot').disabled = true;\r\n");
-               $nm_saida->saida("   document.getElementById('forward_bot').className = \"scButton_" . $this->arr_buttons['bcons_avanca']['style'] . " disabled\";\r\n");
                if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
                {
                    $this->Ini->Arr_result['setDisabled'][] = array('field' => 'forward_bot', 'value' => "true");
@@ -6227,7 +4671,6 @@ $nm_saida->saida("             }\r\n");
                }
                if ($this->arr_buttons['bcons_avanca']['display'] == 'only_img' || $this->arr_buttons['bcons_avanca']['display'] == 'text_img')
                { 
-                   $nm_saida->saida("   document.getElementById('id_img_forward_bot').src = \"" . $this->Ini->path_botoes . "/" . $this->arr_buttons['bcons_avanca']['image'] . "\";\r\n");
                    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
                    {
                        $this->Ini->Arr_result['setSrc'][] = array('field' => 'id_img_forward_bot', 'value' => $this->Ini->path_botoes . "/" . $this->arr_buttons['bcons_avanca']['image']);
@@ -6235,8 +4678,6 @@ $nm_saida->saida("             }\r\n");
                } 
            } 
            { 
-               $nm_saida->saida("   document.getElementById('last_bot').disabled = true;\r\n");
-               $nm_saida->saida("   document.getElementById('last_bot').className = \"scButton_" . $this->arr_buttons['bcons_final']['style'] . " disabled\";\r\n");
                if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
                {
                   $this->Ini->Arr_result['setDisabled'][] = array('field' => 'last_bot', 'value' => "true");
@@ -6244,7 +4685,6 @@ $nm_saida->saida("             }\r\n");
                }
                if ($this->arr_buttons['bcons_final']['display'] == 'only_img' || $this->arr_buttons['bcons_final']['display'] == 'text_img')
                { 
-                   $nm_saida->saida("   document.getElementById('id_img_last_bot').src = \"" . $this->Ini->path_botoes . "/" . $this->arr_buttons['bcons_final']['image'] . "\";\r\n");
                    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
                    {
                        $this->Ini->Arr_result['setSrc'][] = array('field' => 'id_img_last_bot', 'value' => $this->Ini->path_botoes . "/" . $this->arr_buttons['bcons_final']['image']);
@@ -6255,8 +4695,6 @@ $nm_saida->saida("             }\r\n");
        elseif ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] != "pdf" && !isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_liga']['nav']) && $_SESSION['scriptcase']['proc_mobile'])
        { 
            { 
-               $nm_saida->saida("   document.getElementById('forward_bot').disabled = true;\r\n");
-               $nm_saida->saida("   document.getElementById('forward_bot').className = \"scButton_" . $this->arr_buttons['bcons_avanca']['style'] . " disabled\";\r\n");
                if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
                {
                    $this->Ini->Arr_result['setDisabled'][] = array('field' => 'forward_bot', 'value' => "true");
@@ -6264,7 +4702,6 @@ $nm_saida->saida("             }\r\n");
                }
                if ($this->arr_buttons['bcons_avanca']['display'] == 'only_img' || $this->arr_buttons['bcons_avanca']['display'] == 'text_img')
                { 
-                   $nm_saida->saida("   document.getElementById('id_img_forward_bot').src = \"" . $this->Ini->path_botoes . "/" . $this->arr_buttons['bcons_avanca']['image'] . "\";\r\n");
                    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
                    {
                        $this->Ini->Arr_result['setSrc'][] = array('field' => 'id_img_forward_bot', 'value' => $this->Ini->path_botoes . "/" . $this->arr_buttons['bcons_avanca']['image']);
@@ -6272,8 +4709,6 @@ $nm_saida->saida("             }\r\n");
                } 
            } 
            { 
-               $nm_saida->saida("   document.getElementById('last_bot').disabled = true;\r\n");
-               $nm_saida->saida("   document.getElementById('last_bot').className = \"scButton_" . $this->arr_buttons['bcons_final']['style'] . " disabled\";\r\n");
                if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
                {
                   $this->Ini->Arr_result['setDisabled'][] = array('field' => 'last_bot', 'value' => "true");
@@ -6281,7 +4716,6 @@ $nm_saida->saida("             }\r\n");
                }
                if ($this->arr_buttons['bcons_final']['display'] == 'only_img' || $this->arr_buttons['bcons_final']['display'] == 'text_img')
                { 
-                   $nm_saida->saida("   document.getElementById('id_img_last_bot').src = \"" . $this->Ini->path_botoes . "/" . $this->arr_buttons['bcons_final']['image'] . "\";\r\n");
                    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['ajax_nav'])
                    {
                        $this->Ini->Arr_result['setSrc'][] = array('field' => 'id_img_last_bot', 'value' => $this->Ini->path_botoes . "/" . $this->arr_buttons['bcons_final']['image']);
@@ -6572,9 +5006,55 @@ $nm_saida->saida("             }\r\n");
    $nm_saida->saida("      } \r\n");
    $nm_saida->saida("      nm_gp_submit_ajax(\"rec\", campo); \r\n");
    $nm_saida->saida("   } \r\n");
+   $nm_saida->saida("   function nm_gp_open_qsearch_div(pos)\r\n");
+   $nm_saida->saida("   {\r\n");
+   $nm_saida->saida("        if($('#SC_fast_search_dropdown_' + pos).hasClass('fa-caret-down'))\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            if(($('#quicksearchph_' + pos).offset().top+$('#id_qs_div_' + pos).height()+10) >= $(document).height())\r\n");
+   $nm_saida->saida("            {\r\n");
+   $nm_saida->saida("                $('#id_qs_div_' + pos).offset({top:($('#quicksearchph_' + pos).offset().top-($('#quicksearchph_' + pos).height()/2)-$('#id_qs_div_' + pos).height()-4)});\r\n");
+   $nm_saida->saida("            }\r\n");
+   $nm_saida->saida("            nm_gp_open_qsearch_div_store_temp(pos);\r\n");
+   $nm_saida->saida("            $('#SC_fast_search_dropdown_' + pos).removeClass('fa-caret-down').addClass('fa-caret-up');\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        else\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            $('#SC_fast_search_dropdown_' + pos).removeClass('fa-caret-up').addClass('fa-caret-down');\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        $('#id_qs_div_' + pos).toggle();\r\n");
+   $nm_saida->saida("   }\r\n");
+   $nm_saida->saida("   var tmp_qs_arr_fields = [], tmp_qs_arr_cond = \"\";\r\n");
+   $nm_saida->saida("   function nm_gp_open_qsearch_div_store_temp(pos)\r\n");
+   $nm_saida->saida("   {\r\n");
+   $nm_saida->saida("        tmp_qs_arr_fields = [], tmp_qs_str_cond = \"\";\r\n");
+   $nm_saida->saida("        if($('#fast_search_f0_' + pos).prop('type') == 'select-multiple')\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            tmp_qs_arr_fields = $('#fast_search_f0_' + pos).val();\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        else\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            tmp_qs_arr_fields.push($('#fast_search_f0_' + pos).val());\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        tmp_qs_str_cond = $('#cond_fast_search_f0_' + pos).val();\r\n");
+   $nm_saida->saida("   }\r\n");
+   $nm_saida->saida("   function nm_gp_cancel_qsearch_div_store_temp(pos)\r\n");
+   $nm_saida->saida("   {\r\n");
+   $nm_saida->saida("        $('#fast_search_f0_' + pos).val('');\r\n");
+   $nm_saida->saida("        $(\"#fast_search_f0_\" + pos + \" option\").prop('selected', false);\r\n");
+   $nm_saida->saida("        for(it=0; it<tmp_qs_arr_fields.length; it++)\r\n");
+   $nm_saida->saida("        {\r\n");
+   $nm_saida->saida("            $(\"#fast_search_f0_\" + pos + \" option[value='\"+ tmp_qs_arr_fields[it] +\"']\").prop('selected', true);\r\n");
+   $nm_saida->saida("        }\r\n");
+   $nm_saida->saida("        $(\"#fast_search_f0_\" + pos).change();\r\n");
+   $nm_saida->saida("        tmp_qs_arr_fields = [];\r\n");
+   $nm_saida->saida("        $('#cond_fast_search_f0_' + pos).val(tmp_qs_str_cond);\r\n");
+   $nm_saida->saida("        $('#cond_fast_search_f0_' + pos).change();\r\n");
+   $nm_saida->saida("        tmp_qs_str_cond = \"\";\r\n");
+   $nm_saida->saida("        nm_gp_open_qsearch_div(pos);\r\n");
+   $nm_saida->saida("   }\r\n");
    $nm_saida->saida("   function nm_gp_submit_qsearch(pos) \r\n");
    $nm_saida->saida("   { \r\n");
-   $nm_saida->saida("      var out_qsearch = \"\";\r\n");
+   $nm_saida->saida("       var out_qsearch = \"\";\r\n");
    $nm_saida->saida("       var ver_ch = eval('change_fast_' + pos);\r\n");
    $nm_saida->saida("       if (document.getElementById('SC_fast_search_' + pos).value == '' && ver_ch == '')\r\n");
    $nm_saida->saida("       { \r\n");
@@ -6586,8 +5066,8 @@ $nm_saida->saida("             }\r\n");
    $nm_saida->saida("       { \r\n");
    $nm_saida->saida("           document.getElementById('SC_fast_search_' + pos).value = '';\r\n");
    $nm_saida->saida("       } \r\n");
-   $nm_saida->saida("       out_qsearch = document.getElementById('fast_search_f0_' + pos).value;\r\n");
-   $nm_saida->saida("       out_qsearch += \"_SCQS_\" + document.getElementById('cond_fast_search_f0_' + pos).value;\r\n");
+   $nm_saida->saida("       out_qsearch = $('#fast_search_f0_' + pos).val();\r\n");
+   $nm_saida->saida("       out_qsearch += \"_SCQS_\" + $('#cond_fast_search_f0_' + pos).val();\r\n");
    $nm_saida->saida("       out_qsearch += \"_SCQS_\" + document.getElementById('SC_fast_search_' + pos).value;\r\n");
    $nm_saida->saida("       out_qsearch = out_qsearch.replace(/[+]/g, \"__NM_PLUS__\");\r\n");
    $nm_saida->saida("       out_qsearch = out_qsearch.replace(/[&]/g, \"__NM_AMP__\");\r\n");
@@ -6597,26 +5077,6 @@ $nm_saida->saida("             }\r\n");
    $nm_saida->saida("   function nm_gp_submit_ajax(opc, parm) \r\n");
    $nm_saida->saida("   { \r\n");
    $nm_saida->saida("      return ajax_navigate(opc, parm); \r\n");
-   $nm_saida->saida("   } \r\n");
-   $nm_saida->saida("   function nm_gp_submit1(apl_lig, apl_saida, parms, target, apl_name) \r\n");
-   $nm_saida->saida("   { \r\n");
-   $nm_saida->saida("      document.F3.target               = \"_self\"; \r\n");
-   $nm_saida->saida("      if (target != null) \r\n");
-   $nm_saida->saida("      {\r\n");
-   $nm_saida->saida("          document.F3.target = target; \r\n");
-   $nm_saida->saida("      }\r\n");
-   $nm_saida->saida("      document.F3.action               = apl_lig  ;\r\n");
-   $nm_saida->saida("      document.F3.nmgp_url_saida.value = apl_saida ;\r\n");
-   $nm_saida->saida("      document.F3.nmgp_chave.value     = \"\" ;\r\n");
-   $nm_saida->saida("      document.F3.nmgp_opcao.value     = \"edit_novo\" ;\r\n");
-   $nm_saida->saida("      document.F3.nmgp_parms.value     = parms ;\r\n");
-   $nm_saida->saida("      if (target == '_blank') \r\n");
-   $nm_saida->saida("      {\r\n");
-   $nm_saida->saida("          document.F3.nmgp_outra_jan.value = \"true\" ;\r\n");
-   $nm_saida->saida("         window.open('','jan_sc','location=no,menubar=no,resizable,scrollbars,status=no,toolbar=no');\r\n");
-   $nm_saida->saida("          document.F3.target = \"jan_sc\"; \r\n");
-   $nm_saida->saida("      }\r\n");
-   $nm_saida->saida("      document.F3.submit() ;\r\n");
    $nm_saida->saida("   } \r\n");
    $nm_saida->saida("   function nm_gp_submit2(campo) \r\n");
    $nm_saida->saida("   { \r\n");
@@ -7142,10 +5602,6 @@ $nm_saida->saida("             }\r\n");
    $nm_saida->saida("      }\r\n");
    $nm_saida->saida("      if (hotkey == 'sys_format_imp') { \r\n");
    $nm_saida->saida("         var output =  $('#print_top').click();\r\n");
-   $nm_saida->saida("         return (0 < output.length);\r\n");
-   $nm_saida->saida("      }\r\n");
-   $nm_saida->saida("      if (hotkey == 'sys_format_fil') { \r\n");
-   $nm_saida->saida("         var output =  $('#pesq_top').click();\r\n");
    $nm_saida->saida("         return (0 < output.length);\r\n");
    $nm_saida->saida("      }\r\n");
    $nm_saida->saida("      if (hotkey == 'sys_format_webh') { \r\n");

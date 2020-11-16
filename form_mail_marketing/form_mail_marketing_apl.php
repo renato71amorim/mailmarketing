@@ -134,10 +134,6 @@ class form_mail_marketing_apl
           {
               $this->mail_marketing_emitente = $this->NM_ajax_info['param']['mail_marketing_emitente'];
           }
-          if (isset($this->NM_ajax_info['param']['mail_marketing_gatilho']))
-          {
-              $this->mail_marketing_gatilho = $this->NM_ajax_info['param']['mail_marketing_gatilho'];
-          }
           if (isset($this->NM_ajax_info['param']['mail_marketing_imagem_cabecalho']))
           {
               $this->mail_marketing_imagem_cabecalho = $this->NM_ajax_info['param']['mail_marketing_imagem_cabecalho'];
@@ -523,9 +519,11 @@ class form_mail_marketing_apl
       $this->Ini->Label_sort      = "" == trim($str_label_sort)      ? ""     : $str_label_sort;
       $this->Ini->Label_sort_asc  = "" == trim($str_label_sort_asc)  ? ""     : $str_label_sort_asc;
       $this->Ini->Label_sort_desc = "" == trim($str_label_sort_desc) ? ""     : $str_label_sort_desc;
-      $this->Ini->Img_status_ok   = "" == trim($str_img_status_ok)   ? ""     : $str_img_status_ok;
-      $this->Ini->Img_status_err  = "" == trim($str_img_status_err)  ? ""     : $str_img_status_err;
-      $this->Ini->Css_status      = "scFormInputError";
+      $this->Ini->Img_status_ok       = "" == trim($str_img_status_ok)   ? ""     : $str_img_status_ok;
+      $this->Ini->Img_status_err      = "" == trim($str_img_status_err)  ? ""     : $str_img_status_err;
+      $this->Ini->Css_status          = "scFormInputError";
+      $this->Ini->Css_status_pwd_box  = "scFormInputErrorPwdBox";
+      $this->Ini->Css_status_pwd_text = "scFormInputErrorPwdText";
       $this->Ini->Error_icon_span = "" == trim($str_error_icon_span) ? false  : "message" == $str_error_icon_span;
       $this->Ini->Img_qs_search        = "" == trim($img_qs_search)        ? "scriptcase__NM__qs_lupa.png"  : $img_qs_search;
       $this->Ini->Img_qs_clean         = "" == trim($img_qs_clean)         ? "scriptcase__NM__qs_close.png" : $img_qs_clean;
@@ -701,6 +699,7 @@ class form_mail_marketing_apl
       $this->nmgp_botoes['navpage'] = "on";
       $this->nmgp_botoes['goto'] = "on";
       $this->nmgp_botoes['qtline'] = "off";
+      $this->nmgp_botoes['reload'] = "off";
       $this->nmgp_botoes['Vizualizar'] = "on";
       if (isset($this->NM_btn_cancel) && 'N' == $this->NM_btn_cancel)
       {
@@ -866,6 +865,7 @@ class form_mail_marketing_apl
       if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['dados_form']))
       {
           $this->nmgp_dados_form = $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['dados_form'];
+          if (!isset($this->mail_marketing_gatilho)){$this->mail_marketing_gatilho = $this->nmgp_dados_form['mail_marketing_gatilho'];} 
       }
       $glo_senha_protect = (isset($_SESSION['scriptcase']['glo_senha_protect'])) ? $_SESSION['scriptcase']['glo_senha_protect'] : "S";
       $this->aba_iframe = false;
@@ -1082,7 +1082,6 @@ class form_mail_marketing_apl
       if (isset($this->mail_marketing_imagem_cabecalho)) { $this->nm_limpa_alfa($this->mail_marketing_imagem_cabecalho); }
       if (isset($this->mail_marketing_imagem_rodape)) { $this->nm_limpa_alfa($this->mail_marketing_imagem_rodape); }
       if (isset($this->mail_marketing_link_conteudo)) { $this->nm_limpa_alfa($this->mail_marketing_link_conteudo); }
-      if (isset($this->mail_marketing_gatilho)) { $this->nm_limpa_alfa($this->mail_marketing_gatilho); }
       $Campos_Crit       = "";
       $Campos_erro       = "";
       $Campos_Falta      = array();
@@ -1204,10 +1203,6 @@ class form_mail_marketing_apl
           if ('validate_mail_marketing_terminar_quando' == $this->NM_ajax_opcao)
           {
               $this->Valida_campos($Campos_Crit, $Campos_Falta, $Campos_Erros, 'mail_marketing_terminar_quando');
-          }
-          if ('validate_mail_marketing_gatilho' == $this->NM_ajax_opcao)
-          {
-              $this->Valida_campos($Campos_Crit, $Campos_Falta, $Campos_Erros, 'mail_marketing_gatilho');
           }
           form_mail_marketing_pack_ajax_response();
           exit;
@@ -1840,8 +1835,6 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
         $this->ValidateField_mail_marketing_iniciar_quando($Campos_Crit, $Campos_Falta, $Campos_Erros);
       if ('' == $filtro || 'mail_marketing_terminar_quando' == $filtro)
         $this->ValidateField_mail_marketing_terminar_quando($Campos_Crit, $Campos_Falta, $Campos_Erros);
-      if ('' == $filtro || 'mail_marketing_gatilho' == $filtro)
-        $this->ValidateField_mail_marketing_gatilho($Campos_Crit, $Campos_Falta, $Campos_Erros);
 //-- converter datas   
           $this->nm_converte_datas();
 //---
@@ -1918,6 +1911,24 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
     {
         global $teste_validade;
         $hasError = false;
+      if ($this->nmgp_opcao != "excluir" && (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['php_cmp_required']['mail_marketing_campanha']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['php_cmp_required']['mail_marketing_campanha'] == "on")) 
+      { 
+          if ($this->mail_marketing_campanha == "")  
+          { 
+              $hasError = true;
+              $Campos_Falta[] =  "Mail Marketing Campanha" ; 
+              if (!isset($Campos_Erros['mail_marketing_campanha']))
+              {
+                  $Campos_Erros['mail_marketing_campanha'] = array();
+              }
+              $Campos_Erros['mail_marketing_campanha'][] = $this->Ini->Nm_lang['lang_errm_ajax_rqrd'];
+                  if (!isset($this->NM_ajax_info['errList']['mail_marketing_campanha']) || !is_array($this->NM_ajax_info['errList']['mail_marketing_campanha']))
+                  {
+                      $this->NM_ajax_info['errList']['mail_marketing_campanha'] = array();
+                  }
+                  $this->NM_ajax_info['errList']['mail_marketing_campanha'][] = $this->Ini->Nm_lang['lang_errm_ajax_rqrd'];
+          } 
+      } 
       if ($this->nmgp_opcao != "excluir") 
       { 
           if (NM_utf8_strlen($this->mail_marketing_campanha) > 255) 
@@ -1952,11 +1963,21 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
         $hasError = false;
       if ($this->mail_marketing_emitente == "" && $this->nmgp_opcao != "excluir")
       { 
-      } 
-      if ($this->mail_marketing_emitente === "" || is_null($this->mail_marketing_emitente))  
-      { 
-          $this->mail_marketing_emitente = 0;
-          $this->sc_force_zero[] = 'mail_marketing_emitente';
+        if (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['php_cmp_required']['mail_marketing_emitente']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['php_cmp_required']['mail_marketing_emitente'] == "on")
+        { 
+          $hasError = true;
+          $Campos_Falta[] = "Mail Marketing Emitente" ; 
+          if (!isset($Campos_Erros['mail_marketing_emitente']))
+          {
+              $Campos_Erros['mail_marketing_emitente'] = array();
+          }
+          $Campos_Erros['mail_marketing_emitente'][] = $this->Ini->Nm_lang['lang_errm_ajax_rqrd'];
+                  if (!isset($this->NM_ajax_info['errList']['mail_marketing_emitente']) || !is_array($this->NM_ajax_info['errList']['mail_marketing_emitente']))
+                  {
+                      $this->NM_ajax_info['errList']['mail_marketing_emitente'] = array();
+                  }
+                  $this->NM_ajax_info['errList']['mail_marketing_emitente'][] = $this->Ini->Nm_lang['lang_errm_ajax_rqrd'];
+        } 
       } 
       if ($this->mail_marketing_emitente != "")
       { 
@@ -1990,21 +2011,36 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
     {
         global $teste_validade;
         $hasError = false;
-               if (!empty($this->mail_marketing_lista) && isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_lista']) && !in_array($this->mail_marketing_lista, $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_lista']))
-               {
-                   $hasError = true;
-                   $Campos_Crit .= $this->Ini->Nm_lang['lang_errm_ajax_data'];
-                   if (!isset($Campos_Erros['mail_marketing_lista']))
-                   {
-                       $Campos_Erros['mail_marketing_lista'] = array();
-                   }
-                   $Campos_Erros['mail_marketing_lista'][] = $this->Ini->Nm_lang['lang_errm_ajax_data'];
-                   if (!isset($this->NM_ajax_info['errList']['mail_marketing_lista']) || !is_array($this->NM_ajax_info['errList']['mail_marketing_lista']))
-                   {
-                       $this->NM_ajax_info['errList']['mail_marketing_lista'] = array();
-                   }
-                   $this->NM_ajax_info['errList']['mail_marketing_lista'][] = $this->Ini->Nm_lang['lang_errm_ajax_data'];
-               }
+      if ($this->mail_marketing_lista == "" && $this->nmgp_opcao != "excluir" && (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['php_cmp_required']['mail_marketing_lista']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['php_cmp_required']['mail_marketing_lista'] == "on"))
+      {
+          $hasError = true;
+          $Campos_Falta[] = "Mail Marketing Lista" ; 
+          if (!isset($Campos_Erros['mail_marketing_lista']))
+          {
+              $Campos_Erros['mail_marketing_lista'] = array();
+          }
+          $Campos_Erros['mail_marketing_lista'][] = $this->Ini->Nm_lang['lang_errm_ajax_rqrd'];
+          if (!isset($this->NM_ajax_info['errList']['mail_marketing_lista']) || !is_array($this->NM_ajax_info['errList']['mail_marketing_lista']))
+          {
+              $this->NM_ajax_info['errList']['mail_marketing_lista'] = array();
+          }
+          $this->NM_ajax_info['errList']['mail_marketing_lista'][] = $this->Ini->Nm_lang['lang_errm_ajax_rqrd'];
+      }
+          if (!empty($this->mail_marketing_lista) && isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_lista']) && !in_array($this->mail_marketing_lista, $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_lista']))
+          {
+              $hasError = true;
+              $Campos_Crit .= $this->Ini->Nm_lang['lang_errm_ajax_data'];
+              if (!isset($Campos_Erros['mail_marketing_lista']))
+              {
+                  $Campos_Erros['mail_marketing_lista'] = array();
+              }
+              $Campos_Erros['mail_marketing_lista'][] = $this->Ini->Nm_lang['lang_errm_ajax_data'];
+              if (!isset($this->NM_ajax_info['errList']['mail_marketing_lista']) || !is_array($this->NM_ajax_info['errList']['mail_marketing_lista']))
+              {
+                  $this->NM_ajax_info['errList']['mail_marketing_lista'] = array();
+              }
+              $this->NM_ajax_info['errList']['mail_marketing_lista'][] = $this->Ini->Nm_lang['lang_errm_ajax_data'];
+          }
         if ($hasError) {
             global $sc_seq_vert;
             $fieldName = 'mail_marketing_lista';
@@ -2019,6 +2055,24 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
     {
         global $teste_validade;
         $hasError = false;
+      if ($this->nmgp_opcao != "excluir" && (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['php_cmp_required']['mail_marketing_assunto']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['php_cmp_required']['mail_marketing_assunto'] == "on")) 
+      { 
+          if ($this->mail_marketing_assunto == "")  
+          { 
+              $hasError = true;
+              $Campos_Falta[] =  "Mail Marketing Assunto" ; 
+              if (!isset($Campos_Erros['mail_marketing_assunto']))
+              {
+                  $Campos_Erros['mail_marketing_assunto'] = array();
+              }
+              $Campos_Erros['mail_marketing_assunto'][] = $this->Ini->Nm_lang['lang_errm_ajax_rqrd'];
+                  if (!isset($this->NM_ajax_info['errList']['mail_marketing_assunto']) || !is_array($this->NM_ajax_info['errList']['mail_marketing_assunto']))
+                  {
+                      $this->NM_ajax_info['errList']['mail_marketing_assunto'] = array();
+                  }
+                  $this->NM_ajax_info['errList']['mail_marketing_assunto'][] = $this->Ini->Nm_lang['lang_errm_ajax_rqrd'];
+          } 
+      } 
       if ($this->nmgp_opcao != "excluir") 
       { 
           if (NM_utf8_strlen($this->mail_marketing_assunto) > 55) 
@@ -2312,35 +2366,6 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
             $this->NM_ajax_info['fieldsWithErrors'][] = $fieldName;
         }
     } // ValidateField_mail_marketing_terminar_quando_hora
-
-    function ValidateField_mail_marketing_gatilho(&$Campos_Crit, &$Campos_Falta, &$Campos_Erros)
-    {
-        global $teste_validade;
-        $hasError = false;
-               if (!empty($this->mail_marketing_gatilho) && isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho']) && !in_array($this->mail_marketing_gatilho, $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho']))
-               {
-                   $hasError = true;
-                   $Campos_Crit .= $this->Ini->Nm_lang['lang_errm_ajax_data'];
-                   if (!isset($Campos_Erros['mail_marketing_gatilho']))
-                   {
-                       $Campos_Erros['mail_marketing_gatilho'] = array();
-                   }
-                   $Campos_Erros['mail_marketing_gatilho'][] = $this->Ini->Nm_lang['lang_errm_ajax_data'];
-                   if (!isset($this->NM_ajax_info['errList']['mail_marketing_gatilho']) || !is_array($this->NM_ajax_info['errList']['mail_marketing_gatilho']))
-                   {
-                       $this->NM_ajax_info['errList']['mail_marketing_gatilho'] = array();
-                   }
-                   $this->NM_ajax_info['errList']['mail_marketing_gatilho'][] = $this->Ini->Nm_lang['lang_errm_ajax_data'];
-               }
-        if ($hasError) {
-            global $sc_seq_vert;
-            $fieldName = 'mail_marketing_gatilho';
-            if (isset($sc_seq_vert) && '' != $sc_seq_vert) {
-                $fieldName .= $sc_seq_vert;
-            }
-            $this->NM_ajax_info['fieldsWithErrors'][] = $fieldName;
-        }
-    } // ValidateField_mail_marketing_gatilho
 
     function removeDuplicateDttmError($aErrDate, &$aErrTime)
     {
@@ -2896,8 +2921,7 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
    function nm_conv_data_db($dt_in, $form_in, $form_out, $replaces = array())
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -2905,8 +2929,7 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -2914,8 +2937,18 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out, $replaces);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out, $replaces);
+           return $dt_out;
+       }
    }
 
    function returnWhere($aCond, $sOp = 'AND')
@@ -2961,7 +2994,6 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
           $this->ajax_return_values_mail_marketing_imagem_rodape();
           $this->ajax_return_values_mail_marketing_iniciar_quando();
           $this->ajax_return_values_mail_marketing_terminar_quando();
-          $this->ajax_return_values_mail_marketing_gatilho();
           if ('navigate_form' == $this->NM_ajax_opcao)
           {
               $this->NM_ajax_info['clearUpload']      = 'S';
@@ -3126,6 +3158,8 @@ else
 {
     $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_lista'] = array(); 
 }
+$aLookup[] = array(form_mail_marketing_pack_protect_string('') => str_replace('<', '&lt;',form_mail_marketing_pack_protect_string(' ')));
+$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_lista'][] = '';
    $nm_nao_carga = false;
    $nmgp_def_dados = "" ; 
 
@@ -3318,7 +3352,7 @@ else
           $aLookupOrig = $aLookup;
           $this->NM_ajax_info['fldList']['mail_marketing_iniciar_quando'] = array(
                        'row'    => '',
-               'type'    => 'text',
+               'type'    => 'label',
                'valList' => array($this->mail_marketing_iniciar_quando . ' ' . $this->mail_marketing_iniciar_quando_hora),
               );
           }
@@ -3334,130 +3368,9 @@ else
           $aLookupOrig = $aLookup;
           $this->NM_ajax_info['fldList']['mail_marketing_terminar_quando'] = array(
                        'row'    => '',
-               'type'    => 'text',
+               'type'    => 'label',
                'valList' => array($this->mail_marketing_terminar_quando . ' ' . $this->mail_marketing_terminar_quando_hora),
               );
-          }
-   }
-
-          //----- mail_marketing_gatilho
-   function ajax_return_values_mail_marketing_gatilho($bForce = false)
-   {
-          if ('navigate_form' == $this->NM_ajax_opcao || 'backup_line' == $this->NM_ajax_opcao || (isset($this->nmgp_refresh_fields) && in_array("mail_marketing_gatilho", $this->nmgp_refresh_fields)) || $bForce)
-          {
-              $sTmpValue = NM_charset_to_utf8($this->mail_marketing_gatilho);
-              $aLookup = array();
-              $this->_tmp_lookup_mail_marketing_gatilho = $this->mail_marketing_gatilho;
-
- 
-$nmgp_def_dados = "" ; 
-if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho']))
-{
-    $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho'] = array_unique($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho']); 
-}
-else
-{
-    $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho'] = array(); 
-}
-   $nm_nao_carga = false;
-   $nmgp_def_dados = "" ; 
-
-   $old_value_idmail_marketing = $this->idmail_marketing;
-   $old_value_mail_marketing_iniciar_quando = $this->mail_marketing_iniciar_quando;
-   $old_value_mail_marketing_iniciar_quando_hora = $this->mail_marketing_iniciar_quando_hora;
-   $old_value_mail_marketing_terminar_quando = $this->mail_marketing_terminar_quando;
-   $old_value_mail_marketing_terminar_quando_hora = $this->mail_marketing_terminar_quando_hora;
-   $this->nm_tira_formatacao();
-   $this->nm_converte_datas(false);
-
-
-   $unformatted_value_idmail_marketing = $this->idmail_marketing;
-   $unformatted_value_mail_marketing_iniciar_quando = $this->mail_marketing_iniciar_quando;
-   $unformatted_value_mail_marketing_iniciar_quando_hora = $this->mail_marketing_iniciar_quando_hora;
-   $unformatted_value_mail_marketing_terminar_quando = $this->mail_marketing_terminar_quando;
-   $unformatted_value_mail_marketing_terminar_quando_hora = $this->mail_marketing_terminar_quando_hora;
-
-   $nm_comando = "SELECT idmail_gatilho, mail_descreva  FROM mail_gatilho  ORDER BY idmail_gatilho";
-
-   $this->idmail_marketing = $old_value_idmail_marketing;
-   $this->mail_marketing_iniciar_quando = $old_value_mail_marketing_iniciar_quando;
-   $this->mail_marketing_iniciar_quando_hora = $old_value_mail_marketing_iniciar_quando_hora;
-   $this->mail_marketing_terminar_quando = $old_value_mail_marketing_terminar_quando;
-   $this->mail_marketing_terminar_quando_hora = $old_value_mail_marketing_terminar_quando_hora;
-
-   $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando;
-   $_SESSION['scriptcase']['sc_sql_ult_conexao'] = '';
-   if ($nm_comando != "" && $rs = $this->Db->Execute($nm_comando))
-   {
-       while (!$rs->EOF) 
-       { 
-              $rs->fields[0] = str_replace(',', '.', $rs->fields[0]);
-              $rs->fields[0] = (strpos(strtolower($rs->fields[0]), "e")) ? (float)$rs->fields[0] : $rs->fields[0];
-              $rs->fields[0] = (string)$rs->fields[0];
-              $aLookup[] = array(form_mail_marketing_pack_protect_string(NM_charset_to_utf8($rs->fields[0])) => str_replace('<', '&lt;', form_mail_marketing_pack_protect_string(NM_charset_to_utf8($rs->fields[1]))));
-              $nmgp_def_dados .= $rs->fields[1] . "?#?" ; 
-              $nmgp_def_dados .= $rs->fields[0] . "?#?N?@?" ; 
-              $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho'][] = $rs->fields[0];
-              $rs->MoveNext() ; 
-       } 
-       $rs->Close() ; 
-   } 
-   elseif ($GLOBALS["NM_ERRO_IBASE"] != 1 && $nm_comando != "")  
-   {  
-       $this->Erro->mensagem(__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg()); 
-       exit; 
-   } 
-   $GLOBALS["NM_ERRO_IBASE"] = 0; 
-          $aLookupOrig = $aLookup;
-          $sSelComp = "name=\"mail_marketing_gatilho\"";
-          if (isset($this->NM_ajax_info['select_html']['mail_marketing_gatilho']) && !empty($this->NM_ajax_info['select_html']['mail_marketing_gatilho']))
-          {
-              $sSelComp = $this->NM_ajax_info['select_html']['mail_marketing_gatilho'];
-          }
-          $sLookup = '';
-          if (empty($aLookup))
-          {
-              $aLookup[] = array('' => '');
-          }
-          foreach ($aLookup as $aOption)
-          {
-              foreach ($aOption as $sValue => $sLabel)
-              {
-
-                  if ($this->mail_marketing_gatilho == $sValue)
-                  {
-                      $this->_tmp_lookup_mail_marketing_gatilho = $sLabel;
-                  }
-
-                  $sOpt     = ($sValue !== $sLabel) ? $sValue : $sLabel;
-                  $sLookup .= "<option value=\"" . $sOpt . "\">" . $sLabel . "</option>";
-              }
-          }
-          $aLookup  = $sLookup;
-          $this->NM_ajax_info['fldList']['mail_marketing_gatilho'] = array(
-                       'row'    => '',
-               'type'    => 'select',
-               'valList' => array($sTmpValue),
-               'optList' => $aLookup,
-              );
-          $aLabel     = array();
-          $aLabelTemp = array();
-          foreach ($this->NM_ajax_info['fldList']['mail_marketing_gatilho']['valList'] as $i => $v)
-          {
-              $this->NM_ajax_info['fldList']['mail_marketing_gatilho']['valList'][$i] = form_mail_marketing_pack_protect_string($v);
-          }
-          foreach ($aLookupOrig as $aValData)
-          {
-              if (in_array(key($aValData), $this->NM_ajax_info['fldList']['mail_marketing_gatilho']['valList']))
-              {
-                  $aLabelTemp[key($aValData)] = current($aValData);
-              }
-          }
-          foreach ($this->NM_ajax_info['fldList']['mail_marketing_gatilho']['valList'] as $iIndex => $sValue)
-          {
-              $aLabel[$iIndex] = (isset($aLabelTemp[$sValue])) ? $aLabelTemp[$sValue] : $sValue;
-          }
-          $this->NM_ajax_info['fldList']['mail_marketing_gatilho']['labList'] = $aLabel;
           }
    }
 
@@ -3709,12 +3622,16 @@ else
               if (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mysql))
               { 
                   $comando = "UPDATE " . $this->Ini->nm_tabela . " SET ";  
-                  $SC_fields_update[] = "mail_marketing_campanha = '$this->mail_marketing_campanha', mail_marketing_lista = $this->mail_marketing_lista, mail_marketing_emitente = $this->mail_marketing_emitente, mail_marketing_assunto = '$this->mail_marketing_assunto', mail_marketing_conteudo = '$this->mail_marketing_conteudo', mail_marketing_imagem_cabecalho = '$this->mail_marketing_imagem_cabecalho', mail_marketing_imagem_rodape = '$this->mail_marketing_imagem_rodape', mail_marketing_link_conteudo = '$this->mail_marketing_link_conteudo', mail_marketing_iniciar_quando = " . $this->Ini->date_delim . $this->mail_marketing_iniciar_quando . $this->Ini->date_delim1 . ", mail_marketing_terminar_quando = " . $this->Ini->date_delim . $this->mail_marketing_terminar_quando . $this->Ini->date_delim1 . ", mail_marketing_gatilho = $this->mail_marketing_gatilho"; 
+                  $SC_fields_update[] = "mail_marketing_campanha = '$this->mail_marketing_campanha', mail_marketing_lista = $this->mail_marketing_lista, mail_marketing_emitente = $this->mail_marketing_emitente, mail_marketing_assunto = '$this->mail_marketing_assunto', mail_marketing_conteudo = '$this->mail_marketing_conteudo', mail_marketing_imagem_cabecalho = '$this->mail_marketing_imagem_cabecalho', mail_marketing_imagem_rodape = '$this->mail_marketing_imagem_rodape', mail_marketing_link_conteudo = '$this->mail_marketing_link_conteudo', mail_marketing_iniciar_quando = " . $this->Ini->date_delim . $this->mail_marketing_iniciar_quando . $this->Ini->date_delim1 . ", mail_marketing_terminar_quando = " . $this->Ini->date_delim . $this->mail_marketing_terminar_quando . $this->Ini->date_delim1 . ""; 
               } 
               else 
               { 
                   $comando = "UPDATE " . $this->Ini->nm_tabela . " SET ";  
-                  $SC_fields_update[] = "mail_marketing_campanha = '$this->mail_marketing_campanha', mail_marketing_lista = $this->mail_marketing_lista, mail_marketing_emitente = $this->mail_marketing_emitente, mail_marketing_assunto = '$this->mail_marketing_assunto', mail_marketing_conteudo = '$this->mail_marketing_conteudo', mail_marketing_imagem_cabecalho = '$this->mail_marketing_imagem_cabecalho', mail_marketing_imagem_rodape = '$this->mail_marketing_imagem_rodape', mail_marketing_link_conteudo = '$this->mail_marketing_link_conteudo', mail_marketing_iniciar_quando = " . $this->Ini->date_delim . $this->mail_marketing_iniciar_quando . $this->Ini->date_delim1 . ", mail_marketing_terminar_quando = " . $this->Ini->date_delim . $this->mail_marketing_terminar_quando . $this->Ini->date_delim1 . ", mail_marketing_gatilho = $this->mail_marketing_gatilho"; 
+                  $SC_fields_update[] = "mail_marketing_campanha = '$this->mail_marketing_campanha', mail_marketing_lista = $this->mail_marketing_lista, mail_marketing_emitente = $this->mail_marketing_emitente, mail_marketing_assunto = '$this->mail_marketing_assunto', mail_marketing_conteudo = '$this->mail_marketing_conteudo', mail_marketing_imagem_cabecalho = '$this->mail_marketing_imagem_cabecalho', mail_marketing_imagem_rodape = '$this->mail_marketing_imagem_rodape', mail_marketing_link_conteudo = '$this->mail_marketing_link_conteudo', mail_marketing_iniciar_quando = " . $this->Ini->date_delim . $this->mail_marketing_iniciar_quando . $this->Ini->date_delim1 . ", mail_marketing_terminar_quando = " . $this->Ini->date_delim . $this->mail_marketing_terminar_quando . $this->Ini->date_delim1 . ""; 
+              } 
+              if (isset($NM_val_form['mail_marketing_gatilho']) && $NM_val_form['mail_marketing_gatilho'] != $this->nmgp_dados_select['mail_marketing_gatilho']) 
+              { 
+                  $SC_fields_update[] = "mail_marketing_gatilho = $this->mail_marketing_gatilho"; 
               } 
               $aDoNotUpdate = array();
               $comando .= implode(",", $SC_fields_update);  
@@ -3767,6 +3684,9 @@ else
               }
 
               $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['db_changed'] = true;
+              if ($this->NM_ajax_flag) {
+                  $this->NM_ajax_info['clearUpload'] = 'S';
+              }
 
 
               if     (isset($NM_val_form) && isset($NM_val_form['idmail_marketing'])) { $this->idmail_marketing = $NM_val_form['idmail_marketing']; }
@@ -3785,13 +3705,11 @@ else
               elseif (isset($this->mail_marketing_imagem_rodape)) { $this->nm_limpa_alfa($this->mail_marketing_imagem_rodape); }
               if     (isset($NM_val_form) && isset($NM_val_form['mail_marketing_link_conteudo'])) { $this->mail_marketing_link_conteudo = $NM_val_form['mail_marketing_link_conteudo']; }
               elseif (isset($this->mail_marketing_link_conteudo)) { $this->nm_limpa_alfa($this->mail_marketing_link_conteudo); }
-              if     (isset($NM_val_form) && isset($NM_val_form['mail_marketing_gatilho'])) { $this->mail_marketing_gatilho = $NM_val_form['mail_marketing_gatilho']; }
-              elseif (isset($this->mail_marketing_gatilho)) { $this->nm_limpa_alfa($this->mail_marketing_gatilho); }
 
               $this->nm_formatar_campos();
 
               $aOldRefresh               = $this->nmgp_refresh_fields;
-              $this->nmgp_refresh_fields = array_diff(array('idmail_marketing', 'mail_marketing_campanha', 'mail_marketing_emitente', 'mail_marketing_lista', 'mail_marketing_assunto', 'mail_marketing_imagem_cabecalho', 'mail_marketing_conteudo', 'mail_marketing_link_conteudo', 'mail_marketing_imagem_rodape', 'mail_marketing_iniciar_quando', 'mail_marketing_terminar_quando', 'mail_marketing_gatilho'), $aDoNotUpdate);
+              $this->nmgp_refresh_fields = array_diff(array('idmail_marketing', 'mail_marketing_campanha', 'mail_marketing_emitente', 'mail_marketing_lista', 'mail_marketing_assunto', 'mail_marketing_imagem_cabecalho', 'mail_marketing_conteudo', 'mail_marketing_link_conteudo', 'mail_marketing_imagem_rodape', 'mail_marketing_iniciar_quando', 'mail_marketing_terminar_quando'), $aDoNotUpdate);
               $this->ajax_return_values();
               $this->nmgp_refresh_fields = $aOldRefresh;
 
@@ -4762,6 +4680,49 @@ else
         function hideFormPages() {
         } // hideFormPages
 
+    function form_format_readonly($field, $value)
+    {
+        $result = $value;
+
+        $this->form_highlight_search($result, $field, $value);
+
+        return $result;
+    }
+
+    function form_highlight_search(&$result, $field, $value)
+    {
+        if ($this->proc_fast_search) {
+            $this->form_highlight_search_quicksearch($result, $field, $value);
+        }
+    }
+
+    function form_highlight_search_quicksearch(&$result, $field, $value)
+    {
+        $searchOk = false;
+        if ('SC_all_Cmp' == $this->nmgp_fast_search && in_array($field, array("idmail_marketing", "mail_marketing_campanha", "mail_marketing_lista", "mail_marketing_emitente", "mail_marketing_assunto", "mail_marketing_conteudo", "mail_marketing_imagem_cabecalho", "mail_marketing_imagem_rodape", "mail_marketing_link_conteudo", "mail_marketing_gatilho"))) {
+            $searchOk = true;
+        }
+        elseif ($field == $this->nmgp_fast_search && in_array($field, array(""))) {
+            $searchOk = true;
+        }
+
+        if (!$searchOk || '' == $this->nmgp_arg_fast_search) {
+            return;
+        }
+
+        $htmlIni = '<div class="highlight" style="background-color: #fafaca; display: inline-block">';
+        $htmlFim = '</div>';
+
+        if ('qp' == $this->nmgp_cond_fast_search) {
+            $result = preg_replace('/'. $this->nmgp_arg_fast_search .'/i', $htmlIni . '$0' . $htmlFim, $result);
+        } elseif ('eq' == $this->nmgp_cond_fast_search) {
+            if (strcasecmp($this->nmgp_arg_fast_search, $value) == 0) {
+                $result = $htmlIni. $result .$htmlFim;
+            }
+        }
+    }
+
+
     function form_encode_input($string)
     {
         if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['table_refresh']) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['table_refresh'])
@@ -4977,6 +4938,35 @@ else
      }
      return str_replace("'", "\'", $charlist);
  }
+
+function sc_file_size($file, $format = false)
+{
+    if ('' == $file) {
+        return '';
+    }
+    if (!@is_file($file)) {
+        return '';
+    }
+    $fileSize = @filesize($file);
+    if ($format) {
+        $suffix = '';
+        if (1024 >= $fileSize) {
+            $fileSize /= 1024;
+            $suffix    = ' KB';
+        }
+        if (1024 >= $fileSize) {
+            $fileSize /= 1024;
+            $suffix    = ' MB';
+        }
+        if (1024 >= $fileSize) {
+            $fileSize /= 1024;
+            $suffix    = ' GB';
+        }
+        $fileSize = $fileSize . $suffix;
+    }
+    return $fileSize;
+}
+
 
  function new_date_format($type, $field)
  {
@@ -5325,80 +5315,9 @@ else
    return $todo;
 
    }
-   function Form_lookup_mail_marketing_gatilho()
+   function SC_fast_search($in_fields, $arg_search, $data_search)
    {
-$nmgp_def_dados = "" ; 
-if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho']))
-{
-    $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho'] = array_unique($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho']); 
-}
-else
-{
-    $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho'] = array(); 
-}
-   $nm_nao_carga = false;
-   $nmgp_def_dados = "" ; 
-   if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho']))
-   {
-       $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho'] = array_unique($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho']); 
-   }
-   else
-   {
-       $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho'] = array(); 
-    }
-
-   $old_value_idmail_marketing = $this->idmail_marketing;
-   $old_value_mail_marketing_iniciar_quando = $this->mail_marketing_iniciar_quando;
-   $old_value_mail_marketing_iniciar_quando_hora = $this->mail_marketing_iniciar_quando_hora;
-   $old_value_mail_marketing_terminar_quando = $this->mail_marketing_terminar_quando;
-   $old_value_mail_marketing_terminar_quando_hora = $this->mail_marketing_terminar_quando_hora;
-   $this->nm_tira_formatacao();
-   $this->nm_converte_datas(false);
-
-
-   $unformatted_value_idmail_marketing = $this->idmail_marketing;
-   $unformatted_value_mail_marketing_iniciar_quando = $this->mail_marketing_iniciar_quando;
-   $unformatted_value_mail_marketing_iniciar_quando_hora = $this->mail_marketing_iniciar_quando_hora;
-   $unformatted_value_mail_marketing_terminar_quando = $this->mail_marketing_terminar_quando;
-   $unformatted_value_mail_marketing_terminar_quando_hora = $this->mail_marketing_terminar_quando_hora;
-
-   $nm_comando = "SELECT idmail_gatilho, mail_descreva  FROM mail_gatilho  ORDER BY idmail_gatilho";
-
-   $this->idmail_marketing = $old_value_idmail_marketing;
-   $this->mail_marketing_iniciar_quando = $old_value_mail_marketing_iniciar_quando;
-   $this->mail_marketing_iniciar_quando_hora = $old_value_mail_marketing_iniciar_quando_hora;
-   $this->mail_marketing_terminar_quando = $old_value_mail_marketing_terminar_quando;
-   $this->mail_marketing_terminar_quando_hora = $old_value_mail_marketing_terminar_quando_hora;
-
-   $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_comando;
-   $_SESSION['scriptcase']['sc_sql_ult_conexao'] = '';
-   if ($nm_comando != "" && $rs = $this->Db->Execute($nm_comando))
-   {
-       while (!$rs->EOF) 
-       { 
-              $rs->fields[0] = str_replace(',', '.', $rs->fields[0]);
-              $rs->fields[0] = (strpos(strtolower($rs->fields[0]), "e")) ? (float)$rs->fields[0] : $rs->fields[0];
-              $rs->fields[0] = (string)$rs->fields[0];
-              $nmgp_def_dados .= $rs->fields[1] . "?#?" ; 
-              $nmgp_def_dados .= $rs->fields[0] . "?#?N?@?" ; 
-              $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['Lookup_mail_marketing_gatilho'][] = $rs->fields[0];
-              $rs->MoveNext() ; 
-       } 
-       $rs->Close() ; 
-   } 
-   elseif ($GLOBALS["NM_ERRO_IBASE"] != 1 && $nm_comando != "")  
-   {  
-       $this->Erro->mensagem(__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg()); 
-       exit; 
-   } 
-   $GLOBALS["NM_ERRO_IBASE"] = 0; 
-   $todox = str_replace("?#?@?#?", "?#?@ ?#?", trim($nmgp_def_dados)) ; 
-   $todo  = explode("?@?", $todox) ; 
-   return $todo;
-
-   }
-   function SC_fast_search($field, $arg_search, $data_search)
-   {
+      $fields = (strpos($in_fields, "SC_all_Cmp") !== false) ? array("SC_all_Cmp") : explode(";", $in_fields);
       $this->NM_case_insensitive = false;
       if (empty($data_search)) 
       {
@@ -5424,56 +5343,58 @@ else
           $data_search = NM_conv_charset($data_search, $_SESSION['scriptcase']['charset'], "UTF-8");
       }
       $sv_data = $data_search;
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "idmail_marketing", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_marketing_campanha", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $data_lookup = $this->SC_lookup_mail_marketing_lista($arg_search, $data_search);
-          if (is_array($data_lookup) && !empty($data_lookup)) 
+      foreach ($fields as $field) {
+          if ($field == "SC_all_Cmp") 
           {
-              $this->SC_monta_condicao($comando, "mail_marketing_lista", $arg_search, $data_lookup);
+              $this->SC_monta_condicao($comando, "idmail_marketing", $arg_search, str_replace(",", ".", $data_search));
           }
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $data_lookup = $this->SC_lookup_mail_marketing_emitente($arg_search, $data_search);
-          if (is_array($data_lookup) && !empty($data_lookup)) 
+          if ($field == "SC_all_Cmp") 
           {
-              $this->SC_monta_condicao($comando, "mail_marketing_emitente", $arg_search, $data_lookup);
+              $this->SC_monta_condicao($comando, "mail_marketing_campanha", $arg_search, $data_search);
           }
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_marketing_assunto", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_marketing_conteudo", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_marketing_imagem_cabecalho", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_marketing_imagem_rodape", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_marketing_link_conteudo", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $data_lookup = $this->SC_lookup_mail_marketing_gatilho($arg_search, $data_search);
-          if (is_array($data_lookup) && !empty($data_lookup)) 
+          if ($field == "SC_all_Cmp") 
           {
-              $this->SC_monta_condicao($comando, "mail_marketing_gatilho", $arg_search, $data_lookup);
+              $data_lookup = $this->SC_lookup_mail_marketing_lista($arg_search, $data_search);
+              if (is_array($data_lookup) && !empty($data_lookup)) 
+              {
+                  $this->SC_monta_condicao($comando, "mail_marketing_lista", $arg_search, $data_lookup);
+              }
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $data_lookup = $this->SC_lookup_mail_marketing_emitente($arg_search, $data_search);
+              if (is_array($data_lookup) && !empty($data_lookup)) 
+              {
+                  $this->SC_monta_condicao($comando, "mail_marketing_emitente", $arg_search, $data_lookup);
+              }
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_marketing_assunto", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_marketing_conteudo", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_marketing_imagem_cabecalho", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_marketing_imagem_rodape", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_marketing_link_conteudo", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $data_lookup = $this->SC_lookup_mail_marketing_gatilho($arg_search, $data_search);
+              if (is_array($data_lookup) && !empty($data_lookup)) 
+              {
+                  $this->SC_monta_condicao($comando, "mail_marketing_gatilho", $arg_search, $data_lookup);
+              }
           }
       }
       if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['where_detal']) && !empty($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing']['where_detal']) && !empty($comando)) 

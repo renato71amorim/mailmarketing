@@ -1,0 +1,14 @@
+[16-Nov-2020 16:09:46 America/Sao_Paulo] PHP Fatal error:  Uncaught Swift_RfcComplianceException: Address in mailbox given [copadomundo202] does not comply with RFC 2822, 3.6.2. in /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php:348
+Stack trace:
+#0 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php(263): Swift_Mime_Headers_MailboxHeader->_assertValidAddress('copadomundo202')
+#1 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php(106): Swift_Mime_Headers_MailboxHeader->normalizeMailboxes(Array)
+#2 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php(63): Swift_Mime_Headers_MailboxHeader->setNameAddresses(Array)
+#3 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/SimpleMimeEntity.php(592): Swift_Mime_Headers_MailboxHeader->setFieldBodyModel(Array)
+#4 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/SimpleMessage.php(213): in /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php on line 348
+[16-Nov-2020 16:09:54 America/Recife] PHP Fatal error:  Uncaught Swift_RfcComplianceException: Address in mailbox given [copadomundo202] does not comply with RFC 2822, 3.6.2. in /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php:348
+Stack trace:
+#0 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php(263): Swift_Mime_Headers_MailboxHeader->_assertValidAddress('copadomundo202')
+#1 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php(106): Swift_Mime_Headers_MailboxHeader->normalizeMailboxes(Array)
+#2 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php(63): Swift_Mime_Headers_MailboxHeader->setNameAddresses(Array)
+#3 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/SimpleMimeEntity.php(592): Swift_Mime_Headers_MailboxHeader->setFieldBodyModel(Array)
+#4 /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/SimpleMessage.php(213): in /home/devsieca/public_html/scriptcase9/prod/third/swift/classes/Swift/Mime/Headers/MailboxHeader.php on line 348

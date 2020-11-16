@@ -90,7 +90,7 @@ sajax_show_javascript();
             var $oField = $('#id_sc_field_' + sErrorId);
             if (0 < $oField.length)
             {
-                $oField.removeClass(sc_css_status);
+                scAjax_removeFieldErrorStyle($oField);
             }
         }
     }
@@ -118,7 +118,7 @@ sajax_show_javascript();
       var $oField = $('#id_sc_field_' + sErrorId);
       if (0 < $oField.length)
       {
-        $oField.addClass(sc_css_status);
+        scAjax_applyFieldErrorStyle($oField);
       }
     }
     if (ajax_error_list && ajax_error_list[sErrorId] && ajax_error_list[sErrorId]["timeout"] && 0 < ajax_error_list[sErrorId]["timeout"])
@@ -2364,11 +2364,11 @@ sajax_show_javascript();
       {
         if("off" == sAction)
         {
-          $('#' + sElement + "_dumb").hide();
+          $('#' + sElement + "_dumb").show();
         }
         else
         {
-          $('#' + sElement + "_dumb").show();
+          $('#' + sElement + "_dumb").hide();
         }
       }
     }
@@ -2731,14 +2731,14 @@ sajax_show_javascript();
 	function scAjaxError_markField(fieldName) {
 		var $oField = $("#id_sc_field_" + fieldName);
 		if (0 < $oField.length) {
-			$oField.addClass(sc_css_status);
+			scAjax_applyFieldErrorStyle($oField);
 		}
 	} // scAjaxError_markField
 
 	function scAjaxError_unmarkField(fieldName) {
 		var $oField = $("#id_sc_field_" + fieldName);
 		if (0 < $oField.length) {
-			$oField.removeClass(sc_css_status);
+			scAjax_removeFieldErrorStyle($oField);
 		}
 	} // scAjaxError_unmarkField
 
@@ -2748,6 +2748,52 @@ sajax_show_javascript();
         $("#sc-id-required-row").hide();
         sc_hide_form_mail_marketing_mob_form();
 	}
+
+  function scAjax_applyFieldErrorStyle(fieldObj) {
+    if (fieldObj.hasClass("sc-ui-pwd-toggle")) {
+        fieldObj.addClass(sc_css_status_pwd_text);
+        fieldObj.parent().addClass(sc_css_status_pwd_box);
+      } else {
+        fieldObj.addClass(sc_css_status);
+      }
+  }
+
+  function scAjax_removeFieldErrorStyle(fieldObj) {
+    if (fieldObj.hasClass("sc-ui-pwd-toggle")) {
+        fieldObj.removeClass(sc_css_status_pwd_text);
+        fieldObj.parent().removeClass(sc_css_status_pwd_box);
+      } else {
+        fieldObj.removeClass(sc_css_status);
+      }
+  }
+
+  function scAjax_formReload() {
+    nm_move('igual');
+  }
+
+  var scFormHasChanged = false;
+
+  function scMarkFormAsChanged() {
+    scFormHasChanged = true;
+  }
+
+  function scResetFormChanges() {
+    scFormHasChanged = false;
+  }
+
+  function scFormClose_F5(exitUrl) {
+
+    document.F5.action = exitUrl;
+    document.F5.submit();
+
+  }
+
+  function scFormClose_F6(exitUrl) {
+
+    document.F6.action = exitUrl;
+    document.F6.submit();
+
+  }
 
   // ---------- Validate idmail_marketing
   function do_ajax_form_mail_marketing_mob_validate_idmail_marketing()
@@ -3086,7 +3132,7 @@ sajax_show_javascript();
   function do_ajax_form_mail_marketing_mob_validate_mail_marketing_iniciar_quando()
   {
     var nomeCampo_mail_marketing_iniciar_quando = "mail_marketing_iniciar_quando";
-    var var_mail_marketing_iniciar_quando = scAjaxGetFieldText(nomeCampo_mail_marketing_iniciar_quando);
+    var var_mail_marketing_iniciar_quando = scAjaxGetFieldHidden(nomeCampo_mail_marketing_iniciar_quando);
     var var_script_case_init = document.F1.script_case_init.value;
     x_ajax_form_mail_marketing_mob_validate_mail_marketing_iniciar_quando(var_mail_marketing_iniciar_quando, var_script_case_init, do_ajax_form_mail_marketing_mob_validate_mail_marketing_iniciar_quando_cb);
   } // do_ajax_form_mail_marketing_mob_validate_mail_marketing_iniciar_quando
@@ -3123,7 +3169,7 @@ sajax_show_javascript();
   function do_ajax_form_mail_marketing_mob_validate_mail_marketing_terminar_quando()
   {
     var nomeCampo_mail_marketing_terminar_quando = "mail_marketing_terminar_quando";
-    var var_mail_marketing_terminar_quando = scAjaxGetFieldText(nomeCampo_mail_marketing_terminar_quando);
+    var var_mail_marketing_terminar_quando = scAjaxGetFieldHidden(nomeCampo_mail_marketing_terminar_quando);
     var var_script_case_init = document.F1.script_case_init.value;
     x_ajax_form_mail_marketing_mob_validate_mail_marketing_terminar_quando(var_mail_marketing_terminar_quando, var_script_case_init, do_ajax_form_mail_marketing_mob_validate_mail_marketing_terminar_quando_cb);
   } // do_ajax_form_mail_marketing_mob_validate_mail_marketing_terminar_quando
@@ -3155,43 +3201,6 @@ sajax_show_javascript();
     scAjaxSetMaster();
     scAjaxSetFocus();
   } // do_ajax_form_mail_marketing_mob_validate_mail_marketing_terminar_quando_cb
-
-  // ---------- Validate mail_marketing_gatilho
-  function do_ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho()
-  {
-    var nomeCampo_mail_marketing_gatilho = "mail_marketing_gatilho";
-    var var_mail_marketing_gatilho = scAjaxGetFieldSelect(nomeCampo_mail_marketing_gatilho);
-    var var_script_case_init = document.F1.script_case_init.value;
-    x_ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho(var_mail_marketing_gatilho, var_script_case_init, do_ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho_cb);
-  } // do_ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho
-
-  function do_ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho_cb(sResp)
-  {
-    oResp = scAjaxResponse(sResp);
-    scAjaxRedir();
-    sFieldValid = "mail_marketing_gatilho";
-    scEventControl_onBlur(sFieldValid);
-    scAjaxUpdateFieldErrors(sFieldValid, "valid");
-    sFieldErrors = scAjaxListFieldErrors(sFieldValid, false);
-    if ("" == sFieldErrors)
-    {
-      var sImgStatus = sc_img_status_ok;
-      scAjaxHideErrorDisplay(sFieldValid);
-    }
-    else
-    {
-      var sImgStatus = sc_img_status_err;
-      scAjaxShowErrorDisplay(sFieldValid, sFieldErrors);
-    }
-    var $oImg = $('#id_sc_status_' + sFieldValid);
-    if (0 < $oImg.length)
-    {
-      $oImg.attr('src', sImgStatus).css('display', '');
-    }
-    scAjaxShowDebug();
-    scAjaxSetMaster();
-    scAjaxSetFocus();
-  } // do_ajax_form_mail_marketing_mob_validate_mail_marketing_gatilho_cb
 function scAjaxShowErrorDisplay(sErrorId, sErrorMsg) {
 	if ("table" != sErrorId && !$("id_error_display_" + sErrorId + "_frame").hasClass('scFormToastDivFixed')) {
 		scAjaxShowErrorDisplay_default(sErrorId, sErrorMsg);
@@ -3265,7 +3274,7 @@ function _scAjaxShowMessageToast(params) {
 	}
 
 	if (null == sweetAlertParams["position"]) {
-		sweetAlertParams["position"] = "top-end";
+		sweetAlertParams["position"] = "top";
 	}
 
 	if (null == sweetAlertParams["timer"]) {
@@ -3471,7 +3480,7 @@ function scJs_sweetalert_params(params) {
 			sweetAlertConfig['timer'] = 3000;
 		}
 		if (null == sweetAlertConfig["position"]) {
-			sweetAlertConfig["position"] = "top-end";
+			sweetAlertConfig["position"] = "top";
 		}
 	}
 
@@ -3495,9 +3504,8 @@ function scJs_sweetalert_params(params) {
     var var_mail_marketing_conteudo = scAjaxGetFieldText("mail_marketing_conteudo");
     var var_mail_marketing_link_conteudo = scAjaxGetFieldText("mail_marketing_link_conteudo");
     var var_mail_marketing_imagem_rodape = scAjaxGetFieldText("mail_marketing_imagem_rodape");
-    var var_mail_marketing_iniciar_quando = scAjaxGetFieldText("mail_marketing_iniciar_quando");
-    var var_mail_marketing_terminar_quando = scAjaxGetFieldText("mail_marketing_terminar_quando");
-    var var_mail_marketing_gatilho = scAjaxGetFieldSelect("mail_marketing_gatilho");
+    var var_mail_marketing_iniciar_quando = scAjaxGetFieldHidden("mail_marketing_iniciar_quando");
+    var var_mail_marketing_terminar_quando = scAjaxGetFieldHidden("mail_marketing_terminar_quando");
     var var_nm_form_submit = document.F1.nm_form_submit.value;
     var var_nmgp_url_saida = document.F1.nmgp_url_saida.value;
     var var_nmgp_opcao = document.F1.nmgp_opcao.value;
@@ -3507,7 +3515,7 @@ function scJs_sweetalert_params(params) {
     var var_script_case_init = document.F1.script_case_init.value;
     var var_csrf_token = scAjaxGetFieldText("csrf_token");
     scAjaxProcOn();
-    x_ajax_form_mail_marketing_mob_submit_form(var_idmail_marketing, var_mail_marketing_campanha, var_mail_marketing_emitente, var_mail_marketing_lista, var_mail_marketing_assunto, var_mail_marketing_imagem_cabecalho, var_mail_marketing_conteudo, var_mail_marketing_link_conteudo, var_mail_marketing_imagem_rodape, var_mail_marketing_iniciar_quando, var_mail_marketing_terminar_quando, var_mail_marketing_gatilho, var_nm_form_submit, var_nmgp_url_saida, var_nmgp_opcao, var_nmgp_ancora, var_nmgp_num_form, var_nmgp_parms, var_script_case_init, var_csrf_token, do_ajax_form_mail_marketing_mob_submit_form_cb);
+    x_ajax_form_mail_marketing_mob_submit_form(var_idmail_marketing, var_mail_marketing_campanha, var_mail_marketing_emitente, var_mail_marketing_lista, var_mail_marketing_assunto, var_mail_marketing_imagem_cabecalho, var_mail_marketing_conteudo, var_mail_marketing_link_conteudo, var_mail_marketing_imagem_rodape, var_mail_marketing_iniciar_quando, var_mail_marketing_terminar_quando, var_nm_form_submit, var_nmgp_url_saida, var_nmgp_opcao, var_nmgp_ancora, var_nmgp_num_form, var_nmgp_parms, var_script_case_init, var_csrf_token, do_ajax_form_mail_marketing_mob_submit_form_cb);
   } // do_ajax_form_mail_marketing_mob_submit_form
 
   function do_ajax_form_mail_marketing_mob_submit_form_cb(sResp)
@@ -3529,6 +3537,7 @@ function scJs_sweetalert_params(params) {
     }
     if (scAjaxIsOk())
     {
+      scResetFormChanges();
       scAjaxShowMessage("success");
       scAjaxHideErrorDisplay("table");
       scAjaxHideErrorDisplay("idmail_marketing");
@@ -3542,7 +3551,6 @@ function scJs_sweetalert_params(params) {
       scAjaxHideErrorDisplay("mail_marketing_imagem_rodape");
       scAjaxHideErrorDisplay("mail_marketing_iniciar_quando");
       scAjaxHideErrorDisplay("mail_marketing_terminar_quando");
-      scAjaxHideErrorDisplay("mail_marketing_gatilho");
       scLigEditLookupCall();
 <?php
 if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob']['dashboard_info']['under_dashboard']) {
@@ -3588,6 +3596,11 @@ if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob'
 
   function do_ajax_form_mail_marketing_mob_navigate_form()
   {
+    perform_ajax_form_mail_marketing_mob_navigate_form();
+  }
+
+  function perform_ajax_form_mail_marketing_mob_navigate_form()
+  {
     if (scRefreshTable())
     {
       return;
@@ -3605,7 +3618,6 @@ if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_marketing_mob'
     scAjaxHideErrorDisplay("mail_marketing_imagem_rodape");
     scAjaxHideErrorDisplay("mail_marketing_iniciar_quando");
     scAjaxHideErrorDisplay("mail_marketing_terminar_quando");
-    scAjaxHideErrorDisplay("mail_marketing_gatilho");
     var var_idmail_marketing = document.F2.idmail_marketing.value;
     var var_nm_form_submit = document.F2.nm_form_submit.value;
     var var_nmgp_opcao = document.F2.nmgp_opcao.value;
@@ -3651,11 +3663,13 @@ foreach ($this->Ini->sc_lig_iframe as $tmp_i => $tmp_v)
        scAjax_displayEmptyForm();
     }
     scAjaxClearErrors()
+    scResetFormChanges()
     sc_mupload_ok = true;
     scAjaxSetFields(false);
     scAjaxSetVariables();
     document.F2.idmail_marketing.value = scAjaxGetKeyValue("idmail_marketing");
     scAjaxSetSummary();
+    scAjaxSetNavpage();
     scAjaxShowDebug();
     scAjaxSetLabel(true);
     scAjaxSetReadonly(true);
@@ -3670,12 +3684,8 @@ foreach ($this->Ini->sc_lig_iframe as $tmp_i => $tmp_v)
   function do_ajax_form_mail_marketing_mob_navigate_form_cb_after_alert() {
     scAjaxMessage();
     scAjaxJavascript();
-    scQSInit = true;
-    scQSInitVal = $("#SC_fast_search_t").val();
     scQuickSearchKeyUp('t', null);
     $('#SC_fast_search_t').blur();
-    scQuickSearchInit(true, '');
-    scQSInit = false;
     scAjaxSetFocus();
 <?php
 if ($this->Embutida_form)
@@ -3689,7 +3699,6 @@ if ($this->Embutida_form)
     {
       sc_form_onload();
     }
-    SC_btn_grp_text();
   } // do_ajax_form_mail_marketing_mob_navigate_form_cb_after_alert
   function sc_hide_form_mail_marketing_mob_form()
   {
@@ -3722,10 +3731,10 @@ if ($this->Embutida_form)
   ajax_field_list[8] = "mail_marketing_imagem_rodape";
   ajax_field_list[9] = "mail_marketing_iniciar_quando";
   ajax_field_list[10] = "mail_marketing_terminar_quando";
-  ajax_field_list[11] = "mail_marketing_gatilho";
 
   var ajax_block_list = new Array();
   ajax_block_list[0] = "0";
+  ajax_block_list[1] = "1";
 
   var ajax_error_list = {
     "idmail_marketing": {"label": "Idmail Marketing", "valid": new Array(), "onblur": new Array(), "onchange": new Array(), "onclick": new Array(), "onfocus": new Array(), "timeout": 5},
@@ -3738,17 +3747,18 @@ if ($this->Embutida_form)
     "mail_marketing_link_conteudo": {"label": "Mail Marketing Link Conteudo", "valid": new Array(), "onblur": new Array(), "onchange": new Array(), "onclick": new Array(), "onfocus": new Array(), "timeout": 5},
     "mail_marketing_imagem_rodape": {"label": "Mail Marketing Imagem Rodape", "valid": new Array(), "onblur": new Array(), "onchange": new Array(), "onclick": new Array(), "onfocus": new Array(), "timeout": 5},
     "mail_marketing_iniciar_quando": {"label": "Mail Marketing Iniciar Quando", "valid": new Array(), "onblur": new Array(), "onchange": new Array(), "onclick": new Array(), "onfocus": new Array(), "timeout": 5},
-    "mail_marketing_terminar_quando": {"label": "Mail Marketing Terminar Quando", "valid": new Array(), "onblur": new Array(), "onchange": new Array(), "onclick": new Array(), "onfocus": new Array(), "timeout": 5},
-    "mail_marketing_gatilho": {"label": "Mail Marketing Gatilho", "valid": new Array(), "onblur": new Array(), "onchange": new Array(), "onclick": new Array(), "onfocus": new Array(), "timeout": 5}
+    "mail_marketing_terminar_quando": {"label": "Mail Marketing Terminar Quando", "valid": new Array(), "onblur": new Array(), "onchange": new Array(), "onclick": new Array(), "onfocus": new Array(), "timeout": 5}
   };
   var ajax_error_timeout = 5;
 
   var ajax_block_id = {
-    "0": "hidden_bloco_0"
+    "0": "hidden_bloco_0",
+    "1": "hidden_bloco_1"
   };
 
   var ajax_block_tab = {
-    "hidden_bloco_0": ""
+    "hidden_bloco_0": "",
+    "hidden_bloco_1": ""
   };
 
   var ajax_field_mult = {
@@ -3762,8 +3772,7 @@ if ($this->Embutida_form)
     "mail_marketing_link_conteudo": new Array(),
     "mail_marketing_imagem_rodape": new Array(),
     "mail_marketing_iniciar_quando": new Array(),
-    "mail_marketing_terminar_quando": new Array(),
-    "mail_marketing_gatilho": new Array()
+    "mail_marketing_terminar_quando": new Array()
   };
   ajax_field_mult["idmail_marketing"][1] = "idmail_marketing";
   ajax_field_mult["mail_marketing_campanha"][1] = "mail_marketing_campanha";
@@ -3776,7 +3785,6 @@ if ($this->Embutida_form)
   ajax_field_mult["mail_marketing_imagem_rodape"][1] = "mail_marketing_imagem_rodape";
   ajax_field_mult["mail_marketing_iniciar_quando"][1] = "mail_marketing_iniciar_quando";
   ajax_field_mult["mail_marketing_terminar_quando"][1] = "mail_marketing_terminar_quando";
-  ajax_field_mult["mail_marketing_gatilho"][1] = "mail_marketing_gatilho";
 
   var ajax_field_id = {
     "idmail_marketing": new Array("hidden_field_label_idmail_marketing", "hidden_field_data_idmail_marketing"),
@@ -3789,8 +3797,7 @@ if ($this->Embutida_form)
     "mail_marketing_link_conteudo": new Array("hidden_field_label_mail_marketing_link_conteudo", "hidden_field_data_mail_marketing_link_conteudo"),
     "mail_marketing_imagem_rodape": new Array("hidden_field_label_mail_marketing_imagem_rodape", "hidden_field_data_mail_marketing_imagem_rodape"),
     "mail_marketing_iniciar_quando": new Array("hidden_field_label_mail_marketing_iniciar_quando", "hidden_field_data_mail_marketing_iniciar_quando"),
-    "mail_marketing_terminar_quando": new Array("hidden_field_label_mail_marketing_terminar_quando", "hidden_field_data_mail_marketing_terminar_quando"),
-    "mail_marketing_gatilho": new Array("hidden_field_label_mail_marketing_gatilho", "hidden_field_data_mail_marketing_gatilho")
+    "mail_marketing_terminar_quando": new Array("hidden_field_label_mail_marketing_terminar_quando", "hidden_field_data_mail_marketing_terminar_quando")
   };
 
   var ajax_read_only = {
@@ -3804,8 +3811,7 @@ if ($this->Embutida_form)
     "mail_marketing_link_conteudo": "off",
     "mail_marketing_imagem_rodape": "off",
     "mail_marketing_iniciar_quando": "off",
-    "mail_marketing_terminar_quando": "off",
-    "mail_marketing_gatilho": "off"
+    "mail_marketing_terminar_quando": "off"
   };
   var bRefreshTable = false;
   function scRefreshTable()
@@ -3972,7 +3978,7 @@ if ($this->Embutida_form)
     }
     if ("mail_marketing_iniciar_quando" == sIndex)
     {
-      scAjaxSetFieldText(sIndex, aValue, "", "", true);
+      scAjaxSetFieldLabel(sIndex, aValue);
       updateHeaderFooter(sIndex, aValue);
 
       if ($("#id_sc_field_" + sIndex).length) {
@@ -3989,24 +3995,7 @@ if ($this->Embutida_form)
     }
     if ("mail_marketing_terminar_quando" == sIndex)
     {
-      scAjaxSetFieldText(sIndex, aValue, "", "", true);
-      updateHeaderFooter(sIndex, aValue);
-
-      if ($("#id_sc_field_" + sIndex).length) {
-          $("#id_sc_field_" + sIndex).change();
-      }
-      else if (document.F1.elements[sIndex]) {
-          $(document.F1.elements[sIndex]).change();
-      }
-      else if (document.F1.elements[sFieldName + "[]"]) {
-          $(document.F1.elements[sFieldName + "[]"]).change();
-      }
-
-      return;
-    }
-    if ("mail_marketing_gatilho" == sIndex)
-    {
-      scAjaxSetFieldSelect(sIndex, aValue, null);
+      scAjaxSetFieldLabel(sIndex, aValue);
       updateHeaderFooter(sIndex, aValue);
 
       if ($("#id_sc_field_" + sIndex).length) {

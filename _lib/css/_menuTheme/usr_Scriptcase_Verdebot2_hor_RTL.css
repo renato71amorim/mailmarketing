@@ -1,5 +1,5 @@
 ul#css3menu1,ul#css3menu1 ul{
-	margin:0;list-style:none;padding:0;background-color:#5B6F2A;background-image:url("/scriptcase/devel/conf/scriptcase/img/menu_img/deg_vert_green_white.gif");}
+	margin:0;list-style:none;padding:0;background-color:#5B6F2A;background-image:url("/scriptcase9/devel/conf/scriptcase/img/menu_img/deg_vert_green_white.gif");}
 ul#css3menu1 ul{
 	display:none;position:absolute;right:0;top:100%;-moz-box-shadow:3.5px 3.5px 5px #000000;-webkit-box-shadow:3.5px 3.5px 5px #000000;box-shadow:3.5px 3.5px 5px #000000;background-color:#ffffff;background-image:none;}
 ul#css3menu1 li:hover>*{
@@ -20,7 +20,7 @@ ul#css3menu1>li{
 ul#css3menu1 a:active, ul#css3menu1 a:focus{
 	outline-style:none;}
 ul#css3menu1 a{
-	display:block;vertical-align:middle;text-align:right;text-decoration:none;font-weight:bold;font-style:none;font-size:12px;font-family:Arial, Arial, sans-serif;color:#ffffff;text-shadow:#FFF 0 0 1px;cursor:pointer;padding:10px;background-image:url("/scriptcase/devel/conf/scriptcase/img/menu_img/deg_vert_green_white.gif");background-color:#5B6F2A;}
+	display:block;vertical-align:middle;text-align:right;text-decoration:none;font-weight:bold;font-style:none;font-size:12px;font-family:Arial, Arial, sans-serif;color:#ffffff;text-shadow:#FFF 0 0 1px;cursor:pointer;padding:10px;background-image:url("/scriptcase9/devel/conf/scriptcase/img/menu_img/deg_vert_green_white.gif");background-color:#5B6F2A;}
 ul#css3menu1 ul li{
 	float:none;background-color:#006600 !important;padding-left: 16px;}
 ul#css3menu1 ul a{

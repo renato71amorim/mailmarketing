@@ -1,7 +1,7 @@
 <?php
    include_once('grid_mail_meio_session.php');
    session_start();
-   $_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']  = "/principal/tmp";
+   $_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
    //check tmp
    if(empty($_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']))
    {
@@ -103,15 +103,15 @@ function Ord_cmp_init()
    $tab_ger_campos['mail_usuario'] = "on";
    $tab_def_campos['mail_usuario'] = "mail_usuario";
    $tab_labels["mail_usuario"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_usuario"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_usuario"] : "Mail Usuario";
-   $tab_ger_campos['mail_senha'] = "on";
-   $tab_def_campos['mail_senha'] = "mail_senha";
-   $tab_labels["mail_senha"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_senha"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_senha"] : "Mail Senha";
    $tab_ger_campos['mail_smtp'] = "on";
    $tab_def_campos['mail_smtp'] = "mail_smtp";
    $tab_labels["mail_smtp"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_smtp"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_smtp"] : "Mail Smtp";
    $tab_ger_campos['mail_porta'] = "on";
    $tab_def_campos['mail_porta'] = "mail_porta";
    $tab_labels["mail_porta"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_porta"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_porta"] : "Mail Porta";
+   $tab_ger_campos['mail_ativo'] = "on";
+   $tab_def_campos['mail_ativo'] = "mail_ativo";
+   $tab_labels["mail_ativo"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_ativo"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_meio']['labels']["mail_ativo"] : "Mail Ativo";
    if (isset($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_meio']['field_display']) && !empty($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_meio']['field_display']))
    {
        foreach ($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_meio']['field_display'] as $NM_cada_field => $NM_cada_opc)

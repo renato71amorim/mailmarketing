@@ -2,10 +2,11 @@
    include_once('dispara_email_session.php');
    @session_start() ;
    $_SESSION['scriptcase']['dispara_email']['glo_nm_perfil']          = "principal";
-   $_SESSION['scriptcase']['dispara_email']['glo_nm_path_prod']       = "/principal/prod";
+   $_SESSION['scriptcase']['dispara_email']['glo_nm_path_prod']       = "/var/www/html/principal/prod";
    $_SESSION['scriptcase']['dispara_email']['glo_nm_path_conf']       = "";
-   $_SESSION['scriptcase']['dispara_email']['glo_nm_path_imagens']    = "/principal/file/img";
-   $_SESSION['scriptcase']['dispara_email']['glo_nm_path_imag_temp']  = "/principal/tmp";
+   $_SESSION['scriptcase']['dispara_email']['glo_nm_path_imagens']    = "/var/www/doc/img";
+   $_SESSION['scriptcase']['dispara_email']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
+   $_SESSION['scriptcase']['dispara_email']['glo_nm_path_cache']      = "";
    $_SESSION['scriptcase']['dispara_email']['glo_nm_path_doc']        = "/var/www/doc";
     //check publication with the prod
     $NM_dir_atual = getcwd();
@@ -39,6 +40,11 @@
     if(empty($_SESSION['scriptcase']['dispara_email']['glo_nm_path_imag_temp']))
     {
             /*check tmp*/$_SESSION['scriptcase']['dispara_email']['glo_nm_path_imag_temp'] = $str_path_apl_url . "_lib/tmp";
+    }
+    //check cache
+    if(empty($_SESSION['scriptcase']['dispara_email']['glo_nm_path_cache']))
+    {
+            /*check tmp*/$_SESSION['scriptcase']['dispara_email']['glo_nm_path_cache'] = $str_path_apl_dir . "_lib/file/cache";
     }
     //check doc
     if(empty($_SESSION['scriptcase']['dispara_email']['glo_nm_path_doc']))
@@ -196,8 +202,8 @@ class dispara_email_ini
       $this->nm_dt_criacao   = "20200528"; 
       $this->nm_hr_criacao   = "001951"; 
       $this->nm_autor_alt    = "admin"; 
-      $this->nm_dt_ult_alt   = "20200528"; 
-      $this->nm_hr_ult_alt   = "002047"; 
+      $this->nm_dt_ult_alt   = "20201116"; 
+      $this->nm_hr_ult_alt   = "180303"; 
       $this->Apl_paginacao   = "PARCIAL"; 
       $temp_bug_list         = explode(" ", microtime()); 
       list($NM_usec, $NM_sec) = $temp_bug_list; 
@@ -223,6 +229,7 @@ class dispara_email_ini
       $this->path_conf       = $_SESSION['scriptcase']['dispara_email']['glo_nm_path_conf'];
       $this->path_imagens    = $_SESSION['scriptcase']['dispara_email']['glo_nm_path_imagens'];
       $this->path_imag_temp  = $_SESSION['scriptcase']['dispara_email']['glo_nm_path_imag_temp'];
+      $this->path_cache  = $_SESSION['scriptcase']['dispara_email']['glo_nm_path_cache'];
       $this->path_doc        = $_SESSION['scriptcase']['dispara_email']['glo_nm_path_doc'];
       if (!isset($_SESSION['scriptcase']['str_lang']) || empty($_SESSION['scriptcase']['str_lang']))
       {
@@ -361,7 +368,7 @@ class dispara_email_ini
               }
           }
       }
-      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin;
+      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin, $remove_border;
       if (!isset($_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['under_dashboard']))
       {
           $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['under_dashboard'] = false;
@@ -370,6 +377,7 @@ class dispara_email_ini
           $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['parent_widget']   = '';
           $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['compact_mode']    = false;
           $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['remove_margin']   = false;
+          $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['remove_border']   = false;
       }
       if (isset($_GET['under_dashboard']) && 1 == $_GET['under_dashboard'])
       {
@@ -387,6 +395,9 @@ class dispara_email_ini
               }
               if (isset($_GET['remove_margin'])) {
                   $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['remove_margin'] = 1 == $_GET['remove_margin'];
+              }
+              if (isset($_GET['remove_border'])) {
+                  $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['remove_border'] = 1 == $_GET['remove_border'];
               }
           }
       }
@@ -406,6 +417,9 @@ class dispara_email_ini
               }
               if (isset($remove_margin)) {
                   $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['remove_margin'] = 1 == $remove_margin;
+              }
+              if (isset($remove_border)) {
+                  $_SESSION['sc_session'][$this->sc_page]['dispara_email']['dashboard_info']['remove_border'] = 1 == $remove_border;
               }
           }
       }
@@ -578,11 +592,11 @@ class dispara_email_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -814,7 +828,7 @@ class dispara_email_ini
           exit;
       }
       $this->nm_bases_access     = array();
-      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql");
+      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql", "azure_mysql", "azure_mysqlt", "azure_mysqli", "azure_maxsql", "azure_pdo_mysql", "googlecloud_mysql", "googlecloud_mysqlt", "googlecloud_mysqli", "googlecloud_maxsql", "googlecloud_pdo_mysql", "amazonrds_mysql", "amazonrds_mysqlt", "amazonrds_mysqli", "amazonrds_maxsql", "amazonrds_pdo_mysql");
       $this->sqlite_version      = "old";
       $this->nm_bases_sqlite     = array("sqlite", "sqlite3", "pdosqlite");
       $this->nm_bases_all        = array_merge($this->nm_bases_mysql, $this->nm_bases_sqlite);
@@ -826,7 +840,7 @@ class dispara_email_ini
       $this->nm_ttf_chi  = array("zh_cn", "zh_hk", "ko");
       $_SESSION['sc_session'][$this->sc_page]['dispara_email']['seq_dir'] = 0; 
       $_SESSION['sc_session'][$this->sc_page]['dispara_email']['sub_dir'] = array(); 
-      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_v1D9JKDQFaHANOHuF7DMNOZSrCV5FYHMBqDcNmZSB/HAN7HuX7DEBOVkJ3DWF/VoBiDcJUZSX7Z1BYHuFaDMvOV9FeV5X/VEBiHQBsZ1BiDSrYHQBiHgBODkB/DWB3VoFGHQNmH9FUHAveHQNUDMrYVcFeHEBmDoXGDcNmZ1FGHIBeHQJsHgNKVkJqDWBmVoFGHQXsZSBiDSN7HuNUDMzGDkBsDuFGVoBqD9BsZ1F7DSrYD5rqDMrYZSJ3HEB7ZuJsHQNmDQFUHIrwHurqHgrwVcXKDWXKDoXGHQXOVINUD1NaD5JeDMveHErsDWB3VoFGHQXODuFaZ1BYHuBiDMvmDkB/HEX/DoXGHQXGH9BOHIveD5JwHgBOZSJqDurmDoF7D9XsDQJsDSBYV5FGHgNKDkBsDuB7VEBiHQNwH9BqHIrwHuB/DMvCVkJ3HEXKVoFGHQFYDuBqHINaVWBODMvmVIBsHEFGDoXGHQBsZSBODSNOHQXGHgBOHErCDWrGVoFGHQXsH9BiHIrKHQJeHgrwVcBUDWBmVoBqD9BsZ1F7DSrYD5rqDMrYZSJGH5FYDoF7DcXOZSFGHAveV5FUHuBYVcFKDur/VoJwHQFYH9B/Z1BeD5BqDEvsHEFKV5FaHMJeDcBwDQFGD1veHQXGHgvsVcBOHEX7DoraHQFYH9FaHAvmZMJeHgvCHEJGDWF/VoJeD9NwDQBqHINaV5BqDMrwDkFCDuX7VEF7D9BiH9FaHAN7D5FaDEBOZSJGH5BmDoB/D9NwZSX7D1BeV5BOHuvmVcFCDWXCVENUDcBqH9B/HABYD5JeDMzGHAFKV5XKDoF7D9XsDQJsDSBYV5FGHgNKDkFCH5FqVoBqDcNwH9B/HIveD5FaDErKZSJGH5F/DoFUD9NwDQJsD1BeHuFaHuNOZSrCH5FqDoXGHQJmZ1F7HIBOZMFaHgrKVkJ3V5FaHMFaD9XsDQJsHArYD5F7DMBYDkBsH5XCVoBiDcJUZSBqZ1NOHQJsHgvsHArCDWF/VoBiDcJUZSX7Z1BYHuFaDMrwDkBOH5XCDoFGD9XOH9FaHArKD5NUDErKVkXeDWX7DoFUDcBwDQX7Z1BYV5FUHuvmVcBODuB7DoJsD9XOZ1F7HIveD5BqHgBeHEFiV5B3DoF7D9XsDuFaHAveHuFaHuNOZSrCH5FqDoXGHQJmZ1FGHANOHQFaDMNKZSJ3V5B3ZuJeHQXsDuFaDSrwHuFUHuNODkFCDuX7HMX7HQJmH9B/HArYHuJwDMzGVkJqH5F/HIJsD9XsZ9JeD1BeD5F7DMvmVcrsDWXCDoraDcNwH9B/Z1rYZMJeDErKZSJGDWX7VoX7DcXOZSX7HANOV5BOHuNODkBOV5F/VEBiDcJUZkFGHArKV5FUDMrYZSXeV5FqHIJsHQBiZ9XGHANKV5BODMvOVcBUDWB3VEraHQNmVINUHIveHQJwDEBODkFeH5FYVoFGHQJKDQBqHIrKD5JwHuzGVcrsHEFYHIX7HQNmZ1FGDSrYV5JsHgvsZSJqH5BmDoJeHQXODuFaDSN7HuJeDMvODkBsH5FqHMBiD9BsVIraD1rwV5X7HgBeHENiDWr/VoB/D9XsH9X7HArYVWJsHuNOZSJ3DWXCHMXGDcBqZ1B/HArYZMB/DMBYHEXeV5XCDoB/DcJUDQFaHArYD5F7HuNODkFCDWJeDoFGD9BsZkFGHArKV5FUDMrYZSXeV5FqHIJsHQJeDuBOZ1vCV5Je";
+      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_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";
       $this->prep_conect();
       $this->conectDB();
       if (!in_array(strtolower($this->nm_tpbanco), $this->nm_bases_all))
@@ -1112,11 +1126,11 @@ class dispara_email_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -1283,6 +1297,7 @@ class dispara_email_ini
               ob_start();
           } 
       } 
+      $this->Db->debug = true;
       if (!$_SESSION['sc_session'][$this->sc_page]['dispara_email']['embutida'])
       {
           if (substr($_POST['nmgp_opcao'], 0, 5) == "ajax_")
@@ -1753,14 +1768,95 @@ class dispara_email_apl
       $this->Erro->Ini = $this->Ini;
 //
       $_SESSION['scriptcase']['dispara_email']['contr_erro'] = 'on';
- $origem = 'GMAIL';
-$valida = 2147483642;
-$mail_subject = "";
-$mail_message = "";
-
-$sql_meio = "";
-
+ 		
+$mail = FALSE;
+$i = 0;
+
+$sql_marketing = "SELECT 
+					idmail_marketing,
+					mail_marketing_campanha,
+					mail_marketing_lista,
+					mail_marketing_emitente,
+					lcase(mail_marketing_assunto) as assunto,
+					mail_marketing_conteudo,
+					mail_marketing_imagem_cabecalho,
+					mail_marketing_imagem_rodape,
+					mail_marketing_link_conteudo,
+					mail_marketing_iniciar_quando,
+					mail_marketing_terminar_quando
+				FROM 
+					mail_marketing 
+				WHERE 
+					mail_marketing_terminar_quando IS NULL";
+
  
+      $nm_select = $sql_marketing; 
+      $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select; 
+      $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
+      if ($this->rs_marketing = $this->Db->Execute($nm_select)) 
+      { }
+      elseif (isset($GLOBALS["NM_ERRO_IBASE"]) && $GLOBALS["NM_ERRO_IBASE"] != 1)  
+      { 
+          $this->rs_marketing = false;
+          $this->rs_marketing_erro = $this->Db->ErrorMsg();
+      } 
+;
+
+if ($this->rs_marketing  !== false) {
+	
+	while(!$this->rs_marketing->EOF) {
+
+	
+		$idmail_marketing = $this->rs_marketing->fields['idmail_marketing'];
+		$mail_marketing_campanha = $this->rs_marketing->fields['mail_marketing_campanha'];
+		$mail_marketing_lista = $this->rs_marketing->fields['mail_marketing_lista'];
+		$mail_marketing_emitente = $this->rs_marketing->fields['mail_marketing_emitente'];
+		$mail_marketing_assunto = $this->rs_marketing->fields['assunto'];
+		$mail_marketing_conteudo = $this->rs_marketing->fields['mail_marketing_conteudo'];
+		$mail_marketing_imagem_cabecalho = $this->rs_marketing->fields['mail_marketing_imagem_cabecalho'];
+		$mail_marketing_imagem_rodape = $this->rs_marketing->fields['mail_marketing_imagem_rodape'];
+		$mail_marketing_link_conteudo = $this->rs_marketing->fields['mail_marketing_link_conteudo'];
+		$mail_marketing_iniciar_quando = $this->rs_marketing->fields['mail_marketing_iniciar_quando'];
+		$mail_marketing_terminar_quando = $this->rs_marketing->fields['mail_marketing_terminar_quando'];
+
+		print_r("<H1>$mail_marketing_campanha</H1>");
+
+				
+		$update_sql2 = "UPDATE mail_marketing 
+						SET mail_marketing_iniciar_quando = now() 
+						WHERE idmail_marketing = '$idmail_marketing';";
+		
+		
+     $nm_select = $update_sql2; 
+         $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select;
+      $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
+         $rf = $this->Db->Execute($nm_select);
+         if ($rf === false)
+         {
+             $this->Erro->mensagem (__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg());
+             if ($this->Ini->sc_tem_trans_banco)
+             {
+                 $this->Db->RollbackTrans(); 
+                 $this->Ini->sc_tem_trans_banco = false;
+             }
+             exit;
+         }
+         $rf->Close();
+      ;
+		
+		$sql_meio = "SELECT 
+						idmail_meio,
+						mail_descreva,
+						mail_usuario,
+						mail_senha,
+						mail_smtp,
+						mail_porta,
+						mail_seguranca,
+						mail_ativo
+					FROM 
+						mail_meio WHERE idmail_meio = '$mail_marketing_emitente';";
+
+		 
       $nm_select = $sql_meio; 
       $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select; 
       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
@@ -1771,77 +1867,100 @@ $sql_meio = "";
           $this->rs_meio = false;
           $this->rs_meio_erro = $this->Db->ErrorMsg();
       } 
-;
-
-if ($this->rs_meio  !== false) {
-	
-	$mail = FALSE;
-	$mail_smtp_server = $this->rs1->fields["mail_smtp"];
-	$mail_smtp_user = $this->rs1->fields["mail_usuario"];
-	$mail_smtp_pass = $this->rs1->fields["mail_senha"];
-	$mail_from = $this->rs1->fields["mail_usuario"];
-	$mail_bbc = '7438728@bcc.hubspot.com';	
-	$mail_format = 'H';
-	$i = 0;
-
-}
-{
-
-	return;
-}
-
-
-$sql = "SELECT validador FROM validade WHERE validador = $valida and utilizado = 0;";
-
- 
-      $nm_select = $sql; 
+;
+
+		if ($this->rs_meio  !== false) {
+
+			$mail_smtp_server = $this->rs_meio->fields["mail_smtp"];
+			$mail_smtp_user = $this->rs_meio->fields["mail_usuario"];
+			$mail_smtp_pass = $this->rs_meio->fields["mail_senha"];
+			$mail_from = $this->rs_meio->fields["mail_usuario"];
+			$mail_bbc = 'renatoamori@gmail.com';	
+			$mail_format = 'H';
+			$i = $i++;
+			
+			$mail = TRUE;
+
+		}
+
+	
+	
+			$sql_contato = "SELECT 
+								 t1.*,
+								 coalesce(apelido,nome) as chamar
+							FROM 
+								mail_contato t1,
+								mail_lista t2,
+								mail_marketing t3
+							WHERE
+								t1.origem = t2.mail_lista_descricao
+								and t2.idmail_lista = t3.mail_marketing_lista
+								and t3.mail_marketing_lista = '$mail_marketing_lista'
+								and email NOT IN(select mail_enviados_mail FROM mail_enviados WHERE mail_enviados_id_envio = '$idmail_marketing') order by rand() limit 50;";
+
+			 
+      $nm_select = $sql_contato; 
       $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select; 
       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-      if ($this->rs1 = $this->Db->Execute($nm_select)) 
+      if ($this->rs_contato = $this->Db->Execute($nm_select)) 
       { }
       elseif (isset($GLOBALS["NM_ERRO_IBASE"]) && $GLOBALS["NM_ERRO_IBASE"] != 1)  
       { 
-          $this->rs1 = false;
-          $this->rs1_erro = $this->Db->ErrorMsg();
+          $this->rs_contato = false;
+          $this->rs_contato_erro = $this->Db->ErrorMsg();
       } 
-;
-
-if ($this->rs1  !== false) {
-
-	if(!empty($this->rs1->fields["validador"])) {
-		
-
-	$sql = "SELECT NULL as nome, email FROM email where origem = '$origem' and enviado = 0;";
-
-	 
-      $nm_select = $sql; 
-      $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select; 
-      $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-      if ($this->rs = $this->Db->Execute($nm_select)) 
-      { }
-      elseif (isset($GLOBALS["NM_ERRO_IBASE"]) && $GLOBALS["NM_ERRO_IBASE"] != 1)  
-      { 
-          $this->rs = false;
-          $this->rs_erro = $this->Db->ErrorMsg();
-      } 
-;
-
-	if ($this->rs  !== false) {
-
-		while(!$this->rs->EOF) {
-
-			if(!empty($this->rs->fields["email"])) {
-
-			$client_name = $this->rs->fields["nome"];
-			$mail_to = $this->rs->fields["email"];
-
-
-			$mail_format = "H";
-			$i++;
-
-			print_r('# '. $i .' - '. $mail_to .': ok </br>');
-
-			    include_once($this->Ini->path_third . "/swift/swift_required.php");
+;
+
+			if ($this->rs_contato  !== false) {
+
+				while(!$this->rs_contato->EOF) {
+
+					if(!empty($this->rs_contato->fields["email"])) {
+						
+					$client_name = $this->rs_contato->fields["chamar"];
+					$mail_to = $this->rs_contato->fields["email"];
+					$client_sexo = $this->rs_contato->fields["sexo"];
+					$saudacao = "Olá $client_name!";
+						
+					if($client_sexo == "M"){
+						
+						$saudacao = "Prezado $client_name";
+						
+						}
+					
+						if($client_sexo == "F"){
+						
+						$saudacao = "Prezada $client_name";
+						
+						}
+					
+						
+						
+						$mail_subject = $saudacao . ', '.$mail_marketing_assunto;
+						$mail_message = "<div style:'width: 300px;align-items: center><img src='".$mail_marketing_imagem_cabecalho."'>
+						<br>$saudacao!<br><br>
+						<br>$mail_marketing_conteudo
+						<br><img src='".$mail_marketing_link_conteudo."'>
+						<br><img src='".$mail_marketing_imagem_rodape."'></div>";
+
+
+
+
+
+					$mail_format = "H";
+					$i++;
+
+
+					if($i==50){
+						
+						print_r("<br><br><h3>Mensagem:</h3>Processo de envio iniciado, esta pagina ira sendo atualizada a cada 50 envios, você pode continuar trabalhando em outras telas.</br></br></br></br>");
+						
+						
+
+						
+						}
+						
+					    include_once($this->Ini->path_third . "/swift/swift_required.php");
     $sc_mail_port     = "465";
     $sc_mail_tp_port  = "Y";
     $sc_mail_tp_mens  = "$mail_format";
@@ -1920,13 +2039,15 @@ if ($this->rs1  !== false) {
         $this->sc_mail_erro = $Err_mail;
         $this->sc_mail_ok   = false;
     }
-;
-
-				}
-
-
-			$update_sql = "UPDATE email SET data_hora = now(), enviado = 2 WHERE email ='$mail_to';";
-			
+;
+
+						} 
+
+						print_r('# '. $i .' - '. $mail_to .': ok </br>');
+
+
+					$update_sql = "INSERT INTO mail_enviados(mail_enviados_mail,mail_enviados_id_envio) VALUES('$mail_to','$idmail_marketing');";
+					
      $nm_select = $update_sql; 
          $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select;
       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
@@ -1942,41 +2063,38 @@ if ($this->rs1  !== false) {
              exit;
          }
          $rf->Close();
-      ;
-
-			$this->rs->MoveNext();
-		}
-		$this->rs->Close();
-
+      ;
+
+					
+					
+					$this->rs_contato->MoveNext();
+				}
+				$this->rs_contato->Close();
+
+			}
+
+	
+		
+					$update_sql2 = "UPDATE mail_marketing 
+						SET mail_marketing_terminar_quando = now() 
+						WHERE idmail_marketing = '$idmail_marketing';";
+		
+		
+			$this->rs_marketing->MoveNext();
+
+		}
+	
+	$this->rs_marketing->Close();
+}
+
+if($mail == FALSE){
+	print_r("<h1>Nenhum e-mail enviado</h1>");
+	
+}else{
+	
+		print_r("<h1>$i e-mails enviados</h1>");
+
 	}
-
-}else{
-	
-print_r("<br>Validador já utlizado ou inválido</br>");
-	
-}
-
-			$update_sql1 = "UPDATE validade SET data_hora = now(), utilizado = 1 WHERE validador ='$valida';";
-			
-     $nm_select = $update_sql1; 
-         $_SESSION['scriptcase']['sc_sql_ult_comando'] = $nm_select;
-      $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
-         $rf = $this->Db->Execute($nm_select);
-         if ($rf === false)
-         {
-             $this->Erro->mensagem (__FILE__, __LINE__, "banco", $this->Ini->Nm_lang['lang_errm_dber'], $this->Db->ErrorMsg());
-             if ($this->Ini->sc_tem_trans_banco)
-             {
-                 $this->Db->RollbackTrans(); 
-                 $this->Ini->sc_tem_trans_banco = false;
-             }
-             exit;
-         }
-         $rf->Close();
-      ;
-}
-
-print_r('<br>Concluído!</br>');
 $_SESSION['scriptcase']['dispara_email']['contr_erro'] = 'off'; 
 //--- 
        $this->Db->Close(); 
@@ -2027,8 +2145,7 @@ $_SESSION['scriptcase']['dispara_email']['contr_erro'] = 'off';
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -2036,8 +2153,7 @@ $_SESSION['scriptcase']['dispara_email']['contr_erro'] = 'off';
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -2045,8 +2161,18 @@ $_SESSION['scriptcase']['dispara_email']['contr_erro'] = 'off';
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
 } 
 // 

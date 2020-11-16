@@ -10,7 +10,7 @@ function nmButtonOutput($arr_buttons, $sBtn, $sClick, $sHref, $sId, $sName, $sVa
 
         //if(!empty($sClick))
         {
-            $sClick = "scBtnGrpHide($(this).closest( 'table' ).attr('id').substring(12), true);" . $sClick;
+            $sClick = "if (typeof(getAppData) == 'undefined') { scBtnGrpHide($(this).closest( 'table' ).attr('id').substring(12), true)} " . $sClick;
         }
     }
 

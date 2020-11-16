@@ -1,7 +1,7 @@
 ul#css3menu1,ul#css3menu1 ul{
 	margin:0;list-style:none;padding:0;background-color:none;border-width:0;border-style:solid;border-color:;}
 ul#css3menu1 ul{
-	display:none;position:absolute;left:0;top:100%;background-color:#4e5665;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;padding:0;}
+	display:none;position:absolute;left:0;top:100%;background-color:#8db6cd;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;padding:0;}
 ul#css3menu1 li:hover>*{
 	display:block;}
 ul#css3menu1 li{
@@ -24,27 +24,27 @@ ul#css3menu1 a{
 ul#css3menu1 ul li{
 	float:none;margin:0;}
 ul#css3menu1 ul a{
-	text-align:left;padding:8px 15px;background-color:#4e5665;border-width:0 0 1px 0;border-style:solid;border-color:#4A4A4A;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;font-family:Open Sans,Arial,sans-serif;font-size:12px;font-weight:normal;font-style:none;color:#FFFFFF;text-decoration:none;}
+	text-align:left;padding:8px 15px;background-color:#8db6cd;border-width:0 0 1px 0;border-style:solid;border-color:#4A4A4A;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;font-family:Open Sans,Arial,sans-serif;font-size:12px;font-weight:normal;font-style:none;color:#FFFFFF;text-decoration:none;}
 ul#css3menu1 li:hover>a,ul#css3menu1 li a.pressed{
-	border-style:none;color:#FFFFFF;text-decoration:none;}
+	border-style:none;color:#333333;text-decoration:none;}
 ul#css3menu1 ul span{
 	background-image:none;padding-right:8px;}
 ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li a.pressed{
-	background-color:#767c8b;border-style:solid;border-color:#4A4A4A;color:#FFFFFF;text-decoration:none;}
+	background-color:#607b8b;border-style:solid;border-color:#4A4A4A;color:#333333;text-decoration:none;}
 ul#css3menu1 li.topmenu>a{
 	background-color:#363636;border-width:3px 0 0 0;border-style:solid;border-color:transparent transparent transparent transparent;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;}
 ul#css3menu1 li.topmenu:hover>a,ul#css3menu1 li.topmenu a.pressed{
-	background-color:#767c8b;border-style:solid;border-color:#2DB2EA transparent transparent transparent;}
+	background-color:#607b8b;border-style:solid;border-color:#2DB2EA transparent transparent transparent;}
 ul#css3menu1 li.sublast>a{
 	border-width:0px;}
 ul#css3menu1 img {
     border: none; vertical-align: middle; margin-right: 10px;}
 .scdisabledmain{
- color:#FFFFFF !important;
+ color:#CCCCCC !important;
 }
 .scdisabledsub{
  color:#FFFFFF !important;
 }
 .scMenuHTableCssAlt{
- background-color:#4e5665;background-position:right;background-repeat:no-repeat;
+ background-color:#363636;background-position:right;background-repeat:no-repeat;
 }

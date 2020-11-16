@@ -71,6 +71,7 @@ function ajax_navigate(opc, parm)
     }
     parm = parm.replace(/[&]/g, "__NM_AMP__");
     parm = parm.replace(/[%]/g, "__NM_PRC__");
+    parm_save = parm;
     return new Promise(function(resolve, reject) {$.ajax({
       type: "POST",
       url: "index.php",
@@ -195,17 +196,6 @@ function ajax_navigate(opc, parm)
                eval (oResp["exec_JS"][i]["function"] + '("' + oResp["exec_JS"][i]["parm"] + '");');
           }
         }
-        if (oResp["grid_search_add"]) {
-          for (i = 0; i < oResp["grid_search_add"].length; i++) {
-               var parm = oResp["grid_search_add"][i]['field'];
-               Tot_obj_grid_search++;
-               Tab_obj_grid_search[Tot_obj_grid_search] = parm;
-               $(oResp["grid_search_add"][i]['tag']).insertBefore('#add_grid_search');
-               $('#grid_search_' + parm).attr('new', 'new');
-               scLoadScInput('#grid_search_' + parm + '_' + Tot_obj_grid_search + ' input:text.sc-js-input');
-          }
-          SC_carga_evt_jquery_grid('all');
-        }
         if (oResp["htmOutput"]) {
            nmAjaxShowDebug(oResp);
         }
@@ -213,14 +203,7 @@ function ajax_navigate(opc, parm)
         {
             if (Qsearch_ok)
             {
-                scQSInitVal = $("#SC_fast_search_top").val();
-                scQSInit = true;
-                scQuickSearchInit(false, '');
                 scQuickSearchKeyUp('top', null);
-                scQSInit = false;
-            }
-            if (parm == "save_grid") {
-                Dyn_Ini = true;
             }
             SC_init_jquery(false);
             tb_init('a.thickbox, area.thickbox, input.thickbox');
@@ -237,6 +220,7 @@ function ajax_navigate(opc, parm)
 function ajax_navigate_res(opc, parm)
 {
     nmAjaxProcOn();
+    parm_save = parm;
     $.ajax({
       type: "POST",
       url: "index.php",
@@ -315,17 +299,6 @@ function ajax_navigate_res(opc, parm)
             }
           }
         }
-        if (oResp["grid_search_add"]) {
-          for (i = 0; i < oResp["grid_search_add"].length; i++) {
-               var parm = oResp["grid_search_add"][i]['field'];
-               Tot_obj_grid_search++;
-               Tab_obj_grid_search[Tot_obj_grid_search] = parm;
-               $(oResp["grid_search_add"][i]['tag']).insertBefore('#add_grid_search');
-               $('#grid_search_' + parm).attr('new', 'new');
-               scLoadScInput('#grid_search_' + parm + '_' + Tot_obj_grid_search + ' input:text.sc-js-input');
-          }
-          SC_carga_evt_jquery_grid('all');
-        }
         if (oResp["redirInfo"]) {
            nmAjaxRedir(oResp);
         }
@@ -349,61 +322,6 @@ function ajax_navigate_res(opc, parm)
               eval (oResp["exec_script"][i]);
           }
         }
-    });
-}
-function ajax_add_grid_search(obj, str_origem, str_field)
-{
-    $(obj).parent().parent().remove();
-    
-    if($('#id_grid_search_all_cmp tr').length < 1)
-    {
-        $('#add_grid_search').addClass('scGridFilterTagAddDisabled');
-    }
-    else
-    {
-        $('#add_grid_search').removeClass('scGridFilterTagAddDisabled');
-    }
-    parm  = str_field;
-    nmAjaxProcOn();
-    Tot_obj_grid_search++;
-    Tab_obj_grid_search[Tot_obj_grid_search] = parm;
-    $.ajax({
-      type: "POST",
-      url: "index.php",
-      data: "nmgp_opcao=ajax_add_grid_search&script_case_init=" + document.Fgrid_search.script_case_init.value + "&script_case_session=" + document.Fgrid_search.script_case_session.value + "&parm=" + parm + "&seq=" + Tot_obj_grid_search + "&origem=" + str_origem
-     })
-     .done(function(jsonGrid_add) {
-        var i, oResp;
-        Tst_integrid = jsonGrid_add.trim();
-        if ("{" != Tst_integrid.substr(0, 1)) {
-            nmAjaxProcOff();
-            alert (jsonGrid_add);
-            return;
-        }
-        eval("oResp = " + jsonGrid_add);
-        if (oResp["ss_time_out"]) {
-            nmAjaxProcOff();
-            nm_move();
-        }
-        if (oResp["grid_add"]) {
-          for (i = 0; i < oResp["grid_add"].length; i++) {
-               $(oResp["grid_add"][i]).insertBefore('#add_grid_search');
-               $('#grid_search_' + parm).attr('new', 'new');
-               $('#grid_search_' + parm).find('.scGridFilterTagListItemLabel').click();
-               $('#grid_search_' + parm).find('input[type=text]').focus();
-          }
-        }
-        if (oResp["setVar"]) {
-          for (i = 0; i < oResp["setVar"].length; i++) {
-               eval (oResp["setVar"][i]["var"] + ' = \"' + oResp["setVar"][i]["value"] + '\"');
-          }
-        }
-        if (oResp["htmOutput"]) {
-           nmAjaxShowDebug(oResp);
-        }
-        SC_carga_evt_jquery_grid(Tot_obj_grid_search);
-        scLoadScInput('#grid_search_' + parm + '_' + Tot_obj_grid_search + ' input:text.sc-js-input');
-        nmAjaxProcOff();
     });
 }
 function ajax_save_ancor(f_submit, ancor)

@@ -2,10 +2,11 @@
    include_once('grid_mail_lista_session.php');
    @session_start() ;
    $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_perfil']          = "principal";
-   $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_prod']       = "/principal/prod";
+   $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_prod']       = "/var/www/html/principal/prod";
    $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_conf']       = "";
-   $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_imagens']    = "/principal/file/img";
-   $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_imag_temp']  = "/principal/tmp";
+   $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_imagens']    = "/var/www/doc/img";
+   $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
+   $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_cache']      = "";
    $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_doc']        = "/var/www/doc";
     //check publication with the prod
     $NM_dir_atual = getcwd();
@@ -39,6 +40,11 @@
     if(empty($_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_imag_temp']))
     {
             /*check tmp*/$_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_imag_temp'] = $str_path_apl_url . "_lib/tmp";
+    }
+    //check cache
+    if(empty($_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_cache']))
+    {
+            /*check tmp*/$_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_cache'] = $str_path_apl_dir . "_lib/file/cache";
     }
     //check doc
     if(empty($_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_doc']))
@@ -88,8 +94,6 @@ class grid_mail_lista_ini
    var $str_schema_all;
    var $Str_btn_grid;
    var $str_google_fonts;
-   var $str_schema_filter;
-   var $Str_btn_filter;
    var $path_cep;
    var $path_secure;
    var $path_js;
@@ -99,7 +103,6 @@ class grid_mail_lista_ini
    var $path_atual;
    var $Gd_missing;
    var $sc_site_ssl;
-   var $link_form_mail_lista;
    var $link_grid_mail_contato_filtrado_cons;
    var $nm_cont_lin;
    var $nm_limite_lin;
@@ -208,9 +211,9 @@ class grid_mail_lista_ini
       $this->nm_dt_criacao   = "20200509"; 
       $this->nm_hr_criacao   = "120613"; 
       $this->nm_autor_alt    = "admin"; 
-      $this->nm_dt_ult_alt   = "20200528"; 
-      $this->nm_hr_ult_alt   = "015036"; 
-      $this->Apl_paginacao   = "PARCIAL"; 
+      $this->nm_dt_ult_alt   = "20200924"; 
+      $this->nm_hr_ult_alt   = "083303"; 
+      $this->Apl_paginacao   = "FULL"; 
       $temp_bug_list         = explode(" ", microtime()); 
       list($NM_usec, $NM_sec) = $temp_bug_list; 
       $this->nm_timestamp    = (float) $NM_sec; 
@@ -235,6 +238,7 @@ class grid_mail_lista_ini
       $this->path_conf       = $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_conf'];
       $this->path_imagens    = $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_imagens'];
       $this->path_imag_temp  = $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_imag_temp'];
+      $this->path_cache  = $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_cache'];
       $this->path_doc        = $_SESSION['scriptcase']['grid_mail_lista']['glo_nm_path_doc'];
       if (!isset($_SESSION['scriptcase']['str_lang']) || empty($_SESSION['scriptcase']['str_lang']))
       {
@@ -247,7 +251,6 @@ class grid_mail_lista_ini
       $this->str_lang        = $_SESSION['scriptcase']['str_lang'];
       $this->str_conf_reg    = $_SESSION['scriptcase']['str_conf_reg'];
       $this->str_schema_all    = (isset($_SESSION['scriptcase']['str_schema_all']) && !empty($_SESSION['scriptcase']['str_schema_all'])) ? $_SESSION['scriptcase']['str_schema_all'] : "Sc9_SweetHollyhock/Sc9_SweetHollyhock";
-      $this->str_schema_filter = (isset($_SESSION['scriptcase']['str_schema_all']) && !empty($_SESSION['scriptcase']['str_schema_all'])) ? $_SESSION['scriptcase']['str_schema_all'] : "Sc9_SweetHollyhock/Sc9_SweetHollyhock";
       $_SESSION['scriptcase']['erro']['str_schema'] = $this->str_schema_all . "_error.css";
       $_SESSION['scriptcase']['erro']['str_lang']   = $this->str_lang;
       $this->server          = (!isset($_SERVER['HTTP_HOST'])) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
@@ -324,22 +327,6 @@ class grid_mail_lista_ini
               $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['SC_Link_View'] = true;
           }
       }
-    if (!$_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['embutida'])
-    {
-      if (isset($_POST['nmgp_opcao']) && $_POST['nmgp_opcao'] == "ajax_add_grid_search")
-      {
-          $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['grid_search_add']['cmp'] = $_POST['parm'];
-          $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['grid_search_add']['seq'] = $_POST['seq'];
-          $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['opcao'] = $_POST['origem'];
-          $nmgp_opcao = $_POST['origem'];
-      }
-      if (isset($_GET['nmgp_opcao']) && $_GET['nmgp_opcao'] == "ajax_aut_comp_dyn_search")
-      {
-          $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dyn_search_aut_comp']['cmp'] = $_GET['field'];
-          $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['opcao'] = $_GET['origem'];
-          $nmgp_opcao = $_GET['origem'];
-      }
-    }
       if (isset($_POST['nmgp_opcao']) && $_POST['nmgp_opcao'] == "ajax_save_ancor")
       {
           $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['ancor_save'] = $_POST['ancor_save'];
@@ -390,7 +377,7 @@ class grid_mail_lista_ini
               }
           }
       }
-      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin;
+      global $under_dashboard, $dashboard_app, $own_widget, $parent_widget, $compact_mode, $remove_margin, $remove_border;
       if (!isset($_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['under_dashboard']))
       {
           $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['under_dashboard'] = false;
@@ -399,6 +386,7 @@ class grid_mail_lista_ini
           $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['parent_widget']   = '';
           $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['compact_mode']    = false;
           $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin']   = false;
+          $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['remove_border']   = false;
       }
       if (isset($_GET['under_dashboard']) && 1 == $_GET['under_dashboard'])
       {
@@ -416,6 +404,9 @@ class grid_mail_lista_ini
               }
               if (isset($_GET['remove_margin'])) {
                   $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin'] = 1 == $_GET['remove_margin'];
+              }
+              if (isset($_GET['remove_border'])) {
+                  $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['remove_border'] = 1 == $_GET['remove_border'];
               }
           }
       }
@@ -436,6 +427,9 @@ class grid_mail_lista_ini
               if (isset($remove_margin)) {
                   $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['remove_margin'] = 1 == $remove_margin;
               }
+              if (isset($remove_border)) {
+                  $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['remove_border'] = 1 == $remove_border;
+              }
           }
       }
       if (!isset($_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['maximized']))
@@ -446,25 +440,6 @@ class grid_mail_lista_ini
       {
           $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['dashboard_info']['maximized'] = 1 == $_GET['maximized'];
       }
-      $Tmp_apl_lig = "form_mail_lista";
-      if (is_file($this->root . $this->path_link . "_lib/friendly_url/form_mail_lista_ini.txt"))
-      {
-          $Friendly = file($this->root . $this->path_link . "_lib/friendly_url/form_mail_lista_ini.txt");
-          if (isset($Friendly[0]) && !empty($Friendly[0]))
-          {
-              $Tmp_apl_lig = trim($Friendly[0]);
-          }
-      }
-      if (is_file($this->root . $this->path_link . $Tmp_apl_lig . "/form_mail_lista_ini.txt"))
-      {
-          $L_md5 = file($this->root . $this->path_link . $Tmp_apl_lig . "/form_mail_lista_ini.txt");
-          if (isset($L_md5[6]) && trim($L_md5[6]) == "LigMd5")
-          {
-              $this->sc_lig_md5["form_mail_lista"] = 'S';
-          }
-      }
-      $this->sc_lig_target["A_@scinf_"] = '';
-      $this->sc_lig_target["A_@scinf__@scinf_form_mail_lista"] = '';
       $Tmp_apl_lig = "grid_mail_contato_filtrado";
       if (is_file($this->root . $this->path_link . "_lib/friendly_url/grid_mail_contato_filtrado_ini.txt"))
       {
@@ -498,7 +473,6 @@ class grid_mail_lista_ini
               }
           }
       }
-      $this->link_form_mail_lista =  $this->sc_protocolo . $this->server . $this->path_link . "" . SC_dir_app_name('form_mail_lista') . "/" ; 
       $this->link_grid_mail_contato_filtrado_cons =  $this->sc_protocolo . $this->server . $this->path_link . "" . SC_dir_app_name('grid_mail_contato_filtrado') . "/" ; 
       if ($Tp_init == "Path_sub")
       {
@@ -647,11 +621,11 @@ class grid_mail_lista_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -890,7 +864,7 @@ class grid_mail_lista_ini
           exit;
       }
       $this->nm_bases_access     = array();
-      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql");
+      $this->nm_bases_mysql      = array("mysql", "mysqlt", "mysqli", "maxsql", "pdo_mysql", "azure_mysql", "azure_mysqlt", "azure_mysqli", "azure_maxsql", "azure_pdo_mysql", "googlecloud_mysql", "googlecloud_mysqlt", "googlecloud_mysqli", "googlecloud_maxsql", "googlecloud_pdo_mysql", "amazonrds_mysql", "amazonrds_mysqlt", "amazonrds_mysqli", "amazonrds_maxsql", "amazonrds_pdo_mysql");
       $this->sqlite_version      = "old";
       $this->nm_bases_sqlite     = array("sqlite", "sqlite3", "pdosqlite");
       $this->nm_bases_all        = array_merge($this->nm_bases_mysql, $this->nm_bases_sqlite);
@@ -902,7 +876,7 @@ class grid_mail_lista_ini
       $this->nm_ttf_chi  = array("zh_cn", "zh_hk", "ko");
       $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['seq_dir'] = 0; 
       $_SESSION['sc_session'][$this->sc_page]['grid_mail_lista']['sub_dir'] = array(); 
-      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_v1D9NwDQX7HANOD5JsHuzGVcBOH5XCVEF7HQXOZkFGHANOD5BiHgBYHEJqHEFqVoFGDcBiDQFaHAveD5NUHgNKDkBOV5FYHMBiHQNmZSBqHArKV5FUDMrYZSXeV5FqHIJsHQXODQX7HIrKV5raHgrwVcB/DWJeVoraD9BiVINUHAvsZMB/DEBOVkJ3DWr/ZuBOHQJKDQJsZ1vCV5FGHuNOV9FeDWXCVorqDcJUZ1BOZ1BeV5X7DENOHEJGH5FYDoBqD9XsDQB/Z1rwV5X7HuzGVIBOV5X7DoJsD9XGZSB/HArYHQJwDEBODkFeH5FYVoFGHQJKDQBOZ1rwD5XGHuzGVIBOHEFYDoNUDcNwH9B/Z1rYD5NUDEBeHEXeDuFYDoFUD9XsDQJsDSBYV5BqHuBYVcFKDWXKDoJsD9XOZ1F7HIveD5BqHgBeHEFiV5B3DoF7D9XsDuFaHAveD5BqHuvmVIBsV5F/HMJeD9BsH9BqD1rKHQrqDMvCHEBUDuXKZuFaHQJKZSX7HArYHQJsDMrwVcB/H5XCDorqHQJmZ1F7Z1vmD5rqDEBOHArCDWF/HMBqHQJeH9BiD1NKVWBqDMNOV9FeDuFGVErqHQFYZkFGZ1NOHuJwDMvCHErsH5F/HMFaHQXGDQFUHIrKHuFUDMvmV9BUDWF/HIBiHQFYZkFGHIBeHuB/HgBOHErCHEFaHIraDcJUZSX7HIBeD5BqHgvsZSJ3H5FqHMBqHQBqZSBqZ1rYHQBOHgBeVkJqH5F/HMJwHQXGDuFaDSvCV5BqDMvODkB/DurGVErqHQFYZkBiHArYHuBOHgBOVkJ3H5FYHIXGHQXGDQFUD1BeHuBOHgvOVIBsDuX7HMX7DcBwH9B/HIrwV5JeDMBYDkBsH5FYHMBOHQJeZ9XGHIrwHQJeDMzGVIB/DWF/HIraHQFYZ1BOHAzGZMBOHgBYHErCDWr/HMB/HQXGDuFaHAN7V5FaHgvOVcFeH5XCHMJeHQFYZkFGHANOHQF7HgvsHENiH5BmZuBODcJUZSX7HIBeD5BqHgvsZSJ3H5FqVoFGDcBqH9BOZ1BeD5BqDMBYHEJGH5F/VoJeDcXOZ9rqZ1rwV5JwHuzGVcrsH5B3VoraHQBiZSB/HArYZMB/HgvsHEXeDWX7VoJwDcBwDuBOZ1rwVWJeDMvsV9FiV5FYVorqD9JmZ1rqHAvsZMBOHgveDkBsV5FaZuBqD9NmZSFGHIrwV5BOHuNODkBOV5X7VENUHQFYH9FaD1rwD5rqDErKVkXeHEFqDoBOD9NmDQJsD1BeV5FUHuzGDkBOH5XKVoraDcBwH9B/HIrwV5JeDMBYDkBsH5FYDoXGDcJeZSFUZ1rwD5BOHuNODkFCH5FqVENUDcNwH9FaHArKD5rqHgBeHEFiV5B3DoF7D9XsDuFaHANKV5BODMvOVcBUDWrmVorqHQNmZ1BiD1zGD5XGHgBYHErCDWF/VoBiDcJUZSX7Z1BYHuFaDMvmZSNiDWFaVEraDcNmZkFGHIveHuFGHgBODkB/DWr/DoFUHQNwDQFaHArYHQB/HuvmDkBsDWFaHINUD9BsZkFGHArKV5FUDMrYZSXeV5FqHIJsHQFYH9X7HABYD5NUHgvsVcFCH5XCVoraDcBwZ1FGD1rwD5NUDMzGHEJGH5F/DoraD9XsH9X7Z1NaV5BiDMvmVcBOV5FYVoraD9XOZSB/DSrYV5X7HgBeHEFiV5B3DoF7D9XsDuFaHANKVWBqDMrwZSNiDWB3VEB/";
+      $_SESSION['scriptcase']['nm_bases_security']  = "enc_nm_enc_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";
       $this->prep_conect();
       $this->conectDB();
       if (!in_array(strtolower($this->nm_tpbanco), $this->nm_bases_all))
@@ -1188,11 +1162,11 @@ class grid_mail_lista_ini
           echo ".scButton_google_selected { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#dd4b39; border-style:solid; border-radius:4px; background-color:#dd4b39; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_google_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_google_list:hover { filter: alpha(opacity=100); opacity:1;  }";
-          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
-          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:12px; cursor:default; transition:all 0.2s;  }";
-          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:hover { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#833471; border-style:solid; border-radius:4px; background-color:#833471; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons:active { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
+          echo ".scButton_icons_disabled { color:#313a46; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#e3eaef; border-style:solid; border-radius:4px; background-color:#e3eaef; box-shadow:0 2px 6px 0 rgba(227,234,239,.5); filter: alpha(opacity=44); opacity:0.44; padding:9px 12px; cursor:default; transition:all 0.2s;  }";
+          echo ".scButton_icons_selected { color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#7a3269; border-style:solid; border-radius:4px; background-color:#7a3269; box-shadow:inset 0 -1px 0 rgba(31, 45, 61, 0.15); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
           echo ".scButton_icons_list { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_icons_list:hover { filter: alpha(opacity=100); opacity:1;  }";
           echo ".scButton_ok { font-family:Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; color:#fff; font-size:13px; font-weight:normal; text-decoration:none; border-width:1px; border-color:#0acf97; border-style:solid; border-radius:4px; background-color:#0acf97; box-shadow:0 2px 6px 0 rgba(10,207,151,.5); filter: alpha(opacity=100); opacity:1; padding:9px 12px; cursor:pointer; transition:all 0.2s;  }";
@@ -1446,38 +1420,6 @@ class grid_mail_lista_ini
            $dd = $dd_max;
        }
        return $yy . "-" . $mm . "-" . $dd . $hh;
-   }
-   function dyn_convert_date($val)
-   {
-       $val_ok = array();
-       foreach ($val as $Part_date)
-       {
-           if (substr($Part_date, 0, 1) == "Y")
-           {
-               $val_ok['ano'] = substr($Part_date, 2);
-           }
-           if (substr($Part_date, 0, 1) == "M")
-           {
-               $val_ok['mes'] = substr($Part_date, 2);
-           }
-           if (substr($Part_date, 0, 1) == "D")
-           {
-               $val_ok['dia'] = substr($Part_date, 2);
-           }
-           if (substr($Part_date, 0, 1) == "H")
-           {
-               $val_ok['hor'] = substr($Part_date, 2);
-           }
-           if (substr($Part_date, 0, 1) == "I")
-           {
-               $val_ok['min'] = substr($Part_date, 2);
-           }
-           if (substr($Part_date, 0, 1) == "S")
-           {
-               $val_ok['seg'] = substr($Part_date, 2);
-           }
-       }
-       return $val_ok;
    }
 	function appIsSsl() {
 		if (isset($_SERVER['HTTPS'])) {
@@ -1758,7 +1700,6 @@ class grid_mail_lista_apl
    var $grid;
    var $Res;
    var $Graf;
-   var $pesq;
    var $pdf;
    var $xls;
    var $xml;
@@ -1974,6 +1915,22 @@ class grid_mail_lista_apl
               if ($nmgp_opcao == "muda_qt_linhas")
               {
                   $nmgp_quant_linhas  = strtolower($_POST['parm']);
+              }
+              if (($_POST['opc'] == "igual" || $_POST['opc'] == "resumo") && isset($_POST['parm']) && ($_POST['parm'] == "reload" || $_POST['parm'] == "breload"))
+              {
+                  $_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['contr_total_geral'] = "NAO";
+                  $_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['contr_array_resumo'] = "NAO";
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['tot_geral']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['arr_total']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_group_by']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_x_axys']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_y_axys']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_fill']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_order']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_order_col']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_order_level']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_order_sort']);
+                  unset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['pivot_tabular']);
               }
               if ($nmgp_opcao == "fast_search")
               {
@@ -2583,10 +2540,6 @@ class grid_mail_lista_apl
           { 
               $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_liga'] = $NMSC_conf_apl;  
           }   
-          if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_liga']['inicial']))
-          {
-              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_liga']['inicial'];
-          }
       }
           if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_liga']['paginacao']) && !empty($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opc_liga']['paginacao']))
           { 
@@ -2642,55 +2595,6 @@ class grid_mail_lista_apl
               $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] = 'pesq';
               $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['orig_pesq'] = 'grid';
           } 
-      } 
-      $this->Ini->grid_search_change_fil = false;
-      if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "grid_search" || $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "grid_search_res")
-      { 
-          if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "grid_search")
-          { 
-              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['orig_pesq'] = 'grid';
-          } 
-          if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "grid_search_res")
-          { 
-              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['orig_pesq'] = 'res';
-          } 
-          $this->SC_proc_grid_search($_POST['parm']);
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['where_pesq_ant'] = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['where_pesq'];
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['contr_array_resumo'] = "NAO";
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['contr_total_geral']  = "NAO";
-          unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tot_geral']);
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] = 'pesq';
-      } 
-      if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "grid_search_change_fil" || $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "grid_search_change_fil_res")
-      { 
-          if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "grid_search_change_fil")
-          { 
-              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['orig_pesq'] = 'grid';
-          } 
-          if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == "grid_search_change_fil_res")
-          { 
-              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['orig_pesq'] = 'res';
-          } 
-          if (!$_SESSION['scriptcase']['proc_mobile']) 
-          { 
-              require_once($this->Ini->path_aplicacao . "grid_mail_lista_pesq.class.php"); 
-          } 
-          else 
-          { 
-              require_once($this->Ini->path_aplicacao . "grid_mail_lista_mobile_pesq.class.php"); 
-          } 
-          $this->pesq  = new grid_mail_lista_pesq();
-          $this->prep_modulos("pesq");
-          $this->pesq->NM_ajax_grid_fil = $_POST['parm'];
-          $this->pesq->NM_ajax_flag     = true;
-          $this->pesq->NM_ajax_opcao    = "ajax_grid_search_change_fil";
-          $staus_fil = $this->pesq->monta_busca();
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['where_pesq_ant'] = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['where_pesq'];
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['contr_array_resumo'] = "NAO";
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['contr_total_geral']  = "NAO";
-          unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tot_geral']);
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] = 'pesq';
-          $this->Ini->grid_search_change_fil = true;
       } 
       if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['opcao'] == 'pesq' && isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['orig_pesq']) && !empty($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['orig_pesq']))  
       { 
@@ -2765,6 +2669,10 @@ class grid_mail_lista_apl
           $_SESSION['scriptcase']['saida_word'] = true;
           if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['word_name']))
           {
+              $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['word_name'], ".");
+              if ($Pos === false) {
+                  $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['word_name'] .= ".doc";
+              }
               $nm_arquivo_doc_word = "/" . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['word_name'];
           }
           else
@@ -2929,6 +2837,10 @@ class grid_mail_lista_apl
               $_SESSION['scriptcase']['saida_word'] = true;
               if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['word_name']))
               {
+                  $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['word_name'], ".");
+                  if ($Pos === false) {
+                      $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['word_name'] .= ".doc";
+                  }
                   $nm_arquivo_doc_word =  "/" . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['word_name'];
               }
               else
@@ -3065,6 +2977,10 @@ class grid_mail_lista_apl
             }
             if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pdf_name']))
             {
+                $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pdf_name'], ".");
+                if ($Pos === false) {
+                    $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pdf_name'] .= ".pdf";
+                }
                 $nm_arquivo_pdf_serv = $this->Ini->root .  $this->Ini->path_imag_temp . "/" . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pdf_name'];
                 $nm_arquivo_pdf_url  = $this->Ini->path_imag_temp . "/" . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pdf_name'];
                 $nm_arquivo_pdf_base = "/" . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['pdf_name'];
@@ -3126,7 +3042,11 @@ class grid_mail_lista_apl
             {
                 if (FALSE !== strpos(strtolower(php_uname()), 'i686')) 
                 {
-                    if (FALSE !== strpos(php_uname(), 'Debian 4.9')) 
+                    if (FALSE !== strpos(php_uname(), 'Debian 4.19')) 
+                    {
+                        chdir($this->Ini->path_third . "/wkhtmltopdf/buster");
+                    }
+                    elseif (FALSE !== strpos(php_uname(), 'Debian 4.9')) 
                     {
                         chdir($this->Ini->path_third . "/wkhtmltopdf/stretch");
                     }
@@ -3138,7 +3058,11 @@ class grid_mail_lista_apl
                 }
                 else
                 {
-                    if (FALSE !== strpos(php_uname(), 'Debian 4.9')) 
+                    if (FALSE !== strpos(php_uname(), 'Debian 4.19')) 
+                    {
+                        chdir($this->Ini->path_third . "/wkhtmltopdf/buster");
+                    }
+                    elseif (FALSE !== strpos(php_uname(), 'Debian 4.9')) 
                     {
                         chdir($this->Ini->path_third . "/wkhtmltopdf/stretch");
                     }
@@ -3329,8 +3253,7 @@ else
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -3338,8 +3261,7 @@ else
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -3347,8 +3269,18 @@ else
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
   function close_emb()
   {
@@ -3357,8 +3289,9 @@ else
           $this->Db->Close(); 
       }
   }
-   function SC_fast_search($field, $arg_search, $data_search)
+   function SC_fast_search($in_fields, $arg_search, $data_search)
    {
+      $fields = (strpos($in_fields, "SC_all_Cmp") !== false) ? array("SC_all_Cmp") : explode("_VLS_", $in_fields);
       $this->NM_case_insensitive = false;
       if (empty($data_search)) 
       {
@@ -3389,21 +3322,23 @@ else
           $data_search = NM_conv_charset($data_search, $_SESSION['scriptcase']['charset'], "UTF-8");
       }
       $sv_data = $data_search;
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "idmail_lista", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_lista_descricao", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_lista_ativo", $arg_search, $data_search);
-      }
-      if ($field == "SC_all_Cmp") 
-      {
-          $this->SC_monta_condicao($comando, "mail_lista_sistema", $arg_search, $data_search);
+      foreach ($fields as $field) {
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "idmail_lista", $arg_search, str_replace(",", ".", $data_search));
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_lista_descricao", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_lista_ativo", $arg_search, $data_search);
+          }
+          if ($field == "SC_all_Cmp") 
+          {
+              $this->SC_monta_condicao($comando, "mail_lista_sistema", $arg_search, $data_search);
+          }
       }
       if (empty($comando)) 
       {
@@ -3435,7 +3370,7 @@ else
           $comando = " where (" . $comando . ")"; 
       }
       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['where_pesq'] = $comando;
-      $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][0] = $field;
+      $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][0] = $in_fields;
       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][1] = $arg_search;
       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['fast_search'][2] = $sv_data;
    }
@@ -3541,128 +3476,6 @@ else
                $comando        .= $nm_ini_lower . $nome . $nm_fim_lower . " <= " . $nm_ini_lower . $nm_aspas . $campo . $nm_aspas1 . $nm_fim_lower;
             break;
          }
-   }
-   function SC_proc_grid_search($Parms)
-   {
-       $ix     = 0;
-       $fields = array();
-       $busca  = array();
-       $this->Ini->sc_Include($this->Ini->path_lib_php . "/nm_gp_limpa.php", "F", "nm_limpa_valor") ; 
-       if ($_SESSION['scriptcase']['charset'] != "UTF-8" && NM_is_utf8($Parms))
-       {
-           $Parms = NM_conv_charset($Parms, $_SESSION['scriptcase']['charset'], "UTF-8");
-       }
-       $tmp    = explode("_FDYN_", $Parms);
-       $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tmp_busca'] = array();
-       foreach ($tmp as $cada_f)
-       {
-           $dats = explode("_DYN_", $cada_f);
-           if ($dats[1] == "del_grid_search_all")
-           {
-               foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq'] as $ind => $dados)
-               {
-                   $this->proc_del_grid_search($ind, true);
-               }
-               unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq']);
-               continue;
-           }
-           if ($dats[1] == "del_grid_search")
-           {
-               $this->proc_del_grid_search($dats[0], false);
-               continue;
-           }
-           $fields[$ix]['field']  = $dats[0];
-           $fields[$ix]['cond']   = $dats[1];
-           $sep_in                 = explode("_VLS3_", $dats[2]);
-           if (isset($sep_in[1]))
-           {
-               $fields[$ix]['vls'][2][0] = $sep_in[1];
-               $dats[2] = $sep_in[0];
-           }
-           $sep_bw                 = explode("_VLS2_", $dats[2]);
-           $fields[$ix]['vls'][0] = explode("_VLS_",  $sep_bw[0]);
-           $fields[$ix]['vls'][1] = isset($sep_bw[1]) ? explode("_VLS_",  $sep_bw[1]) : "";
-           $val_sv = array();
-           foreach ($fields[$ix]['vls'] as $i => $dados)
-           {
-               if (is_array($dados))
-               {
-                   foreach ($dados as $ind => $str)
-                   {
-                       $str = NM_charset_decode($str);
-                       $tmp_pos = strpos($str, "##@@");
-                       if ($tmp_pos === false)
-                       {
-                          $val_sv[$i][] = $str;
-                       }
-                       else
-                       {
-                         $val_sv[$i][] = substr($str, 0, $tmp_pos);
-                       }
-                   }
-               }
-               else
-               {
-                   $dados = NM_charset_decode($dados);
-                   $tmp_pos = strpos($dados, "##@@");
-                   if ($tmp_pos === false)
-                   {
-                      $val_sv[$i] = $dados;
-                   }
-                   else
-                   {
-                      $val_sv[$i] = substr($dados, 0, $tmp_pos);
-                   }
-               }
-           }
-           if (!isset($busca[$dats[0]]))
-           {
-               $busca[$dats[0]] = $dats[1];
-               $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tmp_busca'][$dats[0]] = (isset($fields[$ix]['vls'][0])) ? $fields[$ix]['vls'][0][0] : "";
-               if (isset($fields[$ix]['vls'][1]))
-               {
-                   $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tmp_busca'][$dats[0] . '_input_2'] = $fields[$ix]['vls'][1][0];
-               }
-               $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tmp_busca'][$dats[0] . '_cond'] = $dats[1];
-           }
-           $ix++;
-      }
-      if ($_SESSION['scriptcase']['charset'] != "UTF-8")
-      {
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tmp_busca'] = NM_conv_charset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tmp_busca'], "UTF-8", $_SESSION['scriptcase']['charset']);
-      }
-      foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['tmp_busca'] as $ind => $dados)
-      {
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['campos_busca'][$ind] = $dados;
-      }
-      if (!$_SESSION['scriptcase']['proc_mobile']) 
-      { 
-          require_once($this->Ini->path_aplicacao . "grid_mail_lista_pesq.class.php"); 
-      } 
-      else 
-      { 
-          require_once($this->Ini->path_aplicacao . "grid_mail_lista_mobile_pesq.class.php"); 
-      } 
-      $this->pesq  = new grid_mail_lista_pesq();
-      $this->prep_modulos("pesq");
-      $this->pesq->NM_ajax_flag  = true;
-      $this->pesq->NM_ajax_opcao = "ajax_grid_search";
-      $this->pesq->monta_busca();
-   }
-   function proc_del_grid_search($cmp_del, $del_all)
-   {
-      if (is_array($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['campos_busca'][$cmp_del]))
-      {
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['campos_busca'][$cmp_del] = array();
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['campos_busca'][$cmp_del . "_input_2"] = array();
-      }
-      else
-      {
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['campos_busca'][$cmp_del] = "";
-          $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['campos_busca'][$cmp_del . "_input_2"] = "";
-      }
-      $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['campos_busca'][$cmp_del . "_cond"] = "";
-      unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista']['grid_pesq'][$cmp_del]);
    }
   function html_doc_word($nm_arquivo_doc_word, $nmgp_password)
   {
@@ -4115,7 +3928,7 @@ $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista'][$path_doc_md5][1
    }
    if (!isset($_SERVER['HTTP_REFERER']) && !isset($nmgp_parms) && !isset($script_case_init) && !isset($script_case_session) && !isset($nmgp_start))
    {
-       $Sem_Session = false;
+       $_SESSION['sc_session']['SC_parm_violation'] = true;
    }
    $NM_dir_atual = getcwd();
    if (empty($NM_dir_atual)) {
@@ -4514,10 +4327,6 @@ $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_lista'][$path_doc_md5][1
        { 
            $_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['opcao'] = $nmgp_opcao ;  
        }   
-       if (!isset($_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['mostra_edit'])) 
-       {
-           $_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['mostra_edit'] = "S";
-       }
        if (isset($nmgp_lig_edit_lapis)) 
        {
           $_SESSION['sc_session'][$script_case_init]['grid_mail_lista']['mostra_edit'] = $nmgp_lig_edit_lapis;

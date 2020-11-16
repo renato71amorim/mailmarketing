@@ -1,4 +1,4 @@
-.select2-container--default .select2-selection { background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #34495E; border-style: solid; border-width: 1px; color: #333333; font-family: Arial, sans-serif; font-size: 13px; text-decoration: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px }
+.select2-container--default .select2-selection { background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #34495E !important; border-style: solid !important; border-width: 1px !important; color: #333333; font-family: Arial, sans-serif; font-size: 13px; text-decoration: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px }
 .scFilterPage { background-color: #E7E7E7; background-image: none; opacity: 1; filter: alpha(opacity=100); color: #000000; font-family: Arial, sans-serif; font-size: 13px; margin: 20px 0 20px 0; text-decoration: none }
 .scFilterBorder { background-color: #fff; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #D2D2D2; border-style: solid; border-width: 1px; border-collapse: collapse; padding: 0 15px; -moz-border-radius: 20px; -webkit-border-radius: 20px; border-radius: 20px }
 .scFilterTable { background-color: #fff; background-image: none; opacity: 1; filter: alpha(opacity=100); border-collapse: collapse; border-color: #d0d0d0; border-style: solid; border-width: 0 }
@@ -56,4 +56,3 @@
 .ui-slider-horizontal > .ui-state-hover { background-image: none; opacity: 1; filter: alpha(opacity=100); border-collapse: collapse }
 .ui-slider-horizontal > .ui-state-active { background-image: none; opacity: 1; filter: alpha(opacity=100); border-collapse: collapse }
 .scFilterPage .ui-menu .ui-menu-item, .scFilterTable .select2-container--default .select2-selection--single .select2-selection__rendered, .scFormPage .select2-container--default .select2-results__option[aria-selected="true"] { color: #333333 }
-.scFilterPage .ui-menu .ui-menu-item, .scFilterPage .select2-container .select2-dropdown, .scFilterPage .select2-container--default .select2-results__option[aria-selected="true"] { border-color: #34495E }

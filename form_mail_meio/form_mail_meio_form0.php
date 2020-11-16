@@ -51,6 +51,8 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
   var sc_img_status_ok = '<?php echo $this->Ini->path_icones; ?>/<?php echo $this->Ini->Img_status_ok; ?>';
   var sc_img_status_err = '<?php echo $this->Ini->path_icones; ?>/<?php echo $this->Ini->Img_status_err; ?>';
   var sc_css_status = '<?php echo $this->Ini->Css_status; ?>';
+  var sc_css_status_pwd_box = '<?php echo $this->Ini->Css_status_pwd_box; ?>';
+  var sc_css_status_pwd_text = '<?php echo $this->Ini->Css_status_pwd_text; ?>';
  </SCRIPT>
         <SCRIPT type="text/javascript" src="<?php echo $this->Ini->path_prod; ?>/third/jquery/js/jquery.js"></SCRIPT>
 <input type="hidden" id="sc-mobile-lock" value='true' />
@@ -64,16 +66,6 @@ if (isset($_SESSION['scriptcase']['device_mobile']) && $_SESSION['scriptcase']['
  <SCRIPT type="text/javascript" src="<?php echo $this->Ini->url_lib_js; ?>jquery.fileupload.js"></SCRIPT>
  <SCRIPT type="text/javascript" src="<?php echo $this->Ini->path_prod; ?>/third/jquery_plugin/malsup-blockui/jquery.blockUI.js"></SCRIPT>
  <SCRIPT type="text/javascript" src="<?php echo $this->Ini->path_prod; ?>/third/jquery_plugin/thickbox/thickbox-compressed.js"></SCRIPT>
- <style type="text/css">
-  #quicksearchph_t {
-   position: relative;
-  }
-  #quicksearchph_t img {
-   position: absolute;
-   top: 0;
-   right: 0;
-  }
- </style>
 <style type="text/css">
 .sc-button-image.disabled {
 	opacity: 0.25
@@ -444,8 +436,6 @@ function process_hotkeys(hotkey)
     return false;
 }
 
- var scQSInit = true;
- var scQSPos  = {};
  var Dyn_Ini  = true;
  $(function() {
 
@@ -491,77 +481,83 @@ if (!$this->NM_ajax_flag && isset($this->NM_non_ajax_info['ajaxJavascript']) && 
  });
 
    $(window).on('load', function() {
-     scQuickSearchInit(false, '');
-     if (document.getElementById('SC_fast_search_t')) {
+     if ($('#t').length>0) {
          scQuickSearchKeyUp('t', null);
      }
-     scQSInit = false;
    });
    function scQuickSearchSubmit_t() {
      nm_move('fast_search', 't');
    }
 
-   function scQuickSearchInit(bPosOnly, sPos) {
-     if (!bPosOnly) {
-       if (document.getElementById('SC_fast_search_t')) {
-           if ('' == sPos || 't' == sPos) {
-               scQuickSearchSize('SC_fast_search_t', 'SC_fast_search_close_t', 'SC_fast_search_submit_t', 'quicksearchph_t');
-           }
-       }
-     }
-   }
-   var fixedQuickSearchSize = {};
-   function scQuickSearchSize(sIdInput, sIdClose, sIdSubmit, sPlaceHolder) {
-     if ("boolean" == typeof fixedQuickSearchSize[sIdInput] && fixedQuickSearchSize[sIdInput]) {
-       return;
-     }
-     var oInput = $('#' + sIdInput),
-         oClose = $('#' + sIdClose),
-         oSubmit = $('#' + sIdSubmit),
-         oPlace = $('#' + sPlaceHolder),
-         iInputP = parseInt(oInput.css('padding-right')) || 0,
-         iInputB = parseInt(oInput.css('border-right-width')) || 0,
-         iInputW = oInput.outerWidth(),
-         iPlaceW = oPlace.outerWidth(),
-         oInputO = oInput.offset(),
-         oPlaceO = oPlace.offset(),
-         iNewRight;
-     iNewRight = (iPlaceW - iInputW) - (oInputO.left - oPlaceO.left) + iInputB + 1;
-     oInput.css({
-       'padding-right': iInputP + 16 + <?php echo $this->Ini->Str_qs_image_padding ?> + 'px'
-     });
-     if (0 != oInput.height()) {
-       oInput.css({
-         'height': Math.max(oInput.height(), 16) + 'px',
-       });
-     }
-     oClose.css({
-       'right': iNewRight + <?php echo $this->Ini->Str_qs_image_padding ?> + 'px',
-       'cursor': 'pointer'
-     });
-     oSubmit.css({
-       'right': iNewRight + <?php echo $this->Ini->Str_qs_image_padding ?> + 'px',
-       'cursor': 'pointer'
-     });
-     fixedQuickSearchSize[sIdInput] = true;
-   }
    function scQuickSearchKeyUp(sPos, e) {
-     if ('' != scQSInitVal && $('#SC_fast_search_' + sPos).val() == scQSInitVal && scQSInit) {
-       $('#SC_fast_search_close_' + sPos).show();
-       $('#SC_fast_search_submit_' + sPos).hide();
-     }
-     else {
-       $('#SC_fast_search_close_' + sPos).hide();
-       $('#SC_fast_search_submit_' + sPos).show();
-     }
      if (null != e) {
        var keyPressed = e.charCode || e.keyCode || e.which;
        if (13 == keyPressed) {
          if ('t' == sPos) scQuickSearchSubmit_t();
        }
+       else
+       {
+           $('#SC_fast_search_submit_'+sPos).show();
+       }
      }
    }
- if($(".sc-ui-block-control").length) {
+   function nm_gp_submit_qsearch(pos)
+   {
+        nm_move('fast_search', pos);
+   }
+   function nm_gp_open_qsearch_div(pos)
+   {
+        if($('#SC_fast_search_dropdown_' + pos).hasClass('fa-caret-down'))
+        {
+            if(($('#quicksearchph_' + pos).offset().top+$('#id_qs_div_' + pos).height()+10) >= $(document).height())
+            {
+                $('#id_qs_div_' + pos).offset({top:($('#quicksearchph_' + pos).offset().top-($('#quicksearchph_' + pos).height()/2)-$('#id_qs_div_' + pos).height()-4)});
+            }
+
+            nm_gp_open_qsearch_div_store_temp(pos);
+            $('#SC_fast_search_dropdown_' + pos).removeClass('fa-caret-down').addClass('fa-caret-up');
+        }
+        else
+        {
+            $('#SC_fast_search_dropdown_' + pos).removeClass('fa-caret-up').addClass('fa-caret-down');
+        }
+        $('#id_qs_div_' + pos).toggle();
+   }
+
+   var tmp_qs_arr_fields = [], tmp_qs_arr_cond = "";
+   function nm_gp_open_qsearch_div_store_temp(pos)
+   {
+        tmp_qs_arr_fields = [], tmp_qs_str_cond = "";
+
+        if($('#fast_search_f0_' + pos).prop('type') == 'select-multiple')
+        {
+            tmp_qs_arr_fields = $('#fast_search_f0_' + pos).val();
+        }
+        else
+        {
+            tmp_qs_arr_fields.push($('#fast_search_f0_' + pos).val());
+        }
+
+        tmp_qs_str_cond = $('#cond_fast_search_f0_' + pos).val();
+   }
+
+   function nm_gp_cancel_qsearch_div_store_temp(pos)
+   {
+        $('#fast_search_f0_' + pos).val('');
+        $("#fast_search_f0_" + pos + " option").prop('selected', false);
+        for(it=0; it<tmp_qs_arr_fields.length; it++)
+        {
+            $("#fast_search_f0_" + pos + " option[value='"+ tmp_qs_arr_fields[it] +"']").prop('selected', true);
+        }
+        $("#fast_search_f0_" + pos).change();
+        tmp_qs_arr_fields = [];
+
+        $('#cond_fast_search_f0_' + pos).val(tmp_qs_str_cond);
+        $('#cond_fast_search_f0_' + pos).change();
+        tmp_qs_str_cond = "";
+
+        nm_gp_open_qsearch_div(pos);
+   } if($(".sc-ui-block-control").length) {
   preloadBlock = new Image();
   preloadBlock.src = "<?php echo $this->Ini->path_icones; ?>/" + sc_blockExp;
  }
@@ -632,6 +628,7 @@ else
     $opcao_botoes = $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['recarga'];
 }
     $remove_margin = isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['dashboard_info']['remove_margin']) && $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['dashboard_info']['remove_margin'] ? 'margin: 0; ' : '';
+    $remove_border = '';
 ?>
 <body class="scFormPage" style="<?php echo $remove_margin . $str_iframe_body; ?>">
 <?php
@@ -782,7 +779,7 @@ sc_userSweetAlertDisplayed = false;
 <table id="main_table_form"  align="center" cellpadding=0 cellspacing=0 >
  <tr>
   <td>
-  <div class="scFormBorder">
+  <div class="scFormBorder" style="<?php echo (isset($remove_border) ? $remove_border : ''); ?>">
    <table width='100%' cellspacing=0 cellpadding=0>
 <?php
   if (!$this->Embutida_call && (!isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['mostra_cab']) || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['mostra_cab'] != "N") && (!$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['dashboard_info']['under_dashboard'] || !$_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['dashboard_info']['compact_mode'] || $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['dashboard_info']['maximized']))
@@ -818,17 +815,30 @@ if (($this->Embutida_form || !$this->Embutida_call || $this->Grid_editavel || $t
           $OPC_cmp = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['fast_search'][0] : "";
           $OPC_arg = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['fast_search'][1] : "";
           $OPC_dat = (isset($_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['fast_search'])) ? $_SESSION['sc_session'][$this->Ini->sc_page]['form_mail_meio']['fast_search'][2] : "";
+          $stateSearchIconClose  = 'none';
+          $stateSearchIconSearch = '';
+          if(!empty($OPC_dat))
+          {
+              $stateSearchIconClose  = '';
+              $stateSearchIconSearch = 'none';
+          }
 ?> 
            <script type="text/javascript">var change_fast_t = "";</script>
-          <input type="hidden" name="nmgp_fast_search_t" value="SC_all_Cmp">
-          <input type="hidden" name="nmgp_cond_fast_search_t" value="qp">
-          <script type="text/javascript">var scQSInitVal = "<?php echo $OPC_dat ?>";</script>
-          <span id="quicksearchph_t">
-           <input type="text" id="SC_fast_search_t" class="scFormToolbarInput" style="vertical-align: middle" name="nmgp_arg_fast_search_t" value="<?php echo $this->form_encode_input($OPC_dat) ?>" size="10" onChange="change_fast_t = 'CH';" alt="{maxLength: 255}" placeholder="<?php echo $this->Ini->Nm_lang['lang_othr_qk_watermark'] ?>">
-           <img style="position: absolute; display: none; height: 16px; width: 16px" id="SC_fast_search_close_t" src="<?php echo $this->Ini->path_botoes ?>/<?php echo $this->Ini->Img_qs_clean; ?>" onclick="document.getElementById('SC_fast_search_t').value = '__Clear_Fast__'; nm_move('fast_search', 't');">
-           <img style="position: absolute; display: none; height: 16px; width: 16px" id="SC_fast_search_submit_t" src="<?php echo $this->Ini->path_botoes ?>/<?php echo $this->Ini->Img_qs_search; ?>" onclick="scQuickSearchSubmit_t();">
-          </span>
+          <input id='fast_search_f0_t' type="hidden" name="nmgp_fast_search_t" value="SC_all_Cmp">
+          <select id='cond_fast_search_f0_t' class="scFormToolbarInput" style="vertical-align: middle;display:none;" name="nmgp_cond_fast_search_t" onChange="change_fast_t = 'CH';">
 <?php 
+          $OPC_sel = ("qp" == $OPC_arg) ? " selected" : "";
+           echo "           <option value='qp'" . $OPC_sel . ">" . $this->Ini->Nm_lang['lang_srch_like'] . "</option>";
+?> 
+          </select>
+          <span id="quicksearchph_t" class="scFormToolbarInput" style='display: inline-block; vertical-align: inherit'>
+              <span>
+                  <input type="text" id="SC_fast_search_t" class="scFormToolbarInputText" style="border-width: 0px;;" name="nmgp_arg_fast_search_t" value="<?php echo $this->form_encode_input($OPC_dat) ?>" size="10" onChange="change_fast_t = 'CH';" alt="{maxLength: 255}" placeholder="<?php echo $this->Ini->Nm_lang['lang_othr_qk_watermark'] ?>">&nbsp;
+                  <img style="display: <?php echo $stateSearchIconSearch ?>; "  id="SC_fast_search_submit_t" class='css_toolbar_obj_qs_search_img' src="<?php echo $this->Ini->path_botoes ?>/<?php echo $this->Ini->Img_qs_search; ?>" onclick="scQuickSearchSubmit_t();">
+                  <img style="display: <?php echo $stateSearchIconClose ?>; " id="SC_fast_search_close_t" class='css_toolbar_obj_qs_search_img' src="<?php echo $this->Ini->path_botoes ?>/<?php echo $this->Ini->Img_qs_clean; ?>" onclick="document.getElementById('SC_fast_search_t').value = '__Clear_Fast__'; nm_move('fast_search', 't');">
+              </span>
+          </span>  </div>
+  <?php
       }
 ?> 
      </td> 
@@ -1009,7 +1019,7 @@ unset($NM_ult_sep);
 <?php if ((isset($this->Embutida_form) && $this->Embutida_form) || ($this->nmgp_opcao != "novo" && $this->nmgp_opc_ant != "incluir")) { ?>
 
     <TD class="scFormLabelOdd scUiLabelWidthFix css_idmail_meio_label" id="hidden_field_label_idmail_meio" style="<?php echo $sStyleHidden_idmail_meio; ?>"><span id="id_label_idmail_meio"><?php echo $this->nm_new_label['idmail_meio']; ?></span></TD>
-    <TD class="scFormDataOdd css_idmail_meio_line" id="hidden_field_data_idmail_meio" style="<?php echo $sStyleHidden_idmail_meio; ?>"><table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_idmail_meio_line" style="vertical-align: top;padding: 0px"><span id="id_read_on_idmail_meio" class="css_idmail_meio_line" style="<?php echo $sStyleReadLab_idmail_meio; ?>"><?php echo $this->form_encode_input($this->idmail_meio); ?></span><span id="id_read_off_idmail_meio" class="css_read_off_idmail_meio" style="<?php echo $sStyleReadInp_idmail_meio; ?>"><input type="hidden" name="idmail_meio" value="<?php echo $this->form_encode_input($idmail_meio) . "\">"?><span id="id_ajax_label_idmail_meio"><?php echo nl2br($idmail_meio); ?></span>
+    <TD class="scFormDataOdd css_idmail_meio_line" id="hidden_field_data_idmail_meio" style="<?php echo $sStyleHidden_idmail_meio; ?>"><table style="border-width: 0px; border-collapse: collapse; width: 100%"><tr><td  class="scFormDataFontOdd css_idmail_meio_line" style="vertical-align: top;padding: 0px"><span id="id_read_on_idmail_meio" class="css_idmail_meio_line" style="<?php echo $sStyleReadLab_idmail_meio; ?>"><?php echo $this->form_format_readonly("idmail_meio", $this->form_encode_input($this->idmail_meio)); ?></span><span id="id_read_off_idmail_meio" class="css_read_off_idmail_meio" style="<?php echo $sStyleReadInp_idmail_meio; ?>"><input type="hidden" name="idmail_meio" value="<?php echo $this->form_encode_input($idmail_meio) . "\">"?><span id="id_ajax_label_idmail_meio"><?php echo nl2br($idmail_meio); ?></span>
 </span></span></td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_idmail_meio_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_idmail_meio_text"></span></td></tr></table></td></tr></table></TD>
    <?php }
       else
@@ -1067,7 +1077,7 @@ unset($NM_ult_sep);
  ?>
 <input type="hidden" name="mail_descreva" value="<?php echo $this->form_encode_input($mail_descreva) . "\">" . $mail_descreva . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_descreva" class="sc-ui-readonly-mail_descreva css_mail_descreva_line" style="<?php echo $sStyleReadLab_mail_descreva; ?>"><?php echo $this->mail_descreva; ?></span><span id="id_read_off_mail_descreva" class="css_read_off_mail_descreva" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_descreva; ?>">
+<span id="id_read_on_mail_descreva" class="sc-ui-readonly-mail_descreva css_mail_descreva_line" style="<?php echo $sStyleReadLab_mail_descreva; ?>"><?php echo $this->form_format_readonly("mail_descreva", $this->mail_descreva); ?></span><span id="id_read_off_mail_descreva" class="css_read_off_mail_descreva" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_descreva; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_descreva_obj" style="" id="id_sc_field_mail_descreva" type=text name="mail_descreva" value="<?php echo $this->form_encode_input($mail_descreva) ?>"
  size=45 maxlength=45 alt="{datatype: 'text', maxLength: 45, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_descreva_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_descreva_text"></span></td></tr></table></td></tr></table></TD>
@@ -1121,7 +1131,7 @@ unset($NM_ult_sep);
  ?>
 <input type="hidden" name="mail_usuario" value="<?php echo $this->form_encode_input($mail_usuario) . "\">" . $mail_usuario . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_usuario" class="sc-ui-readonly-mail_usuario css_mail_usuario_line" style="<?php echo $sStyleReadLab_mail_usuario; ?>"><?php echo $this->mail_usuario; ?></span><span id="id_read_off_mail_usuario" class="css_read_off_mail_usuario" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_usuario; ?>">
+<span id="id_read_on_mail_usuario" class="sc-ui-readonly-mail_usuario css_mail_usuario_line" style="<?php echo $sStyleReadLab_mail_usuario; ?>"><?php echo $this->form_format_readonly("mail_usuario", $this->mail_usuario); ?></span><span id="id_read_off_mail_usuario" class="css_read_off_mail_usuario" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_usuario; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_usuario_obj" style="" id="id_sc_field_mail_usuario" type=text name="mail_usuario" value="<?php echo $this->form_encode_input($mail_usuario) ?>"
  size=50 maxlength=100 alt="{datatype: 'text', maxLength: 100, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_usuario_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_usuario_text"></span></td></tr></table></td></tr></table></TD>
@@ -1175,7 +1185,7 @@ unset($NM_ult_sep);
  ?>
 <input type="hidden" name="mail_senha" value="<?php echo $this->form_encode_input($mail_senha) . "\">" . $mail_senha . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_senha" class="sc-ui-readonly-mail_senha css_mail_senha_line" style="<?php echo $sStyleReadLab_mail_senha; ?>"><?php echo $this->mail_senha; ?></span><span id="id_read_off_mail_senha" class="css_read_off_mail_senha" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_senha; ?>">
+<span id="id_read_on_mail_senha" class="sc-ui-readonly-mail_senha css_mail_senha_line" style="<?php echo $sStyleReadLab_mail_senha; ?>"><?php echo $this->form_format_readonly("mail_senha", $this->mail_senha); ?></span><span id="id_read_off_mail_senha" class="css_read_off_mail_senha" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_senha; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_senha_obj" style="" id="id_sc_field_mail_senha" type=text name="mail_senha" value="<?php echo $this->form_encode_input($mail_senha) ?>"
  size=15 maxlength=15 alt="{datatype: 'text', maxLength: 15, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_senha_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_senha_text"></span></td></tr></table></td></tr></table></TD>
@@ -1229,7 +1239,7 @@ unset($NM_ult_sep);
  ?>
 <input type="hidden" name="mail_smtp" value="<?php echo $this->form_encode_input($mail_smtp) . "\">" . $mail_smtp . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_smtp" class="sc-ui-readonly-mail_smtp css_mail_smtp_line" style="<?php echo $sStyleReadLab_mail_smtp; ?>"><?php echo $this->mail_smtp; ?></span><span id="id_read_off_mail_smtp" class="css_read_off_mail_smtp" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_smtp; ?>">
+<span id="id_read_on_mail_smtp" class="sc-ui-readonly-mail_smtp css_mail_smtp_line" style="<?php echo $sStyleReadLab_mail_smtp; ?>"><?php echo $this->form_format_readonly("mail_smtp", $this->mail_smtp); ?></span><span id="id_read_off_mail_smtp" class="css_read_off_mail_smtp" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_smtp; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_smtp_obj" style="" id="id_sc_field_mail_smtp" type=text name="mail_smtp" value="<?php echo $this->form_encode_input($mail_smtp) ?>"
  size=50 maxlength=100 alt="{datatype: 'text', maxLength: 100, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_smtp_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_smtp_text"></span></td></tr></table></td></tr></table></TD>
@@ -1283,7 +1293,7 @@ unset($NM_ult_sep);
  ?>
 <input type="hidden" name="mail_porta" value="<?php echo $this->form_encode_input($mail_porta) . "\">" . $mail_porta . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_porta" class="sc-ui-readonly-mail_porta css_mail_porta_line" style="<?php echo $sStyleReadLab_mail_porta; ?>"><?php echo $this->mail_porta; ?></span><span id="id_read_off_mail_porta" class="css_read_off_mail_porta" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_porta; ?>">
+<span id="id_read_on_mail_porta" class="sc-ui-readonly-mail_porta css_mail_porta_line" style="<?php echo $sStyleReadLab_mail_porta; ?>"><?php echo $this->form_format_readonly("mail_porta", $this->mail_porta); ?></span><span id="id_read_off_mail_porta" class="css_read_off_mail_porta" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_porta; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_porta_obj" style="" id="id_sc_field_mail_porta" type=text name="mail_porta" value="<?php echo $this->form_encode_input($mail_porta) ?>"
  size=3 maxlength=3 alt="{datatype: 'text', maxLength: 3, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_porta_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_porta_text"></span></td></tr></table></td></tr></table></TD>
@@ -1337,7 +1347,7 @@ unset($NM_ult_sep);
  ?>
 <input type="hidden" name="mail_seguranca" value="<?php echo $this->form_encode_input($mail_seguranca) . "\">" . $mail_seguranca . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_seguranca" class="sc-ui-readonly-mail_seguranca css_mail_seguranca_line" style="<?php echo $sStyleReadLab_mail_seguranca; ?>"><?php echo $this->mail_seguranca; ?></span><span id="id_read_off_mail_seguranca" class="css_read_off_mail_seguranca" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_seguranca; ?>">
+<span id="id_read_on_mail_seguranca" class="sc-ui-readonly-mail_seguranca css_mail_seguranca_line" style="<?php echo $sStyleReadLab_mail_seguranca; ?>"><?php echo $this->form_format_readonly("mail_seguranca", $this->mail_seguranca); ?></span><span id="id_read_off_mail_seguranca" class="css_read_off_mail_seguranca" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_seguranca; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_seguranca_obj" style="" id="id_sc_field_mail_seguranca" type=text name="mail_seguranca" value="<?php echo $this->form_encode_input($mail_seguranca) ?>"
  size=5 maxlength=5 alt="{datatype: 'text', maxLength: 5, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_seguranca_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_seguranca_text"></span></td></tr></table></td></tr></table></TD>
@@ -1391,7 +1401,7 @@ unset($NM_ult_sep);
  ?>
 <input type="hidden" name="mail_ativo" value="<?php echo $this->form_encode_input($mail_ativo) . "\">" . $mail_ativo . ""; ?>
 <?php } else { ?>
-<span id="id_read_on_mail_ativo" class="sc-ui-readonly-mail_ativo css_mail_ativo_line" style="<?php echo $sStyleReadLab_mail_ativo; ?>"><?php echo $this->mail_ativo; ?></span><span id="id_read_off_mail_ativo" class="css_read_off_mail_ativo" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_ativo; ?>">
+<span id="id_read_on_mail_ativo" class="sc-ui-readonly-mail_ativo css_mail_ativo_line" style="<?php echo $sStyleReadLab_mail_ativo; ?>"><?php echo $this->form_format_readonly("mail_ativo", $this->mail_ativo); ?></span><span id="id_read_off_mail_ativo" class="css_read_off_mail_ativo" style="white-space: nowrap;<?php echo $sStyleReadInp_mail_ativo; ?>">
  <input class="sc-js-input scFormObjectOdd css_mail_ativo_obj" style="" id="id_sc_field_mail_ativo" type=text name="mail_ativo" value="<?php echo $this->form_encode_input($mail_ativo) ?>"
  size=1 maxlength=1 alt="{datatype: 'text', maxLength: 1, allowedChars: '<?php echo $this->allowedCharsCharset("") ?>', lettersCase: '', enterTab: false, enterSubmit: false, autoTab: false, selectOnFocus: true, watermark: '', watermarkClass: 'scFormObjectOddWm', maskChars: '(){}[].,;:-+/ '}" ></span><?php } ?>
 </td></tr><tr><td style="vertical-align: top; padding: 0"><table class="scFormFieldErrorTable" style="display: none" id="id_error_display_mail_ativo_frame"><tr><td class="scFormFieldErrorMessage"><span id="id_error_display_mail_ativo_text"></span></td></tr></table></td></tr></table></TD>
@@ -1724,23 +1734,23 @@ scAjax_displayEmptyForm();
 	}
 	function scBtnFn_sys_format_sai() {
 		if ($("#sc_b_sai_t.sc-unique-btn-6").length && $("#sc_b_sai_t.sc-unique-btn-6").is(":visible")) {
-			document.F5.action='<?php echo $nm_url_saida; ?>'; document.F5.submit();
+			scFormClose_F5('<?php echo $nm_url_saida; ?>');
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-7").length && $("#sc_b_sai_t.sc-unique-btn-7").is(":visible")) {
-			document.F5.action='<?php echo $nm_url_saida; ?>'; document.F5.submit();
+			scFormClose_F5('<?php echo $nm_url_saida; ?>');
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-8").length && $("#sc_b_sai_t.sc-unique-btn-8").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-9").length && $("#sc_b_sai_t.sc-unique-btn-9").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
 			 return;
 		}
 		if ($("#sc_b_sai_t.sc-unique-btn-10").length && $("#sc_b_sai_t.sc-unique-btn-10").is(":visible")) {
-			document.F6.action='<?php echo $nm_url_saida; ?>'; document.F6.submit(); return false;
+			scFormClose_F6('<?php echo $nm_url_saida; ?>'); return false;
 			 return;
 		}
 	}

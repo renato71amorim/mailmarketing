@@ -7,7 +7,9 @@
 .scGridToolbarPadding { padding: 20px }
 .scGridToolbarPadding > span { background-color: #37404a }
 .css_toolbar_obj { background-color: #37404a; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #4d5764; border-style: solid; border-width: 1px; color: #aab8c5; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; padding: 0 10px; text-decoration: none; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; height: 34px; line-height: 34px; box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.2) }
+.css_toolbar_obj_text { opacity: 1; filter: alpha(opacity=100); color: #aab8c5; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; text-decoration: none; background: transparent }
 .css_toolbar_obj:focus { background-color: #37404a; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #586372; color: #aab8c5; box-shadow: none }
+.css_toolbar_obj_text:focus { opacity: 1; filter: alpha(opacity=100); color: #aab8c5; outline: none !important }
 .css_toolbar_objWm { color: #aab8c5 }
 .scGridHeader { background-color: #3C4858; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #3C4858; border-style: solid; border-width: 1px }
 .scGridHeaderFont { color: #FFFFFF; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; text-decoration: none }
@@ -29,8 +31,10 @@
 .scGridFieldEvenFont { color: #aab8c5; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; padding: 12px 15px; text-decoration: none; border-color: #464f5b; border-style: solid; border-width: 0 0 1px 0 }
 .scGridFieldEvenVert { background-color: #37404a; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #464f5b; border-style: solid; border-width: 1px; color: #aab8c5; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; padding: 12px 15px; text-decoration: none }
 .scGridFieldEvenLink { color: #6082C5; text-decoration: none }
+.scGridFieldEvenFont .highlight, .scGridFieldEvenVert .highlight { background-image: none; opacity: 1; filter: alpha(opacity=100); color: #ff0000; display: inline-block }
 .scGridFieldOdd { background-color: #37404a; background-image: none; opacity: 1; filter: alpha(opacity=100) }
 .scGridFieldOddFont { color: #aab8c5; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; padding: 12px 15px; text-decoration: none; border-color: #464f5b; border-style: solid; border-width: 0 0 1px 0 }
+.scGridFieldOddFont .highlight, .scGridFieldOddVert .highlight { background-image: none; opacity: 1; filter: alpha(opacity=100); color: #ff0000; display: inline-block }
 .scGridFieldOddVert { background-color: #37404a; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #464f5b; border-style: solid; border-width: 1px; color: #aab8c5; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; padding: 12px 15px; text-decoration: none }
 .scGridFieldOddLink { color: #6082C5; text-decoration: none }
 .scGridFieldClick { background-color: #2E353E; box-shadow: css_grid_campo_par_box_shadow; border-color: #464f5b; border-style: solid; border-width: 0 0 1px 0 }
@@ -39,6 +43,7 @@
 .scGridLabelVert { background-color: #2e353e; background-image: none; opacity: 1; filter: alpha(opacity=100); border-color: #37404a; border-style: solid; border-width: 1px; color: #8492A6; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; font-weight: bold; padding: 12px 15px; text-decoration: none; vertical-align: middle; width: 20% }
 .scGridLabelFont { color: #8492A6; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; font-weight: bold; padding: 12px 15px; text-decoration: none; vertical-align: middle; border-color: #37404a; border-style: solid; border-width: 1px }
 scGridLabelVert:hover,.scGridLabelFont:hover { background-color: #3e4853; background-image: none; opacity: 1; filter: alpha(opacity=100); color: #8492A6; text-decoration: none; border-color: #37404a; border-style: solid; border-width: 1px }
+scGridLabelVert:hover .scGridLabelLink,.scGridLabelFont:hover .scGridLabelLink { color: #8492A6 }
 .scGridLabelLink { color: #aab8c5; font-family: Leelawadee, Ebrima, 'Bahnschrift Light', Gadugi, 'Nirmala UI', 'Segoe UI', Verdana; font-size: 13px; font-weight: bold; text-decoration: none; vertical-align: middle }
 .scGridTabela { background-color: #343a40;box-shadow:0 0 35px 0 rgba(0, 0, 0, 0.15); background-image: none; opacity: 1; filter: alpha(opacity=100); border-collapse: collapse; border-color: #fff; box-shadow: 0 0 35px 0 rgba(0, 0, 0, 0.15); border-style: none; border-width: 0; padding: 0 }
 .scGridTabelaTd { padding: 0 }

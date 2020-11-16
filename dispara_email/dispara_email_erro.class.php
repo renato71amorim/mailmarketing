@@ -45,6 +45,7 @@ class dispara_email_erro
       if ("banco" == $this->tipo)
       {
          $mensagem .= "<BR>" . NM_encode_input($this->complemento);
+      $mensagem .= "<BR>" . NM_encode_input($_SESSION['scriptcase']['sc_sql_ult_comando']);
       }
       $this->msg_final = $mensagem;
    }

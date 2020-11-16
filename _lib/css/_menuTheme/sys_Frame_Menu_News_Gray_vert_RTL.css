@@ -1,7 +1,7 @@
 ul#css3menu1,ul#css3menu1 ul{
 	margin:0;list-style:none;padding:0;background-color:#BDC3C7;border-width:0;border-style:solid;border-color:;}
 ul#css3menu1 ul{
-	display:none;position:absolute;right:0;top:80%;background-color:#307cb2;border-width:9px;{theme_sub_radius_menu5}border-style:solid;border-color:#307cb2;padding:0 9px 9px;}
+	display:none;position:absolute;right:0;top:80%;background-color:#307cb2;border-width:9px;border-radius:0 0px 0px 0px;-moz-border-radius:0 0px 0px 0px;-webkit-border-radius:0;-webkit-border-top-right-radius:0px;-webkit-border-bottom-right-radius:0px;-webkit-border-bottom-left-radius:0px;border-style:solid;border-color:#307cb2;padding:0 9px 9px;}
 ul#css3menu1 li:hover>*{
 	display:block;}
 ul#css3menu1 li{

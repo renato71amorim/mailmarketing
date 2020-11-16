@@ -169,7 +169,7 @@ function _nmAjaxShowMessage_toast(params) {
 		}
 
 		if (null == sweetAlertParams["position"]) {
-			sweetAlertParams["position"] = "top-end";
+			sweetAlertParams["position"] = "top";
 		}
 
 		if (null == sweetAlertParams["timer"]) {
@@ -297,7 +297,7 @@ function scJs_sweetalert_params(params) {
 			sweetAlertConfig['timer'] = 3000;
 		}
 		if (null == sweetAlertConfig["position"]) {
-			sweetAlertConfig["position"] = "top-end";
+			sweetAlertConfig["position"] = "top";
 		}
 	}
 

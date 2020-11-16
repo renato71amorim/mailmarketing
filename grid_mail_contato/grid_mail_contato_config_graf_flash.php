@@ -2,9 +2,15 @@
 /**
  * $Id: nm_gp_config_graf_flash.php,v 1.8 2012-01-27 13:02:59 sergio Exp $
  */
+
+/*
+@ini_set('session.cookie_httponly', 1);
+@ini_set('session.use_only_cookies', 1);
+*/
+
     include_once('grid_mail_contato_session.php');
     session_start();
-    $_SESSION['scriptcase']['grid_mail_contato']['glo_nm_path_imag_temp']  = "/principal/tmp";
+    $_SESSION['scriptcase']['grid_mail_contato']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
     //check tmp
     if(empty($_SESSION['scriptcase']['grid_mail_contato']['glo_nm_path_imag_temp']))
     {

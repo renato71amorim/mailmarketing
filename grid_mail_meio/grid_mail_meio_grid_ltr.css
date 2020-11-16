@@ -4,9 +4,11 @@
 .css_mail_descreva_grid_line {vertical-align: top;text-align: left;}
 .css_mail_usuario_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
 .css_mail_usuario_grid_line {vertical-align: top;text-align: left;}
-.css_mail_senha_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
-.css_mail_senha_grid_line {vertical-align: top;text-align: left;}
 .css_mail_smtp_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
 .css_mail_smtp_grid_line {vertical-align: top;text-align: left;}
 .css_mail_porta_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
 .css_mail_porta_grid_line {vertical-align: top;text-align: left;}
+.css_mail_ativo_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_mail_ativo_grid_line {vertical-align: top;text-align: left;}
+.css_mail_senha_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_mail_senha_grid_line {vertical-align: top;text-align: left;}

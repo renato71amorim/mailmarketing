@@ -1,7 +1,7 @@
 ul#css3menu1,ul#css3menu1 ul{
 	margin:0;list-style:none;padding:0;background-color:#79A091;border-width:0;border-style:solid;border-color:;}
 ul#css3menu1 ul{
-	display:none;position:absolute;right:0;top:100%;background-color:#F5F4EB;{theme_sub_radius_menu5}padding:10px 1px 11px;}
+	display:none;position:absolute;right:0;top:100%;background-color:#F5F4EB;border-radius:0 5px 5px 5px;-moz-border-radius:0 5px 5px 5px;-webkit-border-radius:0;-webkit-border-top-right-radius:5px;-webkit-border-bottom-right-radius:5px;-webkit-border-bottom-left-radius:5px;padding:10px 1px 11px;}
 ul#css3menu1 li:hover>*{
 	display:block;}
 ul#css3menu1 li{

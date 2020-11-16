@@ -1,7 +1,7 @@
 <?php
    include_once('grid_mail_contato_filtrado_session.php');
    session_start();
-   $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imag_temp']  = "/principal/tmp";
+   $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
    //check tmp
    if(empty($_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imag_temp']))
    {
@@ -94,9 +94,15 @@ function Ord_cmp_init()
    $tab_ger_campos = array();
    $tab_def_campos = array();
    $tab_labels     = array();
+   $tab_ger_campos['nome'] = "on";
+   $tab_def_campos['nome'] = "nome";
+   $tab_labels["nome"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_contato_filtrado']['labels']["nome"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_contato_filtrado']['labels']["nome"] : "Nome";
    $tab_ger_campos['email'] = "on";
    $tab_def_campos['email'] = "email";
    $tab_labels["email"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_contato_filtrado']['labels']["email"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_contato_filtrado']['labels']["email"] : "Email";
+   $tab_ger_campos['aniversario'] = "on";
+   $tab_def_campos['aniversario'] = "aniversario";
+   $tab_labels["aniversario"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_contato_filtrado']['labels']["aniversario"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_contato_filtrado']['labels']["aniversario"] : "Aniversario";
    $tab_ger_campos['data_atualizacao'] = "on";
    $tab_def_campos['data_atualizacao'] = "data_atualizacao";
    $tab_labels["data_atualizacao"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_mail_contato_filtrado']['labels']["data_atualizacao"])) ? $_SESSION['sc_session'][$sc_init]['grid_mail_contato_filtrado']['labels']["data_atualizacao"] : "Data Atualizacao";

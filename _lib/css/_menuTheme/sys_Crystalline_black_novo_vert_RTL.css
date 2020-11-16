@@ -1,7 +1,7 @@
 ul#css3menu1,ul#css3menu1 ul{
 	margin:0;list-style:none;padding:0;background-color:#999999;border-width:0;border-style:solid;border-color:;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;}
 ul#css3menu1 ul{
-	display:none;position:absolute;right:0;top:100%;background-color:#999999;{theme_sub_radius_menu5}padding:0 3px 3px;}
+	display:none;position:absolute;right:0;top:100%;background-color:#999999;border-radius:0 0px 0px 0px;-moz-border-radius:0 0px 0px 0px;-webkit-border-radius:0;-webkit-border-top-right-radius:0px;-webkit-border-bottom-right-radius:0px;-webkit-border-bottom-left-radius:0px;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";opacity:0.8;filter:alpha(opacity=80);padding:0 3px 3px;}
 ul#css3menu1 li:hover>*{
 	display:block;}
 ul#css3menu1 li{
@@ -36,11 +36,11 @@ ul#css3menu1 ul span{
 ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li a.pressed{
 	background-color:#33CC99;color:#FFFFFF;text-decoration:none;}
 ul#css3menu1 li.topmenu>a{
-	border-width:1px;border-style:solid;border-color:transparent;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;}
+	border-width:1px;border-style:solid;border-color:transparent;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";opacity:0.8;filter:alpha(opacity=80);}
 ul#css3menu1 li.topmenu:hover>a,ul#css3menu1 li.topmenu a.pressed{
 	border-style:solid;border-color:#434343;}
 ul#css3menu1 li.toproot>a{
-	border-width:1px 1px 0 1px;border-style:solid;border-color:transparent;{theme_sub_radius_item3}}
+	border-width:1px 1px 0 1px;border-style:solid;border-color:transparent;border-radius:0px 0px 0 0;-moz-border-radius:0px 0px 0 0;-webkit-border-radius:0px;-webkit-border-bottom-right-radius:0;-webkit-border-bottom-left-radius:0;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";opacity:0.8;filter:alpha(opacity=80);}
 ul#css3menu1 li.toproot:hover>a,ul#css3menu1 li.toproot a.pressed{
 	border-style:solid;border-color:#434343;}
 ul#css3menu1 img {

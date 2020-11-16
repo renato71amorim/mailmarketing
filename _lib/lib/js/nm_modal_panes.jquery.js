@@ -49,6 +49,7 @@ jQuery.fn.openInModalPane = function(params) {
             openingButton: (typeof params.openingButton === 'undefined') ? false : params.openingButton,
             clickAction: function() {},
             preserveClick: (typeof params.preserveClick === 'undefined') ? false : params.preserveClick,
+            execClickBeforeReady: (typeof params.execClickBeforeReady === 'undefined') ? false : params.execClickBeforeReady,
             isFrame: (typeof params.isFrame === 'undefined') ? '' : 'nm-modalpane-isframe',
             holdAjax: (typeof params.holdAjax === 'undefined') ? '' : 'nm-modalpane-holdajax',
             paneTitleText: (typeof params.paneTitleText === 'undefined' || params.paneTitleText === false) ? '' : params.paneTitleText,
@@ -81,10 +82,6 @@ jQuery.fn.openInModalPane = function(params) {
             if (frmEl) {
                 var frmWindow = frmEl.contentWindow;
 
-                console.log(frmWindow);
-                console.log(window);
-                console.log(window.document);
-                console.log(frmWindow == window);
 
                 if (frmWindow == window && true) {
                     hidden = '-hidden';
@@ -127,11 +124,18 @@ jQuery.fn.openInModalPane = function(params) {
             openButton = $(options.openingButton);
             clickAction = openButton.attr('onclick');
             options.clickAction = function() {
-                eval(clickAction.replace('return', 'var dummyvarreplace = '));
+                try {
+                    eval(clickAction.replace('return', 'var dummyvarreplace = "";'));
+                } catch (ex) {
+                    console.log(ex)
+                }
             };
             _process(function () {
+                if (options.execClickBeforeReady) {
+
+                    options.clickAction();
+                }
                 options.beforeReady(paneContent, openButton, closeButton, clickAction);
-                console.log(options.paneTitleText);
             }).then(function (value) {
                 openButton.removeAttr('href');
                 openButton.removeAttr('onclick');
@@ -146,7 +150,8 @@ jQuery.fn.openInModalPane = function(params) {
                     closeButton: closeButton
                 }, function (e) {
                     if (options.preserveClick) {
-                        eval(clickAction.replace('return', 'var dummyvarreplace = '));
+                        options.clickAction();
+                        //eval(clickAction.replace('return', 'var dummyvarreplace = '));
                     }
                     options.toggleHandler(e);
                 });

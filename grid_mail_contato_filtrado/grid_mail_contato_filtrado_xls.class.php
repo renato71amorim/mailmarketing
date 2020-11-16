@@ -238,21 +238,6 @@ class grid_mail_contato_filtrado_xls
       $_SESSION['scriptcase']['sc_sql_ult_conexao'] = ''; 
       $this->sc_proc_grid = false; 
       $nm_raiz_img  = ""; 
-      if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name']))
-      {
-          $this->Arquivo = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
-          $this->Arq_zip = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
-          $this->Tit_doc = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
-          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'], ".");
-          if ($Pos !== false) {
-              $this->Arq_zip = substr($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'], 0, $Pos);
-          }
-          $this->Arq_zip .= ".zip";
-          $this->Tit_zip  = $this->Arq_zip;
-          unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name']);
-          $this->Xls_f = $this->Ini->root . $this->Ini->path_imag_temp . "/" . $this->Arquivo;
-          $this->Zip_f = $this->Ini->root . $this->Ini->path_imag_temp . "/" . $this->Arq_zip;
-      }
       if (isset($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_contato_filtrado']['field_display']) && !empty($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_contato_filtrado']['field_display']))
       {
           foreach ($_SESSION['scriptcase']['sc_apl_conf']['grid_mail_contato_filtrado']['field_display'] as $NM_cada_field => $NM_cada_opc)
@@ -323,6 +308,25 @@ class grid_mail_contato_filtrado_xls
           }
           $this->aniversario_2 = $Busca_temp['aniversario_input_2']; 
       } 
+      if (isset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name']))
+      {
+          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'], ".");
+          if ($Pos === false) {
+              $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'] .= $this->Xls_tp;
+          }
+          $this->Arquivo = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
+          $this->Arq_zip = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
+          $this->Tit_doc = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'];
+          $Pos = strrpos($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'], ".");
+          if ($Pos !== false) {
+              $this->Arq_zip = substr($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name'], 0, $Pos);
+          }
+          $this->Arq_zip .= ".zip";
+          $this->Tit_zip  = $this->Arq_zip;
+          unset($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['xls_name']);
+          $this->Xls_f = $this->Ini->root . $this->Ini->path_imag_temp . "/" . $this->Arquivo;
+          $this->Zip_f = $this->Ini->root . $this->Ini->path_imag_temp . "/" . $this->Arq_zip;
+      }
       $this->arr_export = array('label' => array(), 'lines' => array());
       $this->arr_span   = array();
 
@@ -339,11 +343,11 @@ class grid_mail_contato_filtrado_xls
       $nmgp_select_count = "SELECT count(*) AS countTest from " . $this->Ini->nm_tabela; 
       if (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mysql))
       { 
-          $nmgp_select = "SELECT email, data_atualizacao, data_descadastramento, data_cadastro, motivo, origem from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT nome, email, aniversario, data_atualizacao, data_descadastramento, data_cadastro, motivo, origem from " . $this->Ini->nm_tabela; 
       } 
       else 
       { 
-          $nmgp_select = "SELECT email, data_atualizacao, data_descadastramento, data_cadastro, motivo, origem from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT nome, email, aniversario, data_atualizacao, data_descadastramento, data_cadastro, motivo, origem from " . $this->Ini->nm_tabela; 
       } 
       $nmgp_select .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['where_pesq'];
       $nmgp_select_count .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['where_pesq'];
@@ -385,12 +389,14 @@ class grid_mail_contato_filtrado_xls
          }
          $this->Xls_col = 0;
          $this->Xls_row++;
-         $this->email = $rs->fields[0] ;  
-         $this->data_atualizacao = $rs->fields[1] ;  
-         $this->data_descadastramento = $rs->fields[2] ;  
-         $this->data_cadastro = $rs->fields[3] ;  
-         $this->motivo = $rs->fields[4] ;  
-         $this->origem = $rs->fields[5] ;  
+         $this->nome = $rs->fields[0] ;  
+         $this->email = $rs->fields[1] ;  
+         $this->aniversario = $rs->fields[2] ;  
+         $this->data_atualizacao = $rs->fields[3] ;  
+         $this->data_descadastramento = $rs->fields[4] ;  
+         $this->data_cadastro = $rs->fields[5] ;  
+         $this->motivo = $rs->fields[6] ;  
+         $this->origem = $rs->fields[7] ;  
          $this->arg_sum_origem = " = " . $this->Db->qstr($this->origem);
           if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['SC_Ind_Groupby'] == "sc_free_group_by") 
           {  
@@ -717,6 +723,34 @@ class grid_mail_contato_filtrado_xls
    { 
       foreach ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['field_order'] as $Cada_col)
       { 
+          $SC_Label = (isset($this->New_label['nome'])) ? $this->New_label['nome'] : "Nome"; 
+          if ($Cada_col == "nome" && (!isset($this->NM_cmp_hidden[$Cada_col]) || $this->NM_cmp_hidden[$Cada_col] != "off"))
+          {
+              $this->count_span++;
+              $current_cell_ref = $this->calc_cell($this->Xls_col);
+              $SC_Label = NM_charset_to_utf8($SC_Label);
+              if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['embutida'])
+              { 
+                  $this->arr_export['label'][$this->Xls_col]['data']     = $SC_Label;
+                  $this->arr_export['label'][$this->Xls_col]['align']    = "left";
+                  $this->arr_export['label'][$this->Xls_col]['autosize'] = "s";
+                  $this->arr_export['label'][$this->Xls_col]['bold']     = "s";
+              }
+              else
+              { 
+                  if ($this->Use_phpspreadsheet) {
+                      $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                  }
+                  else {
+                      $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
+                  }
+                  $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
+                  $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
+              }
+              $this->Xls_col++;
+          }
           $SC_Label = (isset($this->New_label['email'])) ? $this->New_label['email'] : "Email"; 
           if ($Cada_col == "email" && (!isset($this->NM_cmp_hidden[$Cada_col]) || $this->NM_cmp_hidden[$Cada_col] != "off"))
           {
@@ -734,11 +768,40 @@ class grid_mail_contato_filtrado_xls
               { 
                   if ($this->Use_phpspreadsheet) {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                   }
                   else {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
                   }
-                  $this->Nm_ActiveSheet->setCellValue($current_cell_ref . $this->Xls_row, $SC_Label);
+                  $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
+                  $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
+              }
+              $this->Xls_col++;
+          }
+          $SC_Label = (isset($this->New_label['aniversario'])) ? $this->New_label['aniversario'] : "Aniversario"; 
+          if ($Cada_col == "aniversario" && (!isset($this->NM_cmp_hidden[$Cada_col]) || $this->NM_cmp_hidden[$Cada_col] != "off"))
+          {
+              $this->count_span++;
+              $current_cell_ref = $this->calc_cell($this->Xls_col);
+              $SC_Label = NM_charset_to_utf8($SC_Label);
+              if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_mail_contato_filtrado']['embutida'])
+              { 
+                  $this->arr_export['label'][$this->Xls_col]['data']     = $SC_Label;
+                  $this->arr_export['label'][$this->Xls_col]['align']    = "center";
+                  $this->arr_export['label'][$this->Xls_col]['autosize'] = "s";
+                  $this->arr_export['label'][$this->Xls_col]['bold']     = "s";
+              }
+              else
+              { 
+                  if ($this->Use_phpspreadsheet) {
+                      $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                  }
+                  else {
+                      $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
+                  }
                   $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
                   $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
               }
@@ -761,11 +824,12 @@ class grid_mail_contato_filtrado_xls
               { 
                   if ($this->Use_phpspreadsheet) {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                   }
                   else {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
                   }
-                  $this->Nm_ActiveSheet->setCellValue($current_cell_ref . $this->Xls_row, $SC_Label);
                   $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
                   $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
               }
@@ -788,11 +852,12 @@ class grid_mail_contato_filtrado_xls
               { 
                   if ($this->Use_phpspreadsheet) {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                   }
                   else {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
                   }
-                  $this->Nm_ActiveSheet->setCellValue($current_cell_ref . $this->Xls_row, $SC_Label);
                   $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
                   $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
               }
@@ -815,11 +880,12 @@ class grid_mail_contato_filtrado_xls
               { 
                   if ($this->Use_phpspreadsheet) {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                   }
                   else {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
                   }
-                  $this->Nm_ActiveSheet->setCellValue($current_cell_ref . $this->Xls_row, $SC_Label);
                   $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
                   $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
               }
@@ -842,11 +908,12 @@ class grid_mail_contato_filtrado_xls
               { 
                   if ($this->Use_phpspreadsheet) {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                   }
                   else {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
                   }
-                  $this->Nm_ActiveSheet->setCellValue($current_cell_ref . $this->Xls_row, $SC_Label);
                   $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
                   $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
               }
@@ -869,11 +936,12 @@ class grid_mail_contato_filtrado_xls
               { 
                   if ($this->Use_phpspreadsheet) {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                   }
                   else {
                       $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
                   }
-                  $this->Nm_ActiveSheet->setCellValue($current_cell_ref . $this->Xls_row, $SC_Label);
                   $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
                   $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
               }
@@ -883,6 +951,26 @@ class grid_mail_contato_filtrado_xls
       $this->Xls_col = 0;
       $this->Xls_row++;
    } 
+   //----- nome
+   function NM_export_nome()
+   {
+         $current_cell_ref = $this->calc_cell($this->Xls_col);
+         if (!isset($this->NM_ctrl_style[$current_cell_ref])) {
+             $this->NM_ctrl_style[$current_cell_ref]['ini'] = $this->Xls_row;
+             $this->NM_ctrl_style[$current_cell_ref]['align'] = "LEFT"; 
+         }
+         $this->NM_ctrl_style[$current_cell_ref]['end'] = $this->Xls_row;
+         $this->nome = html_entity_decode($this->nome, ENT_COMPAT, $_SESSION['scriptcase']['charset']);
+         $this->nome = strip_tags($this->nome);
+         $this->nome = NM_charset_to_utf8($this->nome);
+         if ($this->Use_phpspreadsheet) {
+             $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $this->nome, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+         }
+         else {
+             $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $this->nome, PHPExcel_Cell_DataType::TYPE_STRING);
+         }
+         $this->Xls_col++;
+   }
    //----- email
    function NM_export_email()
    {
@@ -900,6 +988,32 @@ class grid_mail_contato_filtrado_xls
          }
          else {
              $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $this->email, PHPExcel_Cell_DataType::TYPE_STRING);
+         }
+         $this->Xls_col++;
+   }
+   //----- aniversario
+   function NM_export_aniversario()
+   {
+         $current_cell_ref = $this->calc_cell($this->Xls_col);
+         if (!isset($this->NM_ctrl_style[$current_cell_ref])) {
+             $this->NM_ctrl_style[$current_cell_ref]['ini'] = $this->Xls_row;
+             $this->NM_ctrl_style[$current_cell_ref]['align'] = "CENTER"; 
+         }
+         $this->NM_ctrl_style[$current_cell_ref]['end'] = $this->Xls_row;
+         $this->aniversario = substr($this->aniversario, 0, 10);
+         if (empty($this->aniversario) || $this->aniversario == "0000-00-00")
+         {
+             if ($this->Use_phpspreadsheet) {
+                 $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $this->aniversario, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+             }
+             else {
+                 $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $this->aniversario, PHPExcel_Cell_DataType::TYPE_STRING);
+             }
+         }
+         else
+         {
+             $this->Nm_ActiveSheet->setCellValue($current_cell_ref . $this->Xls_row, $this->aniversario);
+             $this->NM_ctrl_style[$current_cell_ref]['format'] = $this->SC_date_conf_region;
          }
          $this->Xls_col++;
    }
@@ -1051,6 +1165,18 @@ class grid_mail_contato_filtrado_xls
          }
          $this->Xls_col++;
    }
+   //----- nome
+   function NM_sub_cons_nome()
+   {
+         $this->nome = html_entity_decode($this->nome, ENT_COMPAT, $_SESSION['scriptcase']['charset']);
+         $this->nome = strip_tags($this->nome);
+         $this->nome = NM_charset_to_utf8($this->nome);
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['data']   = $this->nome;
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['align']  = "left";
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['type']   = "char";
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['format'] = "";
+         $this->Xls_col++;
+   }
    //----- email
    function NM_sub_cons_email()
    {
@@ -1061,6 +1187,16 @@ class grid_mail_contato_filtrado_xls
          $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['align']  = "left";
          $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['type']   = "char";
          $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['format'] = "";
+         $this->Xls_col++;
+   }
+   //----- aniversario
+   function NM_sub_cons_aniversario()
+   {
+         $this->aniversario = substr($this->aniversario, 0, 10);
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['data']   = $this->aniversario;
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['type']   = "data";
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['align']  = "center";
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['format'] = $this->SC_date_conf_region;
          $this->Xls_col++;
    }
    //----- data_atualizacao
@@ -1382,8 +1518,7 @@ class grid_mail_contato_filtrado_xls
    function nm_conv_data_db($dt_in, $form_in, $form_out)
    {
        $dt_out = $dt_in;
-       if (strtoupper($form_in) == "DB_FORMAT")
-       {
+       if (strtoupper($form_in) == "DB_FORMAT") {
            if ($dt_out == "null" || $dt_out == "")
            {
                $dt_out = "";
@@ -1391,8 +1526,7 @@ class grid_mail_contato_filtrado_xls
            }
            $form_in = "AAAA-MM-DD";
        }
-       if (strtoupper($form_out) == "DB_FORMAT")
-       {
+       if (strtoupper($form_out) == "DB_FORMAT") {
            if (empty($dt_out))
            {
                $dt_out = "null";
@@ -1400,8 +1534,18 @@ class grid_mail_contato_filtrado_xls
            }
            $form_out = "AAAA-MM-DD";
        }
-       nm_conv_form_data($dt_out, $form_in, $form_out);
-       return $dt_out;
+       if (strtoupper($form_out) == "SC_FORMAT_REGION") {
+           $this->nm_data->SetaData($dt_in, strtoupper($form_in));
+           $prep_out  = (strpos(strtolower($form_in), "dd") !== false) ? "dd" : "";
+           $prep_out .= (strpos(strtolower($form_in), "mm") !== false) ? "mm" : "";
+           $prep_out .= (strpos(strtolower($form_in), "aa") !== false) ? "aaaa" : "";
+           $prep_out .= (strpos(strtolower($form_in), "yy") !== false) ? "aaaa" : "";
+           return $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", $prep_out));
+       }
+       else {
+           nm_conv_form_data($dt_out, $form_in, $form_out);
+           return $dt_out;
+       }
    }
    function progress_bar_end()
    {
@@ -1513,7 +1657,16 @@ if ($_SESSION['scriptcase']['proc_mobile'])
       $trab_mask  = $nm_mask;
       $tam_campo  = strlen($nm_campo);
       $trab_saida = "";
-      $mask_num = false;
+      $str_highlight_ini = "";
+      $str_highlight_fim = "";
+      if(substr($nm_campo, 0, 23) == '<div class="highlight">' && substr($nm_campo, -6) == '</div>')
+      {
+           $str_highlight_ini = substr($nm_campo, 0, 23);
+           $str_highlight_fim = substr($nm_campo, -6);
+
+           $trab_campo = substr($nm_campo, 23, -6);
+           $tam_campo  = strlen($trab_campo);
+      }      $mask_num = false;
       for ($x=0; $x < strlen($trab_mask); $x++)
       {
           if (substr($trab_mask, $x, 1) == "#")
@@ -1556,7 +1709,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
           {
               $trab_saida .= substr($trab_campo, $xdados);
           }
-          $nm_campo = $trab_saida;
+          $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
           return;
       }
       for ($ix = strlen($trab_mask); $ix > 0; $ix--)
@@ -1609,7 +1762,7 @@ if ($_SESSION['scriptcase']['proc_mobile'])
                $trab_saida = substr($trab_saida, 0, $iz) . substr($trab_saida, $iz + 1);
            }
       }
-      $nm_campo = $trab_saida;
+      $nm_campo = $str_highlight_ini . $trab_saida . $str_highlight_ini;
    } 
 }
 
