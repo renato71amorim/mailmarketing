@@ -10,7 +10,7 @@
 
     include_once('grid_mail_meio_session.php');
     session_start();
-    $_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
+    $_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']  = "/principal/tmp";
     //check tmp
     if(empty($_SESSION['scriptcase']['grid_mail_meio']['glo_nm_path_imag_temp']))
     {

@@ -21,9 +21,9 @@ if ($_SESSION['scriptcase']['device_mobile'])
         $_SESSION['scriptcase']['display_mobile'] = true;
     }
 }
-    $_SESSION['scriptcase']['menu_mail']['glo_nm_path_prod']      = "/var/www/html/principal/prod";
+    $_SESSION['scriptcase']['menu_mail']['glo_nm_path_prod']      = "/principal/prod";
     $_SESSION['scriptcase']['menu_mail']['glo_nm_perfil']         = "";
-    $_SESSION['scriptcase']['menu_mail']['glo_nm_path_imag_temp'] = "/var/www/html/principal/tmp";
+    $_SESSION['scriptcase']['menu_mail']['glo_nm_path_imag_temp'] = "/principal/tmp";
     $_SESSION['scriptcase']['menu_mail']['glo_nm_usa_grupo']      = "";
     //check publication with the prod
     $str_path_apl_url  = $_SERVER['PHP_SELF'];

@@ -34,9 +34,9 @@
    $_SESSION['scriptcase']['form_mail_marketing']['error_buffer'] = '';
 
    $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_perfil']          = "principal";
-   $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_path_prod']       = "/var/www/html/principal/prod";
-   $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_path_imagens']    = "/var/www/doc/img";
-   $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
+   $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_path_prod']       = "/principal/prod";
+   $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_path_imagens']    = "/principal/img";
+   $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_path_imag_temp']  = "/principal/tmp";
    $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_path_cache']  = "";
    $_SESSION['scriptcase']['form_mail_marketing']['glo_nm_path_doc']        = "/var/www/doc";
    $NM_dir_atual = getcwd();

@@ -2,10 +2,10 @@
    include_once('grid_mail_contato_filtrado_session.php');
    @session_start() ;
    $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_perfil']          = "principal";
-   $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_prod']       = "/var/www/html/principal/prod";
+   $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_prod']       = "/principal/prod";
    $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_conf']       = "";
-   $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imagens']    = "/var/www/doc/img";
-   $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imag_temp']  = "/var/www/html/principal/tmp";
+   $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imagens']    = "/principal/img";
+   $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_imag_temp']  = "/principal/tmp";
    $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_cache']      = "";
    $_SESSION['scriptcase']['grid_mail_contato_filtrado']['glo_nm_path_doc']        = "/var/www/doc";
     //check publication with the prod

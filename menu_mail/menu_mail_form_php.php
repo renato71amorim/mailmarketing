@@ -1,8 +1,8 @@
 <?php
 include_once('menu_mail_session.php');
 session_start();
-   $_SESSION['scriptcase']['menu_mail']['glo_nm_path_prod']      = "/var/www/html/principal/prod";
-   $_SESSION['scriptcase']['menu_mail']['glo_nm_path_imag_temp'] = "/var/www/html/principal/tmp";
+   $_SESSION['scriptcase']['menu_mail']['glo_nm_path_prod']      = "/principal/prod";
+   $_SESSION['scriptcase']['menu_mail']['glo_nm_path_imag_temp'] = "/principal/tmp";
    //check publication with the prod
    $str_path_apl_url  = $_SERVER['PHP_SELF'];
    $str_path_apl_url  = str_replace("\\", '/', $str_path_apl_url);
